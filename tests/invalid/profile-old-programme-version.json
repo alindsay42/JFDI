@@ -1,11 +1,11 @@
 {
  "format": "jfdi-profile",
  "formatVersion": 1,
- "id": "wife",
- "name": "Wife",
- "colour": "#b4447a",
+ "id": "diane",
+ "name": "Diane",
+ "colour": "#7c3aed",
  "createdAt": "2026-11-06T23:40:00Z",
- "updatedAt": "2026-11-06T23:40:00Z",
+ "updatedAt": "2026-11-06T23:55:00Z",
  "display": {
   "weightUnits": "kg",
   "theme": "device"
@@ -17,7 +17,7 @@
   "active": {
    "programme": "strength-block-1",
    "programmeUpdatedAt": "2026-01-01T00:00:00Z",
-   "startDate": "2026-11-09",
+   "startDate": "2026-11-10",
    "startingLoads": {
     "back-squat": {
      "kg": 30,

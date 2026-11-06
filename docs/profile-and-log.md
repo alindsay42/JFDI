@@ -6,8 +6,8 @@ These are the last two pieces of the data model. With programmes, equipment and 
 
 | File | One per | Holds | Schema | Example |
 | --- | --- | --- | --- | --- |
-| Profile | person | Who they are, what they're running, their own limits and starting loads | [`profile.schema.json`](../schema/profile.schema.json) | [`examples/profiles/wife.json`](../examples/profiles/wife.json) |
-| Training log | person | Sessions as performed, daily check-ins and activities, bodyweight | [`log.schema.json`](../schema/log.schema.json) | [`examples/logs/wife-week-1.json`](../examples/logs/wife-week-1.json) |
+| Profile | person | Who they are, what they're running, their own limits and starting loads | [`profile.schema.json`](../schema/profile.schema.json) | [`examples/profiles/diane.json`](../examples/profiles/diane.json) |
+| Training log | person | Sessions as performed, daily check-ins and activities, bodyweight | [`log.schema.json`](../schema/log.schema.json) | [`examples/logs/diane-week-1.json`](../examples/logs/diane-week-1.json) |
 
 ```
 household:  equipment.json, library.json, programme files
@@ -21,10 +21,10 @@ The example log is **made up** to show the format: an illustrative first week on
 
 | Field | Required | Meaning |
 | --- | --- | --- |
-| `id`, `name` | yes | `name` is what the profile switcher shows. The example uses "Wife" as a placeholder |
+| `id`, `name` | yes | `name` is what the profile switcher shows, such as "Diane" |
 | `colour` | yes | Shown on every Train screen, so nobody logs into the wrong profile on the shared tablet (PF-3) |
 | `display` | no | `weightUnits` (`kg` or `kg-and-lb`) and `theme` (`device`, `light`, `dark`). Everything is stored in kg |
-| `unavailableEquipment` | no | Household equipment this person can't use. Your wife's lists `bar-ssb` |
+| `unavailableEquipment` | no | Household equipment this person can't use. Diane's lists `bar-ssb` |
 | `excludedExercises` | no | Library exercises this person doesn't want offered, for any reason |
 | `readiness` | no | Overrides the active programme's daily check, in the same shape as a programme's `readiness` |
 | `programmes.active` | no | The programme being run now (see below) |
@@ -42,7 +42,7 @@ Everything about one person lives here, never in the programme, so two people ca
 | `startDate` | Week 1 starts here |
 | `startingLoads` | Exercise id to `{ kg, reps, sets }`. Used for the first session of each exercise, then the log takes over. These win over a programme slot's own `start` |
 
-Your wife's starting loads are the lowest of her recent numbers: squat 30kg, bench 25kg, overhead press 15.5kg, deadlift 55kg, Romanian deadlift 30kg and row 15kg.
+Diane's profile is purple and starts Block 1 on Tuesday 10 November. Her starting loads are the lowest of her recent numbers: squat 30kg, bench 25kg, overhead press 15.5kg, deadlift 55kg, Romanian deadlift 30kg and row 15kg.
 
 ### Profile checks
 
@@ -139,8 +139,10 @@ The full table is at the top of the script. An exercise with no mapping is repor
 
 `npm test` runs the importer on a sample backup (the made-up 8-week test data from Rebuild Log, in [`tests/fixtures/`](../tests/fixtures/)). It checks that every session and weigh-in comes across, and that the result passes every log check.
 
-## Open questions
+## Decisions
 
-1. **Her profile name and colour.** The example uses "Wife" and a pink. What name should the profile switcher show, and does she want to pick her own colour?
-2. **Her start date.** The example uses Monday 9 November.
-3. **Your own history.** When you move to J.F.D.I, should all of Rebuild Log come across, or only Phase 3 onwards? Everything is the default, since the lift charts then show the whole recovery.
+Settled on 6 Nov:
+
+1. **Diane's profile:** name "Diane", colour purple.
+2. **Start date:** Tuesday 10 November 2026.
+3. **Your history:** all of Rebuild Log comes across when you move to J.F.D.I, so the lift charts show the whole recovery.

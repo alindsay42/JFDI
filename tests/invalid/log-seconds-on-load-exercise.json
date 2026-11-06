@@ -1,14 +1,14 @@
 {
  "format": "jfdi-log",
  "formatVersion": 1,
- "profile": "wife",
+ "profile": "diane",
  "description": "Illustrative example of a first week on Block 1. Not real training.",
  "sessions": [
   {
-   "id": "2026-11-09-a1",
-   "date": "2026-11-09",
-   "startedAt": "2026-11-09T18:05:00Z",
-   "finishedAt": "2026-11-09T19:10:00Z",
+   "id": "2026-11-10-a1",
+   "date": "2026-11-10",
+   "startedAt": "2026-11-10T18:05:00Z",
+   "finishedAt": "2026-11-10T19:10:00Z",
    "status": "done",
    "programme": {
     "id": "strength-block-1",
@@ -318,10 +318,10 @@
    "check48h": null
   },
   {
-   "id": "2026-11-12-b1",
-   "date": "2026-11-12",
-   "startedAt": "2026-11-12T18:20:00Z",
-   "finishedAt": "2026-11-12T19:00:00Z",
+   "id": "2026-11-13-b1",
+   "date": "2026-11-13",
+   "startedAt": "2026-11-13T18:20:00Z",
+   "finishedAt": "2026-11-13T19:00:00Z",
    "status": "done",
    "programme": {
     "id": "strength-block-1",
@@ -526,11 +526,11 @@
  ],
  "days": [
   {
-   "date": "2026-11-09",
+   "date": "2026-11-10",
    "readiness": "green"
   },
   {
-   "date": "2026-11-10",
+   "date": "2026-11-11",
    "activities": [
     {
      "exercise": "walk",
@@ -540,7 +540,7 @@
    "notes": "Spin class"
   },
   {
-   "date": "2026-11-12",
+   "date": "2026-11-13",
    "readiness": "amber"
   }
  ],
