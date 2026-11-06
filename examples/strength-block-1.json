@@ -86,7 +86,7 @@
         ],
         "secondary": [
           { "type": "superset", "restSec": 120, "slots": [
-            { "exercise": "overhead-press-ez", "sets": 5, "reps": { "min": 5, "max": 5 }, "progression": "linear-2-5", "incrementKg": 1, "start": { "kg": 15.5 }, "notes": "1kg jumps with fractional plates. Without them, 2.5kg every second successful session." },
+            { "exercise": "overhead-press-ez", "sets": 5, "reps": { "min": 5, "max": 5 }, "progression": "linear-2-5", "incrementKg": 1, "start": { "kg": 15.5 }, "notes": "1kg jumps using all four collars (0.28kg each). Two collars add about 0.5kg." },
             { "exercise": "band-pull-up", "sets": 3, "reps": { "min": 6, "max": 10 }, "progression": "accessory", "alternatives": ["chest-supported-db-row"], "start": { "note": "Choose a band that leaves 2 reps in reserve" } }
           ] },
           { "type": "straight", "restSec": 90, "slots": [

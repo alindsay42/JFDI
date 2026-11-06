@@ -15,7 +15,7 @@
   },
   "$defs": {
     "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 64 },
-    "kg": { "type": "number", "minimum": 0, "maximum": 1000, "multipleOf": 0.25 },
+    "kg": { "type": "number", "minimum": 0, "maximum": 1000, "description": "Measured weights can be any value, such as a 19.2kg bar or 0.28kg collars" },
     "item": {
       "type": "object",
       "additionalProperties": false,

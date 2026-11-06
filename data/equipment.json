@@ -63,7 +63,9 @@
    "name": "Hex trap bar",
    "kind": "bar",
    "barType": "trap",
-   "kg": 25
+   "kg": 25,
+   "tbc": true,
+   "notes": "25kg is the listed weight. Still to weigh."
   },
   {
    "id": "bar-log",
@@ -77,9 +79,8 @@
    "name": "Swiss bar",
    "kind": "bar",
    "barType": "swiss",
-   "kg": 20,
-   "tbc": true,
-   "notes": "Weight to confirm."
+   "kg": 19.2,
+   "notes": "Weighed at 19.2kg."
   },
   {
    "id": "plates-bumper",
@@ -106,6 +107,7 @@
   },
   {
    "id": "plates-iron",
+   "notes": "Not calibrated, so actual weights may be slightly off.",
    "name": "Bodymax iron plates (carry cut-outs)",
    "kind": "plates",
    "plates": [
@@ -154,8 +156,9 @@
    "id": "collars",
    "name": "Heavy metal collars",
    "kind": "collars",
-   "tbc": true,
-   "notes": "Also used as micro-loading. Weight to confirm: weigh a pair."
+   "kgEach": 0.28,
+   "count": 4,
+   "notes": "Also used for micro-loading: a pair adds about 0.5kg, all four about 1kg."
   },
   {
    "id": "chains",

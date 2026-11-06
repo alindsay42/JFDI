@@ -13,13 +13,13 @@ Generated from `data/equipment.json` and `data/library.json` by `npm run catalog
 | Junior barbell (`bar-junior`) | bar | 10kg; bar type `junior` |
 | EZ curl bar (`bar-ez`) | bar | 8kg; bar type `ez` |
 | BLK Box safety squat bar (`bar-ssb`) | bar | 32kg; bar type `ssb` |
-| Hex trap bar (`bar-trap`) | bar | 25kg; bar type `trap` |
+| Hex trap bar (`bar-trap`) | bar | 25kg; bar type `trap`; **to confirm**; 25kg is the listed weight. Still to weigh. |
 | Mirafit lifting log (`bar-log`) | bar | 30kg; bar type `log` |
-| Swiss bar (`bar-swiss`) | bar | 20kg; bar type `swiss`; **to confirm**; Weight to confirm. |
+| Swiss bar (`bar-swiss`) | bar | 19.2kg; bar type `swiss`; Weighed at 19.2kg. |
 | Jordan competition bumper plates (`plates-bumper`) | plates | 20kg × 4, 15kg × 2, 10kg × 2, 5kg × 2 (140kg in total) |
-| Bodymax iron plates (carry cut-outs) (`plates-iron`) | plates | 20kg × 4, 15kg × 2, 10kg × 2, 5kg × 4, 2.5kg × 4, 1.25kg × 4 (165kg in total) |
+| Bodymax iron plates (carry cut-outs) (`plates-iron`) | plates | 20kg × 4, 15kg × 2, 10kg × 2, 5kg × 4, 2.5kg × 4, 1.25kg × 4 (165kg in total); Not calibrated, so actual weights may be slightly off. |
 | Bodymax rubber-coated plates (carry cut-outs) (`plates-rubber`) | plates | 5kg × 4, 2.5kg × 4 (30kg in total) |
-| Heavy metal collars (`collars`) | collars | **to confirm**; Also used as micro-loading. Weight to confirm: weigh a pair. |
+| Heavy metal collars (`collars`) | collars | 0.28kg each; 4 of them; Also used for micro-loading: a pair adds about 0.5kg, all four about 1kg. |
 | Mirafit chains (`chains`) | chains | 10kg each; 2 of them |
 | Dumbbells (fixed pairs) (`dumbbells`) | dumbbells | pairs: 5kg, 7.5kg, 10kg, 12.5kg, 15kg, 20kg, 25kg, 30kg, 35kg, 40kg, 45kg, 50kg; not available now: 7.5kg, 10kg; The 7.5kg and 10kg pairs are lent out. There's no 17.5kg or 22.5kg pair, so jumps above 15kg are 5kg. |
 | Olympic loadable dumbbell handles (`db-loadable`) | dumbbells | 2 of them; **to confirm**; Plate-loaded handles, a pair. Handle weight to confirm. |

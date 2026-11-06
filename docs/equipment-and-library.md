@@ -49,7 +49,7 @@ Any item can carry `tbc: true` when details are still to be confirmed, plus free
 
 **What the plates and dumbbells mean for planning.**
 
-- **Plates:** 335kg in total across three sets. The smallest plates are 1.25kg, so the smallest barbell jump is **2.5kg**. The heavy collars can make smaller jumps once they're weighed.
+- **Plates:** 335kg in total across three sets. The smallest plates are 1.25kg, so the smallest barbell jump is **2.5kg**. The four heavy collars weigh 0.28kg each, so a pair adds about 0.5kg and all four about 1kg. That's enough for small jumps on light lifts such as your wife's overhead press. The iron plates aren't calibrated, so real loads may be slightly off.
 - **Dumbbells:** fixed pairs from 5kg to 50kg. Below 15kg they go up in 2.5kg steps. Above 15kg they go up in 5kg steps, since there's no 17.5kg or 22.5kg pair. The 7.5kg and 10kg pairs are lent out, so the app won't suggest them until they're marked as back.
 - **Loadable dumbbell handles** take over above 50kg, for heavy carries.
 
@@ -124,8 +124,7 @@ The broken test files in `tests/invalid/` are now each paired with the error the
 
 ## Open questions
 
-Still to weigh or check, all marked "to confirm" in the data:
+Still to weigh, both marked "to confirm" in the data:
 
-1. **The heavy collars:** weight of a pair.
-2. **The Swiss bar:** 20kg is assumed.
-3. **The loadable dumbbell handles:** weight of one empty handle.
+1. **The trap bar:** 25kg is its listed weight.
+2. **The loadable dumbbell handles:** weight of one empty handle.
