@@ -1,0 +1,2533 @@
+{
+ "format": "jfdi-library",
+ "formatVersion": 1,
+ "updatedAt": "2026-11-06T10:30:00Z",
+ "families": [
+  {
+   "id": "squat",
+   "name": "Squat",
+   "pattern": "squat",
+   "variations": "Bar type, bar position, depth target (box), pause, heel elevation, hand support"
+  },
+  {
+   "id": "single-leg-squat",
+   "name": "Single-leg squat and lunge",
+   "pattern": "lunge",
+   "variations": "Split stance or rear foot raised, load position, hand support"
+  },
+  {
+   "id": "knee-extension",
+   "name": "Knee extension",
+   "pattern": "isolation",
+   "variations": "Both legs or one, machine or bodyweight"
+  },
+  {
+   "id": "deadlift",
+   "name": "Deadlift",
+   "pattern": "hinge",
+   "variations": "Bar type, stance, start height (deficit, blocks), handle height on the trap bar"
+  },
+  {
+   "id": "romanian-deadlift",
+   "name": "Romanian deadlift",
+   "pattern": "hinge",
+   "variations": "Barbell or dumbbells, both legs or one, landmine"
+  },
+  {
+   "id": "good-morning",
+   "name": "Good morning",
+   "pattern": "hinge",
+   "variations": "Barbell or SSB, depth"
+  },
+  {
+   "id": "back-extension",
+   "name": "Back extension (45-degree bench)",
+   "pattern": "hinge",
+   "variations": "Legs (both or one), load (none, plate at chest, plate behind head, dumbbell, barbell, band), emphasis (hip-led flat back or spinal rounding), tempo or pause"
+  },
+  {
+   "id": "ghd",
+   "name": "GHD hip and knee work",
+   "pattern": "hinge",
+   "variations": "Hip extension, glute-ham raise, Nordic curl"
+  },
+  {
+   "id": "knee-flexion",
+   "name": "Knee flexion (leg curl)",
+   "pattern": "isolation",
+   "variations": "Both legs or one, machine or Nordic"
+  },
+  {
+   "id": "calf",
+   "name": "Calf raise",
+   "pattern": "isolation",
+   "variations": "Seated or standing, both legs or one"
+  },
+  {
+   "id": "horizontal-press",
+   "name": "Horizontal press",
+   "pattern": "push",
+   "variations": "Barbell or dumbbells, incline, grip width, pause, floor press"
+  },
+  {
+   "id": "dip",
+   "name": "Dip and push-up",
+   "pattern": "push",
+   "variations": "Bodyweight, band-assisted or belt-loaded, push-up elevation"
+  },
+  {
+   "id": "vertical-press",
+   "name": "Vertical press",
+   "pattern": "push",
+   "variations": "Bar type (barbell, EZ, Swiss, log), seated or standing, strict or push press, landmine"
+  },
+  {
+   "id": "vertical-pull",
+   "name": "Vertical pull",
+   "pattern": "pull",
+   "variations": "Grip (overhand, underhand), assistance (band) or added load (belt), cable pulldown"
+  },
+  {
+   "id": "horizontal-pull",
+   "name": "Horizontal pull",
+   "pattern": "pull",
+   "variations": "Barbell, dumbbells, cable or landmine, chest-supported or free-standing, one arm or two"
+  },
+  {
+   "id": "upper-back",
+   "name": "Upper back and rear delts",
+   "pattern": "isolation",
+   "variations": "Cable or band face pulls, pull-aparts, rear-delt fly"
+  },
+  {
+   "id": "lateral-raise",
+   "name": "Lateral raise",
+   "pattern": "isolation",
+   "variations": "Dumbbell or cable, Lu raise"
+  },
+  {
+   "id": "biceps",
+   "name": "Biceps",
+   "pattern": "isolation",
+   "variations": "Dumbbell, EZ bar, hammer grip, ABX curl attachment, cable"
+  },
+  {
+   "id": "triceps",
+   "name": "Triceps",
+   "pattern": "isolation",
+   "variations": "Cable pushdown, overhead extension, EZ skull crusher"
+  },
+  {
+   "id": "anti-movement-core",
+   "name": "Anti-movement core",
+   "pattern": "core",
+   "variations": "Plank, side plank, dead bug, bird dog, Pallof press, McGill curl-up"
+  },
+  {
+   "id": "flexion-core",
+   "name": "Flexion and hanging core",
+   "pattern": "core",
+   "variations": "Hanging knee raise, sit-up attachment, GHD sit-up"
+  },
+  {
+   "id": "carry",
+   "name": "Carry",
+   "pattern": "carry",
+   "variations": "Farmer's (two hands), suitcase (one hand), trap bar"
+  },
+  {
+   "id": "conditioning",
+   "name": "Conditioning",
+   "pattern": "conditioning",
+   "variations": "Battle ropes, boxing bag, bodyweight circuits, walking and rucking"
+  },
+  {
+   "id": "mobility",
+   "name": "Mobility",
+   "pattern": "mobility",
+   "variations": "Hips, hamstrings, upper back and shoulders, deep squat"
+  }
+ ],
+ "exercises": [
+  {
+   "id": "back-squat",
+   "name": "Back squat",
+   "family": "squat",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard",
+    "junior"
+   ],
+   "pattern": "squat",
+   "requires": [
+    "rack",
+    "rack-safeties"
+   ],
+   "muscles": [
+    "quads",
+    "glutes",
+    "adductors"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 180
+  },
+  {
+   "id": "pause-back-squat",
+   "name": "Pause back squat",
+   "family": "squat",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard",
+    "junior"
+   ],
+   "pattern": "squat",
+   "requires": [
+    "rack",
+    "rack-safeties"
+   ],
+   "muscles": [
+    "quads",
+    "glutes",
+    "adductors"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 180,
+   "notes": "2-second pause at the bottom."
+  },
+  {
+   "id": "box-squat",
+   "name": "Box squat",
+   "family": "squat",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard",
+    "junior"
+   ],
+   "pattern": "squat",
+   "requires": [
+    "rack",
+    "rack-safeties"
+   ],
+   "muscles": [
+    "quads",
+    "glutes",
+    "adductors"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 180
+  },
+  {
+   "id": "front-squat",
+   "name": "Front squat",
+   "family": "squat",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard",
+    "junior"
+   ],
+   "pattern": "squat",
+   "requires": [
+    "rack",
+    "rack-safeties"
+   ],
+   "muscles": [
+    "quads",
+    "glutes",
+    "adductors"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 180
+  },
+  {
+   "id": "ssb-squat",
+   "name": "SSB squat",
+   "family": "squat",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "ssb"
+   ],
+   "pattern": "squat",
+   "requires": [
+    "rack",
+    "rack-safeties"
+   ],
+   "muscles": [
+    "quads",
+    "glutes",
+    "adductors"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 180
+  },
+  {
+   "id": "ssb-squat-heels-raised",
+   "name": "SSB squat, heels raised",
+   "family": "squat",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "ssb"
+   ],
+   "pattern": "squat",
+   "requires": [
+    "rack",
+    "rack-safeties"
+   ],
+   "muscles": [
+    "quads",
+    "glutes",
+    "adductors"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 180,
+   "notes": "Heels on small plates."
+  },
+  {
+   "id": "ssb-box-squat",
+   "name": "SSB box squat",
+   "family": "squat",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "ssb"
+   ],
+   "pattern": "squat",
+   "requires": [
+    "rack",
+    "rack-safeties"
+   ],
+   "muscles": [
+    "quads",
+    "glutes",
+    "adductors"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 180
+  },
+  {
+   "id": "ssb-pause-squat",
+   "name": "SSB pause squat",
+   "family": "squat",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "ssb"
+   ],
+   "pattern": "squat",
+   "requires": [
+    "rack",
+    "rack-safeties"
+   ],
+   "muscles": [
+    "quads",
+    "glutes",
+    "adductors"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 180
+  },
+  {
+   "id": "ssb-front-squat",
+   "name": "SSB front squat (bar reversed)",
+   "family": "squat",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "ssb"
+   ],
+   "pattern": "squat",
+   "requires": [
+    "rack",
+    "rack-safeties"
+   ],
+   "muscles": [
+    "quads",
+    "glutes",
+    "adductors"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 180,
+   "notes": "Bar turned round and held in front. Can press on the throat."
+  },
+  {
+   "id": "hatfield-squat",
+   "name": "Hatfield squat",
+   "family": "squat",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "ssb"
+   ],
+   "pattern": "squat",
+   "requires": [
+    "rack",
+    "rack-safeties"
+   ],
+   "muscles": [
+    "quads",
+    "glutes",
+    "adductors"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 180,
+   "notes": "SSB with hands on the safeties for balance."
+  },
+  {
+   "id": "goblet-squat",
+   "name": "Goblet squat",
+   "family": "squat",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "squat",
+   "requires": [
+    "dumbbells"
+   ],
+   "muscles": [
+    "quads",
+    "glutes",
+    "adductors"
+   ],
+   "restSec": 90
+  },
+  {
+   "id": "goblet-squat-to-box",
+   "name": "Goblet squat to box",
+   "family": "squat",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "squat",
+   "requires": [
+    "dumbbells"
+   ],
+   "muscles": [
+    "quads",
+    "glutes",
+    "adductors"
+   ],
+   "restSec": 90
+  },
+  {
+   "id": "landmine-squat",
+   "name": "Landmine squat",
+   "family": "squat",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard"
+   ],
+   "pattern": "squat",
+   "requires": [
+    "rack-landmine"
+   ],
+   "muscles": [
+    "quads",
+    "glutes",
+    "adductors"
+   ],
+   "restSec": 120
+  },
+  {
+   "id": "bodyweight-squat",
+   "name": "Bodyweight squat",
+   "family": "squat",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "squat",
+   "requires": [],
+   "muscles": [
+    "quads",
+    "glutes",
+    "adductors"
+   ]
+  },
+  {
+   "id": "split-squat",
+   "name": "Split squat",
+   "family": "single-leg-squat",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "lunge",
+   "requires": [
+    "dumbbells"
+   ],
+   "muscles": [
+    "quads",
+    "glutes",
+    "adductors"
+   ],
+   "perSide": true,
+   "loadPer": "each"
+  },
+  {
+   "id": "rack-supported-split-squat",
+   "name": "Split squat, holding the rack",
+   "family": "single-leg-squat",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "lunge",
+   "requires": [
+    "dumbbells",
+    "rack"
+   ],
+   "muscles": [
+    "quads",
+    "glutes",
+    "adductors"
+   ],
+   "perSide": true
+  },
+  {
+   "id": "bulgarian-split-squat",
+   "name": "Bulgarian split squat",
+   "family": "single-leg-squat",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "lunge",
+   "requires": [
+    "dumbbells",
+    "abx-bench"
+   ],
+   "muscles": [
+    "quads",
+    "glutes",
+    "adductors"
+   ],
+   "perSide": true,
+   "loadPer": "each"
+  },
+  {
+   "id": "step-up",
+   "name": "Step-up",
+   "family": "single-leg-squat",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "lunge",
+   "requires": [
+    "dumbbells",
+    "abx-bench"
+   ],
+   "muscles": [
+    "quads",
+    "glutes",
+    "adductors"
+   ],
+   "perSide": true,
+   "loadPer": "each"
+  },
+  {
+   "id": "leg-extension",
+   "name": "Leg extension",
+   "family": "knee-extension",
+   "measure": "load",
+   "implement": "machine",
+   "pattern": "isolation",
+   "requires": [
+    "abx-bench",
+    "abx-leg"
+   ],
+   "muscles": [
+    "quads"
+   ],
+   "restSec": 60
+  },
+  {
+   "id": "single-leg-extension",
+   "name": "Single-leg extension",
+   "family": "knee-extension",
+   "measure": "load",
+   "implement": "machine",
+   "pattern": "isolation",
+   "requires": [
+    "abx-bench",
+    "abx-leg"
+   ],
+   "muscles": [
+    "quads"
+   ],
+   "perSide": true,
+   "restSec": 60
+  },
+  {
+   "id": "sissy-squat-partial",
+   "name": "Sissy squat, partial range",
+   "family": "knee-extension",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "isolation",
+   "requires": [],
+   "muscles": [
+    "quads"
+   ],
+   "restSec": 60
+  },
+  {
+   "id": "deadlift",
+   "name": "Deadlift",
+   "family": "deadlift",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard",
+    "junior"
+   ],
+   "pattern": "hinge",
+   "requires": [
+    "plates-bumper"
+   ],
+   "muscles": [
+    "spinal-erectors",
+    "glutes",
+    "hamstrings"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 180
+  },
+  {
+   "id": "sumo-deadlift",
+   "name": "Sumo deadlift",
+   "family": "deadlift",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard",
+    "junior"
+   ],
+   "pattern": "hinge",
+   "requires": [
+    "plates-bumper"
+   ],
+   "muscles": [
+    "spinal-erectors",
+    "glutes",
+    "hamstrings",
+    "adductors"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 180
+  },
+  {
+   "id": "deficit-deadlift",
+   "name": "Deficit deadlift",
+   "family": "deadlift",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard",
+    "junior"
+   ],
+   "pattern": "hinge",
+   "requires": [
+    "plates-bumper"
+   ],
+   "muscles": [
+    "spinal-erectors",
+    "glutes",
+    "hamstrings"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 180,
+   "notes": "Standing on a plate."
+  },
+  {
+   "id": "block-pull",
+   "name": "Deadlift from blocks",
+   "family": "deadlift",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard",
+    "junior"
+   ],
+   "pattern": "hinge",
+   "requires": [
+    "plates-bumper"
+   ],
+   "muscles": [
+    "spinal-erectors",
+    "glutes",
+    "hamstrings"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 180,
+   "notes": "Plates raised on blocks or stacked plates."
+  },
+  {
+   "id": "trap-bar-deadlift-high",
+   "name": "Trap bar deadlift, high handles",
+   "family": "deadlift",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "trap"
+   ],
+   "pattern": "hinge",
+   "requires": [
+    "plates-bumper"
+   ],
+   "muscles": [
+    "spinal-erectors",
+    "glutes",
+    "hamstrings",
+    "quads"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 180
+  },
+  {
+   "id": "trap-bar-deadlift-low",
+   "name": "Trap bar deadlift, low handles",
+   "family": "deadlift",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "trap"
+   ],
+   "pattern": "hinge",
+   "requires": [
+    "plates-bumper"
+   ],
+   "muscles": [
+    "spinal-erectors",
+    "glutes",
+    "hamstrings",
+    "quads"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 180
+  },
+  {
+   "id": "trap-bar-deficit-deadlift",
+   "name": "Trap bar deficit deadlift",
+   "family": "deadlift",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "trap"
+   ],
+   "pattern": "hinge",
+   "requires": [
+    "plates-bumper"
+   ],
+   "muscles": [
+    "spinal-erectors",
+    "glutes",
+    "hamstrings",
+    "quads"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 180,
+   "notes": "Standing on a plate."
+  },
+  {
+   "id": "romanian-deadlift",
+   "name": "Romanian deadlift",
+   "family": "romanian-deadlift",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard",
+    "junior"
+   ],
+   "pattern": "hinge",
+   "requires": [],
+   "muscles": [
+    "hamstrings",
+    "glutes"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 120
+  },
+  {
+   "id": "db-romanian-deadlift",
+   "name": "DB Romanian deadlift",
+   "family": "romanian-deadlift",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "hinge",
+   "requires": [
+    "dumbbells"
+   ],
+   "muscles": [
+    "hamstrings",
+    "glutes"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "loadPer": "each",
+   "restSec": 120
+  },
+  {
+   "id": "single-leg-db-rdl",
+   "name": "Single-leg DB Romanian deadlift",
+   "family": "romanian-deadlift",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "hinge",
+   "requires": [
+    "dumbbells"
+   ],
+   "muscles": [
+    "hamstrings",
+    "glutes"
+   ],
+   "perSide": true,
+   "restSec": 90
+  },
+  {
+   "id": "landmine-rdl",
+   "name": "Landmine Romanian deadlift",
+   "family": "romanian-deadlift",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard"
+   ],
+   "pattern": "hinge",
+   "requires": [
+    "rack-landmine"
+   ],
+   "muscles": [
+    "hamstrings",
+    "glutes"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 120
+  },
+  {
+   "id": "good-morning",
+   "name": "Good morning",
+   "family": "good-morning",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard",
+    "junior"
+   ],
+   "pattern": "hinge",
+   "requires": [
+    "rack",
+    "rack-safeties"
+   ],
+   "muscles": [
+    "spinal-erectors",
+    "glutes",
+    "hamstrings"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 120
+  },
+  {
+   "id": "ssb-good-morning",
+   "name": "SSB good morning",
+   "family": "good-morning",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "ssb"
+   ],
+   "pattern": "hinge",
+   "requires": [
+    "rack",
+    "rack-safeties"
+   ],
+   "muscles": [
+    "spinal-erectors",
+    "glutes",
+    "hamstrings"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 120
+  },
+  {
+   "id": "back-extension",
+   "name": "Back extension, bodyweight",
+   "family": "back-extension",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "hinge",
+   "requires": [
+    "hyper"
+   ],
+   "muscles": [
+    "spinal-erectors",
+    "glutes",
+    "hamstrings"
+   ]
+  },
+  {
+   "id": "back-extension-hip",
+   "name": "Back extension, hip-led (flat back)",
+   "family": "back-extension",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "hinge",
+   "requires": [
+    "hyper"
+   ],
+   "muscles": [
+    "glutes",
+    "hamstrings"
+   ],
+   "notes": "Back stays flat; the movement comes from the hips."
+  },
+  {
+   "id": "back-extension-spinal",
+   "name": "Back extension, spinal (rounding through)",
+   "family": "back-extension",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "hinge",
+   "requires": [
+    "hyper"
+   ],
+   "muscles": [
+    "spinal-erectors"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "notes": "Curl down and up through the spine. Not for an irritated back."
+  },
+  {
+   "id": "back-extension-pause",
+   "name": "Back extension, 2-second hold at the top",
+   "family": "back-extension",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "hinge",
+   "requires": [
+    "hyper"
+   ],
+   "muscles": [
+    "spinal-erectors",
+    "glutes",
+    "hamstrings"
+   ]
+  },
+  {
+   "id": "back-extension-plate-chest",
+   "name": "Back extension, plate held at chest",
+   "family": "back-extension",
+   "measure": "load",
+   "implement": "other",
+   "pattern": "hinge",
+   "requires": [
+    "hyper",
+    "plates-iron"
+   ],
+   "muscles": [
+    "spinal-erectors",
+    "glutes",
+    "hamstrings"
+   ],
+   "notes": "Load is the plate weight."
+  },
+  {
+   "id": "back-extension-plate-head",
+   "name": "Back extension, plate behind head",
+   "family": "back-extension",
+   "measure": "load",
+   "implement": "other",
+   "pattern": "hinge",
+   "requires": [
+    "hyper",
+    "plates-iron"
+   ],
+   "muscles": [
+    "spinal-erectors",
+    "glutes",
+    "hamstrings"
+   ],
+   "notes": "Harder than holding the same plate at the chest."
+  },
+  {
+   "id": "back-extension-db",
+   "name": "Back extension, dumbbell held at chest",
+   "family": "back-extension",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "hinge",
+   "requires": [
+    "hyper",
+    "dumbbells"
+   ],
+   "muscles": [
+    "spinal-erectors",
+    "glutes",
+    "hamstrings"
+   ]
+  },
+  {
+   "id": "back-extension-barbell",
+   "name": "Back extension, barbell on back",
+   "family": "back-extension",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard",
+    "junior"
+   ],
+   "pattern": "hinge",
+   "requires": [
+    "hyper"
+   ],
+   "muscles": [
+    "spinal-erectors",
+    "glutes",
+    "hamstrings"
+   ],
+   "flags": [
+    "spineLoading"
+   ]
+  },
+  {
+   "id": "back-extension-banded",
+   "name": "Back extension, banded",
+   "family": "back-extension",
+   "measure": "reps",
+   "implement": "band",
+   "pattern": "hinge",
+   "requires": [
+    "hyper",
+    "bands"
+   ],
+   "muscles": [
+    "spinal-erectors",
+    "glutes",
+    "hamstrings"
+   ],
+   "notes": "Band anchored under the bench, over the neck or held at the chest."
+  },
+  {
+   "id": "back-extension-single-leg",
+   "name": "Back extension, single leg",
+   "family": "back-extension",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "hinge",
+   "requires": [
+    "hyper"
+   ],
+   "muscles": [
+    "spinal-erectors",
+    "glutes",
+    "hamstrings"
+   ],
+   "perSide": true
+  },
+  {
+   "id": "back-extension-single-leg-plate",
+   "name": "Back extension, single leg, plate at chest",
+   "family": "back-extension",
+   "measure": "load",
+   "implement": "other",
+   "pattern": "hinge",
+   "requires": [
+    "hyper",
+    "plates-iron"
+   ],
+   "muscles": [
+    "spinal-erectors",
+    "glutes",
+    "hamstrings"
+   ],
+   "perSide": true
+  },
+  {
+   "id": "ghd-hip-extension",
+   "name": "GHD hip extension",
+   "family": "ghd",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "hinge",
+   "requires": [
+    "ghd"
+   ],
+   "muscles": [
+    "glutes",
+    "hamstrings",
+    "spinal-erectors"
+   ]
+  },
+  {
+   "id": "glute-ham-raise",
+   "name": "Glute-ham raise",
+   "family": "ghd",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "hinge",
+   "requires": [
+    "ghd"
+   ],
+   "muscles": [
+    "hamstrings",
+    "glutes"
+   ]
+  },
+  {
+   "id": "nordic-curl",
+   "name": "Nordic curl",
+   "family": "knee-flexion",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "isolation",
+   "requires": [
+    "ghd"
+   ],
+   "muscles": [
+    "hamstrings"
+   ],
+   "notes": "Feet anchored in the GHD."
+  },
+  {
+   "id": "leg-curl",
+   "name": "Leg curl",
+   "family": "knee-flexion",
+   "measure": "load",
+   "implement": "machine",
+   "pattern": "isolation",
+   "requires": [
+    "abx-bench",
+    "abx-leg"
+   ],
+   "muscles": [
+    "hamstrings"
+   ],
+   "restSec": 60
+  },
+  {
+   "id": "single-leg-curl",
+   "name": "Single-leg curl",
+   "family": "knee-flexion",
+   "measure": "load",
+   "implement": "machine",
+   "pattern": "isolation",
+   "requires": [
+    "abx-bench",
+    "abx-leg"
+   ],
+   "muscles": [
+    "hamstrings"
+   ],
+   "perSide": true,
+   "restSec": 60
+  },
+  {
+   "id": "seated-db-calf-raise",
+   "name": "Seated DB calf raise",
+   "family": "calf",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "isolation",
+   "requires": [
+    "dumbbells",
+    "abx-bench"
+   ],
+   "muscles": [
+    "calves"
+   ],
+   "restSec": 60
+  },
+  {
+   "id": "standing-calf-raise",
+   "name": "Standing calf raise",
+   "family": "calf",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "isolation",
+   "requires": [
+    "dumbbells"
+   ],
+   "muscles": [
+    "calves"
+   ],
+   "restSec": 60,
+   "notes": "Toes on a plate for range."
+  },
+  {
+   "id": "single-leg-calf-raise",
+   "name": "Single-leg standing calf raise",
+   "family": "calf",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "isolation",
+   "requires": [
+    "dumbbells"
+   ],
+   "muscles": [
+    "calves"
+   ],
+   "perSide": true,
+   "restSec": 60
+  },
+  {
+   "id": "bench-press",
+   "name": "Bench press",
+   "family": "horizontal-press",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard",
+    "junior"
+   ],
+   "pattern": "push",
+   "requires": [
+    "rack",
+    "rack-safeties",
+    "abx-bench"
+   ],
+   "muscles": [
+    "chest",
+    "triceps",
+    "front-delts"
+   ],
+   "restSec": 150
+  },
+  {
+   "id": "pause-bench-press",
+   "name": "Pause bench press",
+   "family": "horizontal-press",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard",
+    "junior"
+   ],
+   "pattern": "push",
+   "requires": [
+    "rack",
+    "rack-safeties",
+    "abx-bench"
+   ],
+   "muscles": [
+    "chest",
+    "triceps",
+    "front-delts"
+   ],
+   "restSec": 150
+  },
+  {
+   "id": "close-grip-bench-press",
+   "name": "Close-grip bench press",
+   "family": "horizontal-press",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard",
+    "junior"
+   ],
+   "pattern": "push",
+   "requires": [
+    "rack",
+    "rack-safeties",
+    "abx-bench"
+   ],
+   "muscles": [
+    "triceps",
+    "chest"
+   ],
+   "restSec": 150
+  },
+  {
+   "id": "incline-bench-press",
+   "name": "Incline bench press",
+   "family": "horizontal-press",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard",
+    "junior"
+   ],
+   "pattern": "push",
+   "requires": [
+    "rack",
+    "rack-safeties",
+    "abx-bench"
+   ],
+   "muscles": [
+    "chest",
+    "triceps",
+    "front-delts"
+   ],
+   "restSec": 150
+  },
+  {
+   "id": "floor-press",
+   "name": "Floor press",
+   "family": "horizontal-press",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard",
+    "junior"
+   ],
+   "pattern": "push",
+   "requires": [
+    "rack"
+   ],
+   "muscles": [
+    "chest",
+    "triceps",
+    "front-delts"
+   ],
+   "restSec": 150
+  },
+  {
+   "id": "db-bench-press",
+   "name": "DB bench press",
+   "family": "horizontal-press",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "push",
+   "requires": [
+    "dumbbells",
+    "abx-bench"
+   ],
+   "muscles": [
+    "chest",
+    "triceps",
+    "front-delts"
+   ],
+   "loadPer": "each",
+   "restSec": 120
+  },
+  {
+   "id": "incline-db-press",
+   "name": "Incline DB press",
+   "family": "horizontal-press",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "push",
+   "requires": [
+    "dumbbells",
+    "abx-bench"
+   ],
+   "muscles": [
+    "chest",
+    "triceps",
+    "front-delts"
+   ],
+   "loadPer": "each",
+   "restSec": 120
+  },
+  {
+   "id": "push-up",
+   "name": "Push-up",
+   "family": "dip",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "push",
+   "requires": [],
+   "muscles": [
+    "chest",
+    "triceps",
+    "front-delts"
+   ]
+  },
+  {
+   "id": "elevated-push-up",
+   "name": "Push-up, hands raised",
+   "family": "dip",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "push",
+   "requires": [],
+   "muscles": [
+    "chest",
+    "triceps",
+    "front-delts"
+   ],
+   "notes": "Hands on a bench or bar in the rack. Easier the higher the hands."
+  },
+  {
+   "id": "dip",
+   "name": "Dip",
+   "family": "dip",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "push",
+   "requires": [
+    "dip-bars"
+   ],
+   "muscles": [
+    "chest",
+    "triceps"
+   ]
+  },
+  {
+   "id": "weighted-dip",
+   "name": "Weighted dip",
+   "family": "dip",
+   "measure": "load",
+   "implement": "other",
+   "pattern": "push",
+   "requires": [
+    "dip-bars",
+    "dip-belt"
+   ],
+   "muscles": [
+    "chest",
+    "triceps"
+   ],
+   "notes": "Load is the added weight on the belt."
+  },
+  {
+   "id": "band-assisted-dip",
+   "name": "Band-assisted dip",
+   "family": "dip",
+   "measure": "reps",
+   "implement": "band",
+   "pattern": "push",
+   "requires": [
+    "dip-bars",
+    "bands"
+   ],
+   "muscles": [
+    "chest",
+    "triceps"
+   ]
+  },
+  {
+   "id": "overhead-press",
+   "name": "Overhead press",
+   "family": "vertical-press",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard",
+    "junior"
+   ],
+   "pattern": "push",
+   "requires": [
+    "rack"
+   ],
+   "muscles": [
+    "shoulders",
+    "triceps"
+   ],
+   "flags": [
+    "overhead"
+   ],
+   "restSec": 150
+  },
+  {
+   "id": "push-press",
+   "name": "Push press",
+   "family": "vertical-press",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard",
+    "junior"
+   ],
+   "pattern": "push",
+   "requires": [
+    "rack"
+   ],
+   "muscles": [
+    "shoulders",
+    "triceps",
+    "quads"
+   ],
+   "flags": [
+    "overhead"
+   ],
+   "restSec": 150
+  },
+  {
+   "id": "overhead-press-ez",
+   "name": "Overhead press (EZ bar)",
+   "family": "vertical-press",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "ez"
+   ],
+   "pattern": "push",
+   "requires": [],
+   "muscles": [
+    "shoulders",
+    "triceps"
+   ],
+   "flags": [
+    "overhead"
+   ],
+   "restSec": 150
+  },
+  {
+   "id": "swiss-bar-press",
+   "name": "Swiss bar press",
+   "family": "vertical-press",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "swiss"
+   ],
+   "pattern": "push",
+   "requires": [
+    "rack"
+   ],
+   "muscles": [
+    "shoulders",
+    "triceps"
+   ],
+   "flags": [
+    "overhead"
+   ],
+   "restSec": 150
+  },
+  {
+   "id": "log-press",
+   "name": "Log press from the rack",
+   "family": "vertical-press",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "log"
+   ],
+   "pattern": "push",
+   "requires": [
+    "rack"
+   ],
+   "muscles": [
+    "shoulders",
+    "triceps"
+   ],
+   "flags": [
+    "overhead"
+   ],
+   "restSec": 180
+  },
+  {
+   "id": "log-clean-and-press",
+   "name": "Log clean and press",
+   "family": "vertical-press",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "log"
+   ],
+   "pattern": "push",
+   "requires": [],
+   "muscles": [
+    "shoulders",
+    "triceps",
+    "spinal-erectors",
+    "glutes",
+    "hamstrings"
+   ],
+   "flags": [
+    "overhead",
+    "spineLoading"
+   ],
+   "restSec": 180
+  },
+  {
+   "id": "seated-db-shoulder-press",
+   "name": "Seated DB shoulder press",
+   "family": "vertical-press",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "push",
+   "requires": [
+    "dumbbells",
+    "abx-bench"
+   ],
+   "muscles": [
+    "shoulders",
+    "triceps"
+   ],
+   "flags": [
+    "overhead"
+   ],
+   "loadPer": "each",
+   "restSec": 120
+  },
+  {
+   "id": "standing-db-press",
+   "name": "Standing DB press",
+   "family": "vertical-press",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "push",
+   "requires": [
+    "dumbbells"
+   ],
+   "muscles": [
+    "shoulders",
+    "triceps"
+   ],
+   "flags": [
+    "overhead"
+   ],
+   "loadPer": "each",
+   "restSec": 120
+  },
+  {
+   "id": "landmine-press",
+   "name": "Landmine press",
+   "family": "vertical-press",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard"
+   ],
+   "pattern": "push",
+   "requires": [
+    "rack-landmine"
+   ],
+   "muscles": [
+    "shoulders",
+    "triceps"
+   ],
+   "restSec": 120,
+   "notes": "Load is the plates on the bar. Can be done one arm or two."
+  },
+  {
+   "id": "pull-up",
+   "name": "Pull-up",
+   "family": "vertical-pull",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "pull",
+   "requires": [
+    "pull-up-bar"
+   ],
+   "muscles": [
+    "lats",
+    "biceps"
+   ]
+  },
+  {
+   "id": "chin-up",
+   "name": "Chin-up",
+   "family": "vertical-pull",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "pull",
+   "requires": [
+    "pull-up-bar"
+   ],
+   "muscles": [
+    "lats",
+    "biceps"
+   ]
+  },
+  {
+   "id": "weighted-pull-up",
+   "name": "Weighted pull-up",
+   "family": "vertical-pull",
+   "measure": "load",
+   "implement": "other",
+   "pattern": "pull",
+   "requires": [
+    "pull-up-bar",
+    "dip-belt"
+   ],
+   "muscles": [
+    "lats",
+    "biceps"
+   ],
+   "notes": "Load is the added weight on the belt."
+  },
+  {
+   "id": "band-pull-up",
+   "name": "Band-assisted pull-up",
+   "family": "vertical-pull",
+   "measure": "reps",
+   "implement": "band",
+   "pattern": "pull",
+   "requires": [
+    "pull-up-bar",
+    "bands"
+   ],
+   "muscles": [
+    "lats",
+    "biceps"
+   ]
+  },
+  {
+   "id": "negative-pull-up",
+   "name": "Pull-up negative",
+   "family": "vertical-pull",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "pull",
+   "requires": [
+    "pull-up-bar"
+   ],
+   "muscles": [
+    "lats",
+    "biceps"
+   ],
+   "notes": "Jump to the top, lower for 3 to 5 seconds."
+  },
+  {
+   "id": "cable-pulldown",
+   "name": "Seated cable pulldown",
+   "family": "vertical-pull",
+   "measure": "load",
+   "implement": "cable",
+   "pattern": "pull",
+   "requires": [
+    "cable-pulleys",
+    "abx-bench"
+   ],
+   "muscles": [
+    "lats",
+    "biceps"
+   ]
+  },
+  {
+   "id": "barbell-row",
+   "name": "Barbell row",
+   "family": "horizontal-pull",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard",
+    "junior"
+   ],
+   "pattern": "pull",
+   "requires": [],
+   "muscles": [
+    "upper-back",
+    "lats",
+    "rear-delts"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 120
+  },
+  {
+   "id": "pendlay-row",
+   "name": "Pendlay row",
+   "family": "horizontal-pull",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard",
+    "junior"
+   ],
+   "pattern": "pull",
+   "requires": [
+    "plates-bumper"
+   ],
+   "muscles": [
+    "upper-back",
+    "lats",
+    "rear-delts"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 120
+  },
+  {
+   "id": "chest-supported-db-row",
+   "name": "Chest-supported DB row",
+   "family": "horizontal-pull",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "pull",
+   "requires": [
+    "dumbbells",
+    "abx-bench"
+   ],
+   "muscles": [
+    "upper-back",
+    "lats",
+    "rear-delts"
+   ],
+   "loadPer": "each",
+   "restSec": 90
+  },
+  {
+   "id": "single-arm-db-row",
+   "name": "Single-arm DB row",
+   "family": "horizontal-pull",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "pull",
+   "requires": [
+    "dumbbells",
+    "abx-bench"
+   ],
+   "muscles": [
+    "upper-back",
+    "lats",
+    "rear-delts"
+   ],
+   "perSide": true,
+   "restSec": 90
+  },
+  {
+   "id": "seated-cable-row",
+   "name": "Seated cable row",
+   "family": "horizontal-pull",
+   "measure": "load",
+   "implement": "cable",
+   "pattern": "pull",
+   "requires": [
+    "cable-pulleys"
+   ],
+   "muscles": [
+    "upper-back",
+    "lats",
+    "rear-delts"
+   ],
+   "restSec": 90
+  },
+  {
+   "id": "landmine-row",
+   "name": "Landmine row (T-bar)",
+   "family": "horizontal-pull",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard"
+   ],
+   "pattern": "pull",
+   "requires": [
+    "rack-landmine",
+    "landmine-handles"
+   ],
+   "muscles": [
+    "upper-back",
+    "lats",
+    "rear-delts"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 120,
+   "notes": "Load is the plates on the bar."
+  },
+  {
+   "id": "inverted-row",
+   "name": "Inverted row",
+   "family": "horizontal-pull",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "pull",
+   "requires": [
+    "rack"
+   ],
+   "muscles": [
+    "upper-back",
+    "lats",
+    "rear-delts"
+   ],
+   "notes": "Bar set in the rack. Higher bar is easier."
+  },
+  {
+   "id": "face-pull",
+   "name": "Face pull",
+   "family": "upper-back",
+   "measure": "load",
+   "implement": "cable",
+   "pattern": "isolation",
+   "requires": [
+    "cable-pulleys"
+   ],
+   "muscles": [
+    "rear-delts",
+    "upper-back"
+   ],
+   "restSec": 45
+  },
+  {
+   "id": "band-pull-apart",
+   "name": "Band pull-apart",
+   "family": "upper-back",
+   "measure": "reps",
+   "implement": "band",
+   "pattern": "isolation",
+   "requires": [
+    "bands"
+   ],
+   "muscles": [
+    "rear-delts",
+    "upper-back"
+   ],
+   "restSec": 45
+  },
+  {
+   "id": "rear-delt-fly",
+   "name": "Rear-delt fly",
+   "family": "upper-back",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "isolation",
+   "requires": [
+    "dumbbells"
+   ],
+   "muscles": [
+    "rear-delts"
+   ],
+   "loadPer": "each",
+   "restSec": 45
+  },
+  {
+   "id": "db-lateral-raise",
+   "name": "DB lateral raise",
+   "family": "lateral-raise",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "isolation",
+   "requires": [
+    "dumbbells"
+   ],
+   "muscles": [
+    "side-delts"
+   ],
+   "loadPer": "each",
+   "restSec": 45
+  },
+  {
+   "id": "lu-raise",
+   "name": "Lu raise",
+   "family": "lateral-raise",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "isolation",
+   "requires": [
+    "dumbbells"
+   ],
+   "muscles": [
+    "side-delts",
+    "front-delts"
+   ],
+   "flags": [
+    "overhead"
+   ],
+   "loadPer": "each",
+   "restSec": 45
+  },
+  {
+   "id": "cable-lateral-raise",
+   "name": "Cable lateral raise",
+   "family": "lateral-raise",
+   "measure": "load",
+   "implement": "cable",
+   "pattern": "isolation",
+   "requires": [
+    "cable-pulleys"
+   ],
+   "muscles": [
+    "side-delts"
+   ],
+   "perSide": true,
+   "restSec": 45
+  },
+  {
+   "id": "db-curl",
+   "name": "DB curl",
+   "family": "biceps",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "isolation",
+   "requires": [
+    "dumbbells"
+   ],
+   "muscles": [
+    "biceps"
+   ],
+   "loadPer": "each",
+   "restSec": 45
+  },
+  {
+   "id": "hammer-curl",
+   "name": "Hammer curl",
+   "family": "biceps",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "isolation",
+   "requires": [
+    "dumbbells"
+   ],
+   "muscles": [
+    "biceps",
+    "forearms"
+   ],
+   "loadPer": "each",
+   "restSec": 45
+  },
+  {
+   "id": "ez-bar-curl",
+   "name": "EZ bar curl",
+   "family": "biceps",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "ez"
+   ],
+   "pattern": "isolation",
+   "requires": [],
+   "muscles": [
+    "biceps"
+   ],
+   "restSec": 60
+  },
+  {
+   "id": "abx-db-curl",
+   "name": "DB curl on the ABX curl attachment",
+   "family": "biceps",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "isolation",
+   "requires": [
+    "dumbbells",
+    "abx-bench",
+    "abx-curl"
+   ],
+   "muscles": [
+    "biceps"
+   ],
+   "restSec": 45
+  },
+  {
+   "id": "cable-curl",
+   "name": "Cable curl",
+   "family": "biceps",
+   "measure": "load",
+   "implement": "cable",
+   "pattern": "isolation",
+   "requires": [
+    "cable-pulleys"
+   ],
+   "muscles": [
+    "biceps"
+   ],
+   "restSec": 45
+  },
+  {
+   "id": "cable-pushdown",
+   "name": "Cable triceps pushdown",
+   "family": "triceps",
+   "measure": "load",
+   "implement": "cable",
+   "pattern": "isolation",
+   "requires": [
+    "cable-pulleys"
+   ],
+   "muscles": [
+    "triceps"
+   ],
+   "restSec": 45
+  },
+  {
+   "id": "cable-overhead-extension",
+   "name": "Cable overhead triceps extension",
+   "family": "triceps",
+   "measure": "load",
+   "implement": "cable",
+   "pattern": "isolation",
+   "requires": [
+    "cable-pulleys"
+   ],
+   "muscles": [
+    "triceps"
+   ],
+   "flags": [
+    "overhead"
+   ],
+   "restSec": 45
+  },
+  {
+   "id": "ez-skull-crusher",
+   "name": "EZ skull crusher",
+   "family": "triceps",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "ez"
+   ],
+   "pattern": "isolation",
+   "requires": [
+    "abx-bench"
+   ],
+   "muscles": [
+    "triceps"
+   ],
+   "restSec": 60
+  },
+  {
+   "id": "db-overhead-extension",
+   "name": "DB overhead triceps extension",
+   "family": "triceps",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "isolation",
+   "requires": [
+    "dumbbells"
+   ],
+   "muscles": [
+    "triceps"
+   ],
+   "flags": [
+    "overhead"
+   ],
+   "restSec": 45
+  },
+  {
+   "id": "plank",
+   "name": "Plank",
+   "family": "anti-movement-core",
+   "measure": "time",
+   "implement": "bodyweight",
+   "pattern": "core",
+   "requires": [],
+   "muscles": [
+    "abs",
+    "obliques"
+   ]
+  },
+  {
+   "id": "side-plank",
+   "name": "Side plank",
+   "family": "anti-movement-core",
+   "measure": "time",
+   "implement": "bodyweight",
+   "pattern": "core",
+   "requires": [],
+   "muscles": [
+    "obliques"
+   ],
+   "perSide": true
+  },
+  {
+   "id": "dead-bug",
+   "name": "Dead bug",
+   "family": "anti-movement-core",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "core",
+   "requires": [],
+   "muscles": [
+    "abs",
+    "obliques"
+   ],
+   "perSide": true
+  },
+  {
+   "id": "bird-dog",
+   "name": "Bird dog",
+   "family": "anti-movement-core",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "core",
+   "requires": [],
+   "muscles": [
+    "spinal-erectors",
+    "glutes"
+   ],
+   "perSide": true
+  },
+  {
+   "id": "mcgill-curl-up",
+   "name": "McGill curl-up",
+   "family": "anti-movement-core",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "core",
+   "requires": [],
+   "muscles": [
+    "abs",
+    "obliques"
+   ],
+   "notes": "Count holds rather than reps if preferred."
+  },
+  {
+   "id": "pallof-press",
+   "name": "Pallof press",
+   "family": "anti-movement-core",
+   "measure": "load",
+   "implement": "cable",
+   "pattern": "core",
+   "requires": [
+    "cable-pulleys"
+   ],
+   "muscles": [
+    "abs",
+    "obliques"
+   ],
+   "perSide": true,
+   "notes": "Resists twisting, without twisting."
+  },
+  {
+   "id": "band-pallof-press",
+   "name": "Band Pallof press",
+   "family": "anti-movement-core",
+   "measure": "reps",
+   "implement": "band",
+   "pattern": "core",
+   "requires": [
+    "bands",
+    "rack"
+   ],
+   "muscles": [
+    "abs",
+    "obliques"
+   ],
+   "perSide": true
+  },
+  {
+   "id": "hanging-knee-raise",
+   "name": "Hanging knee raise",
+   "family": "flexion-core",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "core",
+   "requires": [
+    "pull-up-bar"
+   ],
+   "muscles": [
+    "abs",
+    "hip-flexors"
+   ]
+  },
+  {
+   "id": "abx-sit-up",
+   "name": "Sit-up on the ABX attachment",
+   "family": "flexion-core",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "core",
+   "requires": [
+    "abx-bench",
+    "abx-situp"
+   ],
+   "muscles": [
+    "abs",
+    "hip-flexors"
+   ]
+  },
+  {
+   "id": "ghd-sit-up",
+   "name": "GHD sit-up",
+   "family": "flexion-core",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "core",
+   "requires": [
+    "ghd"
+   ],
+   "muscles": [
+    "abs",
+    "hip-flexors"
+   ],
+   "notes": "Loaded extension at the bottom. Not for an irritated back."
+  },
+  {
+   "id": "farmers-carry",
+   "name": "Farmer's carry",
+   "family": "carry",
+   "measure": "distance",
+   "implement": "dumbbell",
+   "pattern": "carry",
+   "requires": [
+    "dumbbells"
+   ],
+   "muscles": [
+    "grip",
+    "traps",
+    "core"
+   ],
+   "loadPer": "each",
+   "restSec": 90
+  },
+  {
+   "id": "suitcase-carry",
+   "name": "Suitcase carry",
+   "family": "carry",
+   "measure": "distance",
+   "implement": "dumbbell",
+   "pattern": "carry",
+   "requires": [
+    "dumbbells"
+   ],
+   "muscles": [
+    "obliques",
+    "grip"
+   ],
+   "perSide": true,
+   "restSec": 60
+  },
+  {
+   "id": "trap-bar-carry",
+   "name": "Trap bar carry",
+   "family": "carry",
+   "measure": "distance",
+   "implement": "barbell",
+   "barTypes": [
+    "trap"
+   ],
+   "pattern": "carry",
+   "requires": [
+    "plates-bumper"
+   ],
+   "muscles": [
+    "grip",
+    "traps",
+    "core"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 120
+  },
+  {
+   "id": "battle-ropes",
+   "name": "Battle ropes, double waves",
+   "family": "conditioning",
+   "measure": "time",
+   "implement": "other",
+   "pattern": "conditioning",
+   "requires": [
+    "battle-ropes"
+   ],
+   "muscles": [
+    "shoulders",
+    "conditioning"
+   ]
+  },
+  {
+   "id": "battle-ropes-alternating",
+   "name": "Battle ropes, alternating waves",
+   "family": "conditioning",
+   "measure": "time",
+   "implement": "other",
+   "pattern": "conditioning",
+   "requires": [
+    "battle-ropes"
+   ],
+   "muscles": [
+    "shoulders",
+    "conditioning"
+   ]
+  },
+  {
+   "id": "battle-ropes-slams",
+   "name": "Battle ropes, slams",
+   "family": "conditioning",
+   "measure": "time",
+   "implement": "other",
+   "pattern": "conditioning",
+   "requires": [
+    "battle-ropes"
+   ],
+   "muscles": [
+    "shoulders",
+    "conditioning"
+   ]
+  },
+  {
+   "id": "boxing-bag-rounds",
+   "name": "Boxing bag rounds",
+   "family": "conditioning",
+   "measure": "time",
+   "implement": "other",
+   "pattern": "conditioning",
+   "requires": [
+    "boxing-bag"
+   ],
+   "muscles": [
+    "shoulders",
+    "conditioning"
+   ],
+   "flags": [
+    "rotation"
+   ]
+  },
+  {
+   "id": "boxing-bag-straight-punches",
+   "name": "Boxing bag, straight punches only",
+   "family": "conditioning",
+   "measure": "time",
+   "implement": "other",
+   "pattern": "conditioning",
+   "requires": [
+    "boxing-bag"
+   ],
+   "muscles": [
+    "shoulders",
+    "conditioning"
+   ],
+   "notes": "No hooks or body rotation."
+  },
+  {
+   "id": "burpee",
+   "name": "Burpee",
+   "family": "conditioning",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "conditioning",
+   "requires": [],
+   "muscles": [
+    "conditioning"
+   ],
+   "flags": [
+    "impact"
+   ]
+  },
+  {
+   "id": "walk",
+   "name": "Walk",
+   "family": "conditioning",
+   "measure": "time",
+   "implement": "bodyweight",
+   "pattern": "conditioning",
+   "requires": [],
+   "muscles": [
+    "conditioning"
+   ],
+   "notes": "Logged in minutes."
+  },
+  {
+   "id": "ruck-walk",
+   "name": "Ruck walk",
+   "family": "conditioning",
+   "measure": "time",
+   "implement": "other",
+   "pattern": "conditioning",
+   "requires": [],
+   "muscles": [
+    "conditioning"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "notes": "Weighted rucksack. Log the pack weight as the load."
+  },
+  {
+   "id": "deep-squat-hold",
+   "name": "Deep squat hold",
+   "family": "mobility",
+   "measure": "time",
+   "implement": "bodyweight",
+   "pattern": "mobility",
+   "requires": [],
+   "muscles": [
+    "hips",
+    "ankles"
+   ],
+   "notes": "Hold the rack for balance if needed."
+  },
+  {
+   "id": "mobility-hips",
+   "name": "Hip mobility flow",
+   "family": "mobility",
+   "measure": "time",
+   "implement": "bodyweight",
+   "pattern": "mobility",
+   "requires": [],
+   "muscles": [
+    "hips"
+   ]
+  },
+  {
+   "id": "mobility-hamstrings",
+   "name": "Hamstring stretch",
+   "family": "mobility",
+   "measure": "time",
+   "implement": "bodyweight",
+   "pattern": "mobility",
+   "requires": [],
+   "muscles": [
+    "hamstrings"
+   ],
+   "perSide": true
+  },
+  {
+   "id": "mobility-upper-back",
+   "name": "Upper back and shoulder mobility",
+   "family": "mobility",
+   "measure": "time",
+   "implement": "bodyweight",
+   "pattern": "mobility",
+   "requires": [],
+   "muscles": [
+    "upper-back",
+    "shoulders"
+   ]
+  },
+  {
+   "id": "open-book",
+   "name": "Side-lying open book",
+   "family": "mobility",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "mobility",
+   "requires": [],
+   "muscles": [
+    "upper-back"
+   ],
+   "flags": [
+    "rotation"
+   ],
+   "perSide": true,
+   "notes": "Upper back rotation with the knees stacked."
+  },
+  {
+   "id": "nerve-slider",
+   "name": "Seated sciatic nerve slider",
+   "family": "mobility",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "mobility",
+   "requires": [],
+   "perSide": true,
+   "notes": "Easy range. Look up as the knee straightens."
+  }
+ ]
+}

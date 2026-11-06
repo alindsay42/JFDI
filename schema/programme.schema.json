@@ -45,8 +45,11 @@
     "equipment": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "name", "kg"],
-      "properties": { "id": { "$ref": "#/$defs/id" }, "name": { "$ref": "#/$defs/text" }, "kg": { "$ref": "#/$defs/kg" } }
+      "required": ["id", "name", "barType", "kg"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" }, "name": { "$ref": "#/$defs/text" }, "kg": { "$ref": "#/$defs/kg" },
+        "barType": { "enum": ["standard", "junior", "ez", "ssb", "trap", "log", "swiss"], "description": "Matched against the household's bars when the file is imported" }
+      }
     },
 
     "exercise": {
@@ -56,6 +59,7 @@
       "properties": {
         "id": { "$ref": "#/$defs/id" },
         "name": { "$ref": "#/$defs/text" },
+        "family": { "$ref": "#/$defs/id" },
         "measure": { "enum": ["load", "reps", "time", "distance", "calories"] },
         "implement": { "enum": ["barbell", "dumbbell", "kettlebell", "cable", "machine", "band", "bodyweight", "other"] },
         "bar": { "$ref": "#/$defs/id" },

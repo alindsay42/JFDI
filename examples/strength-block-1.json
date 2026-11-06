@@ -10,9 +10,9 @@
   "updatedAt": "2026-11-06T09:40:00Z",
 
   "equipment": [
-    { "id": "bar-standard", "name": "Standard barbell", "kg": 20 },
-    { "id": "bar-junior", "name": "Junior barbell", "kg": 10 },
-    { "id": "bar-ez", "name": "EZ curl bar", "kg": 8 }
+    { "id": "bar-standard", "name": "Standard barbell", "barType": "standard", "kg": 20 },
+    { "id": "bar-junior", "name": "Junior barbell", "barType": "junior", "kg": 10 },
+    { "id": "bar-ez", "name": "EZ curl bar", "barType": "ez", "kg": 8 }
   ],
 
   "exercises": [

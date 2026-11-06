@@ -1,0 +1,12 @@
+{
+ "unknown-exercise.json": "unknown exercise \"front-squat\"",
+ "giant-slot-with-sets.json": "use the block's rounds, not sets",
+ "start-below-bar.json": "lighter than the Standard barbell",
+ "time-exercise-given-reps.json": "measured by time, so the slot needs seconds",
+ "mobility-in-rotation.json": "marked as not in rotation",
+ "bad-id.json": "must match pattern",
+ "superset-with-three.json": "/sessions/0/tiers/secondary/0",
+ "reps-min-over-max.json": "min 6 is more than max 5",
+ "bar-not-in-library.json": "uses bar type \"ez\" but the library allows standard or junior",
+ "exercise-not-in-library.json": "\"zercher-squat\" isn't in the library"
+}

@@ -1,0 +1,215 @@
+{
+ "format": "jfdi-equipment",
+ "formatVersion": 1,
+ "name": "Home gym",
+ "updatedAt": "2026-11-06T10:30:00Z",
+ "items": [
+  {
+   "id": "bar-beater",
+   "name": "Old barbell (non-rotating sleeves)",
+   "kind": "bar",
+   "barType": "standard",
+   "kg": 20,
+   "notes": "Kept for bench. To confirm: is this the same bar as the 'old barbell'?"
+  },
+  {
+   "id": "bar-bastard",
+   "name": "Strength Shop Bastard Barbell",
+   "kind": "bar",
+   "barType": "standard",
+   "kg": 20
+  },
+  {
+   "id": "bar-junior",
+   "name": "Junior barbell",
+   "kind": "bar",
+   "barType": "junior",
+   "kg": 10
+  },
+  {
+   "id": "bar-ez",
+   "name": "EZ curl bar",
+   "kind": "bar",
+   "barType": "ez",
+   "kg": 8
+  },
+  {
+   "id": "bar-ssb",
+   "name": "BLK Box safety squat bar",
+   "kind": "bar",
+   "barType": "ssb",
+   "kg": 32
+  },
+  {
+   "id": "bar-trap",
+   "name": "Hex trap bar",
+   "kind": "bar",
+   "barType": "trap",
+   "kg": 25
+  },
+  {
+   "id": "bar-log",
+   "name": "Mirafit lifting log",
+   "kind": "bar",
+   "barType": "log",
+   "kg": 30
+  },
+  {
+   "id": "bar-swiss",
+   "name": "Swiss bar",
+   "kind": "bar",
+   "barType": "swiss",
+   "kg": 20,
+   "tbc": true,
+   "notes": "Weight to confirm."
+  },
+  {
+   "id": "plates-bumper",
+   "name": "Bumper plates",
+   "kind": "plates",
+   "totalKg": 140,
+   "tbc": true,
+   "notes": "About 140kg in total. Plate sizes and counts to confirm."
+  },
+  {
+   "id": "plates-iron",
+   "name": "Iron plates",
+   "kind": "plates",
+   "totalKg": 180,
+   "tbc": true,
+   "notes": "About 180kg in total. Plate sizes and counts to confirm, including the smallest plates."
+  },
+  {
+   "id": "chains",
+   "name": "Mirafit chains",
+   "kind": "chains",
+   "kgEach": 10,
+   "tbc": true,
+   "notes": "10kg each. Number of chains to confirm."
+  },
+  {
+   "id": "dumbbells",
+   "name": "Dumbbells",
+   "kind": "dumbbells",
+   "maxKg": 50,
+   "missingKg": [
+    7.5,
+    10
+   ],
+   "tbc": true,
+   "notes": "About 600kg in total, up to 50kg. The 7.5kg and 10kg pairs are currently lent out. Exact pairs to confirm."
+  },
+  {
+   "id": "rack",
+   "name": "Strength Shop Riot cage",
+   "kind": "rack"
+  },
+  {
+   "id": "rack-safeties",
+   "name": "Cage safety arms",
+   "kind": "attachment",
+   "attachesTo": "rack"
+  },
+  {
+   "id": "rack-monolift",
+   "name": "Monolift arms (Strength Shop)",
+   "kind": "attachment",
+   "attachesTo": "rack"
+  },
+  {
+   "id": "rack-landmine",
+   "name": "Landmine attachment",
+   "kind": "attachment",
+   "attachesTo": "rack"
+  },
+  {
+   "id": "landmine-handles",
+   "name": "Mirafit landmine handles",
+   "kind": "handle"
+  },
+  {
+   "id": "cable-pulleys",
+   "name": "Cable and pulley set (hung from the cage or pull-up bar)",
+   "kind": "cable"
+  },
+  {
+   "id": "abx-bench",
+   "name": "Freak Athletes ABX bench (flat, incline, decline)",
+   "kind": "bench"
+  },
+  {
+   "id": "abx-leg",
+   "name": "ABX leg extension and leg curl",
+   "kind": "attachment",
+   "attachesTo": "abx-bench"
+  },
+  {
+   "id": "abx-cable",
+   "name": "ABX cable attachment",
+   "kind": "attachment",
+   "attachesTo": "abx-bench"
+  },
+  {
+   "id": "abx-situp",
+   "name": "ABX sit-up attachment",
+   "kind": "attachment",
+   "attachesTo": "abx-bench"
+  },
+  {
+   "id": "abx-curl",
+   "name": "ABX strict curl attachment",
+   "kind": "attachment",
+   "attachesTo": "abx-bench"
+  },
+  {
+   "id": "hyper",
+   "name": "45-degree back hyperextension bench",
+   "kind": "station"
+  },
+  {
+   "id": "ghd",
+   "name": "Primal Strength GHD (low, floor height)",
+   "kind": "station"
+  },
+  {
+   "id": "dip-bars",
+   "name": "Dip bars (adjustable height)",
+   "kind": "station"
+  },
+  {
+   "id": "pull-up-bar",
+   "name": "Wall-mounted pull-up bar",
+   "kind": "station"
+  },
+  {
+   "id": "battle-ropes",
+   "name": "Battle ropes",
+   "kind": "conditioning"
+  },
+  {
+   "id": "boxing-bag",
+   "name": "Boxing bag",
+   "kind": "conditioning"
+  },
+  {
+   "id": "bands",
+   "name": "Resistance bands (various)",
+   "kind": "accessory"
+  },
+  {
+   "id": "lifting-belt",
+   "name": "Strength Shop lifting belt",
+   "kind": "accessory"
+  },
+  {
+   "id": "dip-belt",
+   "name": "Dip and pull-up loading belt",
+   "kind": "accessory"
+  },
+  {
+   "id": "mats",
+   "name": "Rubber gym mats",
+   "kind": "accessory"
+  }
+ ]
+}

@@ -12,16 +12,19 @@
   {
    "id": "bar-standard",
    "name": "Standard barbell",
+   "barType": "standard",
    "kg": 20
   },
   {
    "id": "bar-junior",
    "name": "Junior barbell",
+   "barType": "junior",
    "kg": 10
   },
   {
    "id": "bar-ez",
    "name": "EZ curl bar",
+   "barType": "ez",
    "kg": 8
   }
  ],

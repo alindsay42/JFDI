@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alindsay42.github.io/jfdi/schema/equipment.schema.json",
+  "title": "J.F.D.I household equipment",
+  "description": "Everything in the gym, with the details that matter for planning. See docs/equipment-and-library.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "formatVersion", "name", "updatedAt", "items"],
+  "properties": {
+    "format": { "const": "jfdi-equipment" },
+    "formatVersion": { "const": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "items": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/item" } }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 64 },
+    "kg": { "type": "number", "minimum": 0, "maximum": 1000, "multipleOf": 0.25 },
+    "item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "kind"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["bar", "plates", "chains", "dumbbells", "rack", "attachment", "handle", "cable", "bench", "station", "conditioning", "accessory"] },
+        "barType": { "enum": ["standard", "junior", "ez", "ssb", "trap", "log", "swiss"] },
+        "kg": { "$ref": "#/$defs/kg" },
+        "kgEach": { "$ref": "#/$defs/kg" },
+        "totalKg": { "type": "number", "minimum": 0 },
+        "maxKg": { "$ref": "#/$defs/kg" },
+        "missingKg": { "type": "array", "items": { "$ref": "#/$defs/kg" } },
+        "pairs": {
+          "description": "Plates or dumbbells as weight and number of pairs, once known",
+          "type": "array",
+          "items": { "type": "object", "additionalProperties": false, "required": ["kg", "pairs"], "properties": { "kg": { "$ref": "#/$defs/kg" }, "pairs": { "type": "integer", "minimum": 1 } } }
+        },
+        "attachesTo": { "$ref": "#/$defs/id" },
+        "tbc": { "type": "boolean", "description": "Some details still to confirm" },
+        "notes": { "type": "string" }
+      },
+      "allOf": [
+        { "if": { "properties": { "kind": { "const": "bar" } } }, "then": { "required": ["barType", "kg"] } },
+        { "if": { "properties": { "kind": { "const": "attachment" } } }, "then": { "required": ["attachesTo"] } }
+      ]
+    }
+  }
+}
