@@ -48,6 +48,13 @@ export function validateLibrary(lib, eq) {
     for (const bt of ex.barTypes || []) if (!barTypes.has(bt)) errors.push(`${where}: no ${bt} bar in the equipment list`);
     if (ex.barTypes && ex.implement !== "barbell") errors.push(`${where}: only barbell exercises take bar types`);
   }
+  const exIds = new Map(lib.exercises.map(e => [e.id, e]));
+  for (const i of eq.items) for (const id of i.preferredFor || []) {
+    const ex = exIds.get(id);
+    if (!ex) errors.push(`equipment "${i.id}": preferred for unknown exercise "${id}"`);
+    else if (!(ex.barTypes || []).includes(i.barType)) errors.push(`equipment "${i.id}": preferred for "${id}", which doesn't use a ${i.barType} bar`);
+  }
+  for (const i of eq.items) for (const kg of i.unavailableKg || []) if (!(i.pairsKg || []).includes(kg)) errors.push(`equipment "${i.id}": ${kg}kg is unavailable but isn't in pairsKg`);
   const used = new Set(lib.exercises.map(e => e.family));
   for (const f of lib.families) if (!used.has(f.id)) errors.push(`family "${f.id}" has no exercises`);
   return errors;

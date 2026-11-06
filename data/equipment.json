@@ -6,18 +6,36 @@
  "items": [
   {
    "id": "bar-beater",
-   "name": "Old barbell (non-rotating sleeves)",
+   "name": "Beater barbell (old, non-rotating sleeves)",
    "kind": "bar",
    "barType": "standard",
    "kg": 20,
-   "notes": "Kept for bench. To confirm: is this the same bar as the 'old barbell'?"
+   "preferredFor": [
+    "bench-press",
+    "pause-bench-press",
+    "close-grip-bench-press",
+    "incline-bench-press",
+    "floor-press"
+   ],
+   "notes": "Used for bench, where rotating sleeves aren't wanted."
   },
   {
    "id": "bar-bastard",
    "name": "Strength Shop Bastard Barbell",
    "kind": "bar",
    "barType": "standard",
-   "kg": 20
+   "kg": 20,
+   "preferredFor": [
+    "deadlift",
+    "sumo-deadlift",
+    "deficit-deadlift",
+    "block-pull",
+    "power-clean",
+    "hang-power-clean",
+    "power-snatch",
+    "hang-power-snatch"
+   ],
+   "notes": "More aggressive knurling. Best for deadlifts and Olympic lifts."
   },
   {
    "id": "bar-junior",
@@ -65,39 +83,125 @@
   },
   {
    "id": "plates-bumper",
-   "name": "Bumper plates",
+   "name": "Jordan competition bumper plates",
    "kind": "plates",
-   "totalKg": 140,
-   "tbc": true,
-   "notes": "About 140kg in total. Plate sizes and counts to confirm."
+   "plates": [
+    {
+     "kg": 20,
+     "count": 4
+    },
+    {
+     "kg": 15,
+     "count": 2
+    },
+    {
+     "kg": 10,
+     "count": 2
+    },
+    {
+     "kg": 5,
+     "count": 2
+    }
+   ]
   },
   {
    "id": "plates-iron",
-   "name": "Iron plates",
+   "name": "Bodymax iron plates (carry cut-outs)",
    "kind": "plates",
-   "totalKg": 180,
+   "plates": [
+    {
+     "kg": 20,
+     "count": 4
+    },
+    {
+     "kg": 15,
+     "count": 2
+    },
+    {
+     "kg": 10,
+     "count": 2
+    },
+    {
+     "kg": 5,
+     "count": 4
+    },
+    {
+     "kg": 2.5,
+     "count": 4
+    },
+    {
+     "kg": 1.25,
+     "count": 4
+    }
+   ]
+  },
+  {
+   "id": "plates-rubber",
+   "name": "Bodymax rubber-coated plates (carry cut-outs)",
+   "kind": "plates",
+   "plates": [
+    {
+     "kg": 5,
+     "count": 4
+    },
+    {
+     "kg": 2.5,
+     "count": 4
+    }
+   ]
+  },
+  {
+   "id": "collars",
+   "name": "Heavy metal collars",
+   "kind": "collars",
    "tbc": true,
-   "notes": "About 180kg in total. Plate sizes and counts to confirm, including the smallest plates."
+   "notes": "Also used as micro-loading. Weight to confirm: weigh a pair."
   },
   {
    "id": "chains",
    "name": "Mirafit chains",
    "kind": "chains",
    "kgEach": 10,
-   "tbc": true,
-   "notes": "10kg each. Number of chains to confirm."
+   "count": 2
   },
   {
    "id": "dumbbells",
-   "name": "Dumbbells",
+   "name": "Dumbbells (fixed pairs)",
    "kind": "dumbbells",
-   "maxKg": 50,
-   "missingKg": [
+   "pairsKg": [
+    5,
+    7.5,
+    10,
+    12.5,
+    15,
+    20,
+    25,
+    30,
+    35,
+    40,
+    45,
+    50
+   ],
+   "unavailableKg": [
     7.5,
     10
    ],
+   "notes": "The 7.5kg and 10kg pairs are lent out. There's no 17.5kg or 22.5kg pair, so jumps above 15kg are 5kg."
+  },
+  {
+   "id": "db-loadable",
+   "name": "Olympic loadable dumbbell handles",
+   "kind": "dumbbells",
+   "count": 2,
    "tbc": true,
-   "notes": "About 600kg in total, up to 50kg. The 7.5kg and 10kg pairs are currently lent out. Exact pairs to confirm."
+   "notes": "Plate-loaded handles, a pair. Handle weight to confirm."
+  },
+  {
+   "id": "sandbag",
+   "name": "Sandbag",
+   "kind": "odd-object",
+   "kg": 60,
+   "notes": "Currently filled to 60kg. Refillable, so the weight can change."
   },
   {
    "id": "rack",
@@ -124,8 +228,14 @@
   },
   {
    "id": "landmine-handles",
-   "name": "Mirafit landmine handles",
-   "kind": "handle"
+   "name": "Mirafit M3 parallel landmine handle",
+   "kind": "handle",
+   "notes": "Neutral grip, for rows and presses."
+  },
+  {
+   "id": "rings",
+   "name": "Gymnastic rings (hung from the cage)",
+   "kind": "station"
   },
   {
    "id": "cable-pulleys",
@@ -189,6 +299,11 @@
   {
    "id": "boxing-bag",
    "name": "Boxing bag",
+   "kind": "conditioning"
+  },
+  {
+   "id": "skipping-rope",
+   "name": "Skipping rope",
    "kind": "conditioning"
   },
   {

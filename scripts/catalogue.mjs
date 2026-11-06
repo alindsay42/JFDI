@@ -30,11 +30,14 @@ for (const i of eq.items) {
   if (i.kg !== undefined) d.push(`${i.kg}kg`);
   if (i.barType) d.push(`bar type \`${i.barType}\``);
   if (i.kgEach !== undefined) d.push(`${i.kgEach}kg each`);
-  if (i.totalKg !== undefined) d.push(`about ${i.totalKg}kg in total`);
-  if (i.maxKg !== undefined) d.push(`up to ${i.maxKg}kg`);
-  if (i.missingKg?.length) d.push(`missing: ${i.missingKg.map(x => `${x}kg`).join(", ")}`);
+  if (i.count !== undefined) d.push(`${i.count} of them`);
+  if (i.plates) d.push(i.plates.map(p => `${p.kg}kg × ${p.count}`).join(", ") + ` (${i.plates.reduce((s, p) => s + p.kg * p.count, 0)}kg in total)`);
+  if (i.pairsKg) d.push(`pairs: ${i.pairsKg.map(x => `${x}kg`).join(", ")}`);
+  if (i.unavailableKg?.length) d.push(`not available now: ${i.unavailableKg.map(x => `${x}kg`).join(", ")}`);
+  if (i.preferredFor?.length) d.push(`first choice for: ${i.preferredFor.join(", ")}`);
   if (i.attachesTo) d.push(`attaches to ${itemName[i.attachesTo]}`);
   if (i.tbc) d.push("**to confirm**");
+  if (i.notes) d.push(i.notes);
   lines.push(`| ${i.name} (\`${i.id}\`) | ${i.kind} | ${d.join("; ")} |`);
 }
 lines.push("", "## Exercises by family", "");

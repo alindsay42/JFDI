@@ -133,13 +133,25 @@
    "id": "carry",
    "name": "Carry",
    "pattern": "carry",
-   "variations": "Farmer's (two hands), suitcase (one hand), trap bar"
+   "variations": "Farmer's (two hands), suitcase (one hand), trap bar, sandbag bear hug, heavy loadable dumbbells"
+  },
+  {
+   "id": "power",
+   "name": "Power and odd-object lifts",
+   "pattern": "hinge",
+   "variations": "Olympic lift variations from the floor or the hang, sandbag lifts to the shoulder"
+  },
+  {
+   "id": "rings",
+   "name": "Rings",
+   "pattern": "push",
+   "variations": "Pushing, pulling and support work on the rings"
   },
   {
    "id": "conditioning",
    "name": "Conditioning",
    "pattern": "conditioning",
-   "variations": "Battle ropes, boxing bag, bodyweight circuits, walking and rucking"
+   "variations": "Battle ropes, boxing bag, skipping, bodyweight circuits, walking and rucking"
   },
   {
    "id": "mobility",
@@ -1632,6 +1644,28 @@
    "notes": "Load is the plates on the bar. Can be done one arm or two."
   },
   {
+   "id": "landmine-press-parallel",
+   "name": "Landmine press, parallel handle",
+   "family": "vertical-press",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard"
+   ],
+   "pattern": "push",
+   "requires": [
+    "rack-landmine",
+    "landmine-handles"
+   ],
+   "muscles": [
+    "shoulders",
+    "triceps",
+    "chest"
+   ],
+   "restSec": 120,
+   "notes": "Two hands on the M3 handle, neutral grip. Load is the plates on the bar."
+  },
+  {
    "id": "pull-up",
    "name": "Pull-up",
    "family": "vertical-pull",
@@ -1850,7 +1884,7 @@
     "spineLoading"
    ],
    "restSec": 120,
-   "notes": "Load is the plates on the bar."
+   "notes": "Load is the plates on the bar. Neutral grip with the M3 handle."
   },
   {
    "id": "inverted-row",
@@ -2448,6 +2482,330 @@
     "spineLoading"
    ],
    "notes": "Weighted rucksack. Log the pack weight as the load."
+  },
+  {
+   "id": "power-clean",
+   "name": "Power clean",
+   "family": "power",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard",
+    "junior"
+   ],
+   "pattern": "hinge",
+   "requires": [
+    "plates-bumper"
+   ],
+   "muscles": [
+    "glutes",
+    "hamstrings",
+    "traps",
+    "quads"
+   ],
+   "flags": [
+    "spineLoading",
+    "impact"
+   ],
+   "restSec": 150
+  },
+  {
+   "id": "hang-power-clean",
+   "name": "Hang power clean",
+   "family": "power",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard",
+    "junior"
+   ],
+   "pattern": "hinge",
+   "requires": [
+    "plates-bumper"
+   ],
+   "muscles": [
+    "glutes",
+    "hamstrings",
+    "traps"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 150
+  },
+  {
+   "id": "power-snatch",
+   "name": "Power snatch",
+   "family": "power",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard",
+    "junior"
+   ],
+   "pattern": "hinge",
+   "requires": [
+    "plates-bumper"
+   ],
+   "muscles": [
+    "glutes",
+    "hamstrings",
+    "traps",
+    "shoulders"
+   ],
+   "flags": [
+    "spineLoading",
+    "overhead",
+    "impact"
+   ],
+   "restSec": 150
+  },
+  {
+   "id": "hang-power-snatch",
+   "name": "Hang power snatch",
+   "family": "power",
+   "measure": "load",
+   "implement": "barbell",
+   "barTypes": [
+    "standard",
+    "junior"
+   ],
+   "pattern": "hinge",
+   "requires": [
+    "plates-bumper"
+   ],
+   "muscles": [
+    "glutes",
+    "hamstrings",
+    "traps",
+    "shoulders"
+   ],
+   "flags": [
+    "spineLoading",
+    "overhead"
+   ],
+   "restSec": 150
+  },
+  {
+   "id": "sandbag-to-shoulder",
+   "name": "Sandbag to shoulder",
+   "family": "power",
+   "measure": "load",
+   "implement": "other",
+   "pattern": "hinge",
+   "requires": [
+    "sandbag"
+   ],
+   "muscles": [
+    "glutes",
+    "hamstrings",
+    "spinal-erectors",
+    "traps"
+   ],
+   "flags": [
+    "spineLoading",
+    "rotation"
+   ],
+   "perSide": true,
+   "restSec": 120,
+   "notes": "Load is the sandbag's current weight. Rounded-back lift by design."
+  },
+  {
+   "id": "sandbag-bear-hug-squat",
+   "name": "Sandbag bear-hug squat",
+   "family": "squat",
+   "measure": "load",
+   "implement": "other",
+   "pattern": "squat",
+   "requires": [
+    "sandbag"
+   ],
+   "muscles": [
+    "quads",
+    "glutes",
+    "adductors"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 120
+  },
+  {
+   "id": "sandbag-carry",
+   "name": "Sandbag bear-hug carry",
+   "family": "carry",
+   "measure": "distance",
+   "implement": "other",
+   "pattern": "carry",
+   "requires": [
+    "sandbag"
+   ],
+   "muscles": [
+    "core",
+    "upper-back",
+    "quads"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 120
+  },
+  {
+   "id": "heavy-farmers-carry",
+   "name": "Farmer's carry, loadable handles",
+   "family": "carry",
+   "measure": "distance",
+   "implement": "other",
+   "pattern": "carry",
+   "requires": [
+    "db-loadable",
+    "plates-iron"
+   ],
+   "muscles": [
+    "grip",
+    "traps",
+    "core"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "loadPer": "each",
+   "restSec": 120,
+   "notes": "For loads above the 50kg dumbbells. Load includes the handle."
+  },
+  {
+   "id": "ring-dip",
+   "name": "Ring dip",
+   "family": "rings",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "push",
+   "requires": [
+    "rings",
+    "rack"
+   ],
+   "muscles": [
+    "chest",
+    "triceps"
+   ]
+  },
+  {
+   "id": "ring-push-up",
+   "name": "Ring push-up",
+   "family": "rings",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "push",
+   "requires": [
+    "rings",
+    "rack"
+   ],
+   "muscles": [
+    "chest",
+    "triceps",
+    "core"
+   ]
+  },
+  {
+   "id": "ring-row",
+   "name": "Ring row",
+   "family": "rings",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "pull",
+   "requires": [
+    "rings",
+    "rack"
+   ],
+   "muscles": [
+    "upper-back",
+    "lats",
+    "biceps"
+   ],
+   "notes": "Feet further forward is harder."
+  },
+  {
+   "id": "ring-chin-up",
+   "name": "Ring chin-up",
+   "family": "rings",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "pull",
+   "requires": [
+    "rings",
+    "rack"
+   ],
+   "muscles": [
+    "lats",
+    "biceps"
+   ]
+  },
+  {
+   "id": "ring-face-pull",
+   "name": "Ring face pull",
+   "family": "rings",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "pull",
+   "requires": [
+    "rings",
+    "rack"
+   ],
+   "muscles": [
+    "rear-delts",
+    "upper-back"
+   ]
+  },
+  {
+   "id": "ring-support-hold",
+   "name": "Ring support hold",
+   "family": "rings",
+   "measure": "time",
+   "implement": "bodyweight",
+   "pattern": "push",
+   "requires": [
+    "rings",
+    "rack"
+   ],
+   "muscles": [
+    "chest",
+    "triceps",
+    "shoulders"
+   ]
+  },
+  {
+   "id": "ring-fallout",
+   "name": "Ring fallout",
+   "family": "rings",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "core",
+   "requires": [
+    "rings",
+    "rack"
+   ],
+   "muscles": [
+    "abs"
+   ],
+   "notes": "Anti-extension. Shorter range is easier."
+  },
+  {
+   "id": "skipping",
+   "name": "Skipping",
+   "family": "conditioning",
+   "measure": "time",
+   "implement": "other",
+   "pattern": "conditioning",
+   "requires": [
+    "skipping-rope"
+   ],
+   "muscles": [
+    "calves",
+    "conditioning"
+   ],
+   "flags": [
+    "impact"
+   ]
   },
   {
    "id": "deep-squat-hold",

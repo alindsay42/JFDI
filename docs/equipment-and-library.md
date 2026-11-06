@@ -32,9 +32,12 @@ Each item has an `id`, a `name` and a `kind`. Other fields depend on the kind.
 | `kind` | Extra fields | Examples |
 | --- | --- | --- |
 | `bar` | `barType`, `kg` (required) | Standard, junior, EZ, SSB, trap bar, log, Swiss bar |
-| `plates` | `totalKg`, and `pairs` once counted | Bumpers, iron plates |
-| `chains` | `kgEach` | Mirafit chains |
-| `dumbbells` | `maxKg`, `missingKg`, and `pairs` once counted | The dumbbell set |
+| `bar` (optional) | `preferredFor`: exercises this bar is the first choice for | Beater bar for bench, Bastard bar for deadlifts and Olympic lifts |
+| `plates` | `plates` (required): each size and how many single plates | Bumpers, iron plates, rubber-coated plates |
+| `collars` | `kg` once weighed | The heavy collars used for micro-loading |
+| `chains` | `kgEach`, `count` | Mirafit chains |
+| `dumbbells` | `pairsKg` for fixed pairs, `unavailableKg` for pairs lent out, `count` for loadable handles | The dumbbell set, the loadable handles |
+| `odd-object` | `kg` | Sandbag |
 | `rack` | | The Riot cage |
 | `attachment` | `attachesTo` (required) | Safety arms, monolift arms, landmine, ABX leg extension |
 | `bench`, `station`, `cable`, `handle` | | ABX bench, hyperextension bench, GHD, dip bars, pull-up bar, pulleys, landmine handles |
@@ -42,9 +45,13 @@ Each item has an `id`, a `name` and a `kind`. Other fields depend on the kind.
 
 Any item can carry `tbc: true` when details are still to be confirmed, plus free-text `notes`.
 
-**Bar types.** Exercises name the *type* of bar they use (`standard`, `junior`, `ez`, `ssb`, `trap`, `log`, `swiss`), not a particular bar. You have two standard 20kg bars (the old non-rotating one and the Bastard Barbell); either will do for any standard-bar exercise, and the weights work out the same.
+**Bar types.** Exercises name the *type* of bar they use (`standard`, `junior`, `ez`, `ssb`, `trap`, `log`, `swiss`), not a particular bar. You have two standard 20kg bars, and either works for any standard-bar exercise. When there's a choice, `preferredFor` says which comes first: the non-rotating Beater bar for bench, and the Bastard bar (sharper knurling) for deadlifts and Olympic lifts.
 
-**Why plates and dumbbells matter.** Once the plate sizes are known, the app can work out the smallest jump for each lift (two of the smallest plates), and can avoid suggesting a dumbbell weight you don't have, such as 10kg while that pair is lent out.
+**What the plates and dumbbells mean for planning.**
+
+- **Plates:** 335kg in total across three sets. The smallest plates are 1.25kg, so the smallest barbell jump is **2.5kg**. The heavy collars can make smaller jumps once they're weighed.
+- **Dumbbells:** fixed pairs from 5kg to 50kg. Below 15kg they go up in 2.5kg steps. Above 15kg they go up in 5kg steps, since there's no 17.5kg or 22.5kg pair. The 7.5kg and 10kg pairs are lent out, so the app won't suggest them until they're marked as back.
+- **Loadable dumbbell handles** take over above 50kg, for heavy carries.
 
 ## Exercise library
 
@@ -85,10 +92,11 @@ Families are what make swaps easy. When an exercise is removed in a session, or 
 
 ### What's in version 1
 
-24 families and 129 exercises, built from:
+26 families and 146 exercises, built from:
 
 - everything in Rebuild Log and your wife's Block 1
-- the variations your equipment supports, such as the back extension variations above, SSB variations, trap bar handle heights, and the ABX attachments
+- the variations your equipment supports, such as the back extension variations above, SSB variations, trap bar handle heights, the ABX attachments, rings, the parallel landmine handle, the sandbag and the skipping rope
+- power cleans and snatches from the floor and the hang, on the Bastard bar with bumpers
 - conditioning and mobility work, including things you avoid at the moment (boxing bag rounds, GHD sit-ups, spinal back extensions), flagged so a programme can keep them out
 
 The full list is in [`catalogue.md`](catalogue.md).
@@ -116,9 +124,8 @@ The broken test files in `tests/invalid/` are now each paired with the error the
 
 ## Open questions
 
-1. **Plates:** what sizes and how many of each, for bumpers and iron? In particular, what's the smallest plate? This sets the smallest jump on every barbell lift.
-2. **Dumbbells:** are they fixed pairs (2.5, 5, 7.5 ... 50) or adjustable handles? Which pairs exist?
-3. **Chains:** how many?
-4. **Swiss bar:** confirm 20kg.
-5. **Old barbell:** is the non-rotating bench bar the same as the "old barbell"? The data assumes yes.
-6. **Anything missing?** Kettlebells, a sandbag, a sled, rings, a skipping rope? Adding them later is easy, but it's worth knowing now.
+Still to weigh or check, all marked "to confirm" in the data:
+
+1. **The heavy collars:** weight of a pair.
+2. **The Swiss bar:** 20kg is assumed.
+3. **The loadable dumbbell handles:** weight of one empty handle.

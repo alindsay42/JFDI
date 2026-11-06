@@ -23,25 +23,27 @@
       "properties": {
         "id": { "$ref": "#/$defs/id" },
         "name": { "type": "string", "minLength": 1 },
-        "kind": { "enum": ["bar", "plates", "chains", "dumbbells", "rack", "attachment", "handle", "cable", "bench", "station", "conditioning", "accessory"] },
+        "kind": { "enum": ["bar", "plates", "collars", "chains", "dumbbells", "odd-object", "rack", "attachment", "handle", "cable", "bench", "station", "conditioning", "accessory"] },
         "barType": { "enum": ["standard", "junior", "ez", "ssb", "trap", "log", "swiss"] },
         "kg": { "$ref": "#/$defs/kg" },
         "kgEach": { "$ref": "#/$defs/kg" },
-        "totalKg": { "type": "number", "minimum": 0 },
-        "maxKg": { "$ref": "#/$defs/kg" },
-        "missingKg": { "type": "array", "items": { "$ref": "#/$defs/kg" } },
-        "pairs": {
-          "description": "Plates or dumbbells as weight and number of pairs, once known",
+        "count": { "type": "integer", "minimum": 1, "description": "How many, for chains, loadable handles and the like" },
+        "plates": {
+          "description": "Each plate size and how many single plates there are",
           "type": "array",
-          "items": { "type": "object", "additionalProperties": false, "required": ["kg", "pairs"], "properties": { "kg": { "$ref": "#/$defs/kg" }, "pairs": { "type": "integer", "minimum": 1 } } }
+          "items": { "type": "object", "additionalProperties": false, "required": ["kg", "count"], "properties": { "kg": { "$ref": "#/$defs/kg" }, "count": { "type": "integer", "minimum": 1 } } }
         },
+        "pairsKg": { "type": "array", "items": { "$ref": "#/$defs/kg" }, "uniqueItems": true, "description": "Fixed dumbbell pairs, by weight of one dumbbell" },
+        "unavailableKg": { "type": "array", "items": { "$ref": "#/$defs/kg" }, "uniqueItems": true, "description": "Pairs owned but not available right now, such as lent out" },
+        "preferredFor": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true, "description": "Library exercises this bar should be used for when there's a choice" },
         "attachesTo": { "$ref": "#/$defs/id" },
         "tbc": { "type": "boolean", "description": "Some details still to confirm" },
         "notes": { "type": "string" }
       },
       "allOf": [
         { "if": { "properties": { "kind": { "const": "bar" } } }, "then": { "required": ["barType", "kg"] } },
-        { "if": { "properties": { "kind": { "const": "attachment" } } }, "then": { "required": ["attachesTo"] } }
+        { "if": { "properties": { "kind": { "const": "attachment" } } }, "then": { "required": ["attachesTo"] } },
+        { "if": { "properties": { "kind": { "const": "plates" } } }, "then": { "required": ["plates"] } }
       ]
     }
   }
