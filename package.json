@@ -1,0 +1,15 @@
+{
+  "name": "jfdi",
+  "version": "0.0.0",
+  "private": true,
+  "description": "J.F.D.I: build training programmes and run them in the gym.",
+  "type": "module",
+  "scripts": {
+    "validate": "node scripts/validate.mjs",
+    "test": "node scripts/validate.mjs --self-test"
+  },
+  "devDependencies": {
+    "ajv": "8.17.1",
+    "ajv-formats": "3.0.1"
+  }
+}

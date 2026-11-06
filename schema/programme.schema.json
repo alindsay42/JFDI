@@ -1,0 +1,351 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alindsay42.github.io/jfdi/schema/programme.schema.json",
+  "title": "J.F.D.I programme file",
+  "description": "A training programme as data. See docs/programme-format.md. Cross-references between ids are checked by scripts/validate.mjs, not by this schema.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "formatVersion", "id", "name", "createdAt", "updatedAt", "equipment", "exercises", "progressions", "sessions", "weeks", "phases", "readiness"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "format": { "const": "jfdi-programme" },
+    "formatVersion": { "const": 1 },
+    "id": { "$ref": "#/$defs/id" },
+    "name": { "$ref": "#/$defs/text" },
+    "description": { "type": "string" },
+    "goal": { "type": "string" },
+    "daysPerWeek": { "type": "integer", "minimum": 1, "maximum": 7 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "equipment": { "type": "array", "items": { "$ref": "#/$defs/equipment" } },
+    "exercises": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/exercise" } },
+    "progressions": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/progression" } },
+    "sessions": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/session" } },
+    "weeks": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/week" } },
+    "phases": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/phase" } },
+    "readiness": { "$ref": "#/$defs/readiness" },
+    "targets": { "type": "array", "items": { "$ref": "#/$defs/target" } }
+  },
+
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 64 },
+    "text": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "kg": { "type": "number", "minimum": 0, "maximum": 1000, "multipleOf": 0.25 },
+    "seconds": { "type": "integer", "minimum": 0, "maximum": 3600 },
+    "percent": { "type": "number", "exclusiveMinimum": 0, "maximum": 100 },
+    "tierName": { "enum": ["primary", "secondary", "tertiary"] },
+    "flag": { "enum": ["spineLoading", "rotation", "overhead", "impact"] },
+    "range": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["min", "max"],
+      "properties": { "min": { "type": "number", "minimum": 0 }, "max": { "type": "number", "minimum": 0 } }
+    },
+
+    "equipment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "kg"],
+      "properties": { "id": { "$ref": "#/$defs/id" }, "name": { "$ref": "#/$defs/text" }, "kg": { "$ref": "#/$defs/kg" } }
+    },
+
+    "exercise": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "measure", "implement", "pattern"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "$ref": "#/$defs/text" },
+        "measure": { "enum": ["load", "reps", "time", "distance", "calories"] },
+        "implement": { "enum": ["barbell", "dumbbell", "kettlebell", "cable", "machine", "band", "bodyweight", "other"] },
+        "bar": { "$ref": "#/$defs/id" },
+        "loadPer": { "enum": ["total", "each"] },
+        "perSide": { "type": "boolean" },
+        "pattern": { "enum": ["squat", "hinge", "push", "pull", "lunge", "carry", "core", "isolation", "conditioning", "mobility"] },
+        "muscles": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "flags": { "type": "array", "items": { "$ref": "#/$defs/flag" }, "uniqueItems": true },
+        "restSec": { "$ref": "#/$defs/seconds" },
+        "notes": { "type": "string" }
+      },
+      "if": { "properties": { "implement": { "const": "barbell" } } },
+      "then": { "required": ["bar"] }
+    },
+
+    "stall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["misses", "reducePercent"],
+      "properties": { "misses": { "type": "integer", "minimum": 1 }, "reducePercent": { "$ref": "#/$defs/percent" } }
+    },
+    "progression": {
+      "type": "object",
+      "required": ["id", "type"],
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": { "$ref": "#/$defs/id" }, "type": { "enum": ["linear", "double"] },
+            "incrementKg": { "$ref": "#/$defs/kg" }, "holdIfRpeAtLeast": { "type": "number", "minimum": 5, "maximum": 10 }, "stall": { "$ref": "#/$defs/stall" }
+          },
+          "required": ["incrementKg"]
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": { "$ref": "#/$defs/id" }, "type": { "const": "topSetBackoff" },
+            "incrementKg": { "$ref": "#/$defs/kg" }, "topRpe": { "type": "number", "minimum": 5, "maximum": 10 }, "backoffPercent": { "$ref": "#/$defs/percent" }, "stall": { "$ref": "#/$defs/stall" }
+          },
+          "required": ["incrementKg", "topRpe", "backoffPercent"]
+        },
+        {
+          "additionalProperties": false,
+          "properties": { "id": { "$ref": "#/$defs/id" }, "type": { "const": "none" } }
+        }
+      ]
+    },
+
+    "slot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exercise", "progression"],
+      "properties": {
+        "exercise": { "$ref": "#/$defs/id" },
+        "sets": { "type": "integer", "minimum": 1, "maximum": 20 },
+        "reps": { "$ref": "#/$defs/range" },
+        "seconds": { "$ref": "#/$defs/range" },
+        "metres": { "$ref": "#/$defs/range" },
+        "calories": { "$ref": "#/$defs/range" },
+        "progression": { "$ref": "#/$defs/id" },
+        "incrementKg": { "$ref": "#/$defs/kg" },
+        "start": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kg": { "oneOf": [{ "$ref": "#/$defs/kg" }, { "const": "bar" }] },
+            "note": { "type": "string" }
+          },
+          "minProperties": 1
+        },
+        "restSec": { "$ref": "#/$defs/seconds" },
+        "alternatives": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true },
+        "optional": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["unlock"],
+          "properties": {
+            "unlock": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": { "fromWeek": { "type": "integer", "minimum": 1 } },
+              "minProperties": 1
+            }
+          }
+        },
+        "notes": { "type": "string" }
+      }
+    },
+    "block": {
+      "type": "object",
+      "required": ["type", "slots"],
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": { "type": { "const": "straight" }, "restSec": { "$ref": "#/$defs/seconds" }, "slots": { "type": "array", "minItems": 1, "maxItems": 1, "items": { "$ref": "#/$defs/slot" } } }
+        },
+        {
+          "additionalProperties": false,
+          "properties": { "type": { "const": "superset" }, "restSec": { "$ref": "#/$defs/seconds" }, "slots": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "$ref": "#/$defs/slot" } } }
+        },
+        {
+          "additionalProperties": false,
+          "required": ["rounds"],
+          "properties": {
+            "type": { "const": "giant" }, "rounds": { "type": "integer", "minimum": 1, "maximum": 20 },
+            "transitionSec": { "$ref": "#/$defs/seconds" }, "restSec": { "$ref": "#/$defs/seconds" },
+            "slots": { "type": "array", "minItems": 3, "items": { "$ref": "#/$defs/slot" } }
+          }
+        },
+        {
+          "additionalProperties": false,
+          "required": ["rounds", "workSec", "restSec"],
+          "properties": {
+            "type": { "const": "finisher" }, "rounds": { "type": "integer", "minimum": 1, "maximum": 50 },
+            "workSec": { "$ref": "#/$defs/seconds" }, "restSec": { "$ref": "#/$defs/seconds" },
+            "slots": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/slot" } }
+          }
+        }
+      ]
+    },
+    "session": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "tiers"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "$ref": "#/$defs/text" },
+        "subtitle": { "type": "string" },
+        "estimatedMinutes": { "type": "integer", "minimum": 1, "maximum": 300 },
+        "inRotation": { "type": "boolean" },
+        "tiers": {
+          "type": "object",
+          "additionalProperties": false,
+          "minProperties": 1,
+          "properties": {
+            "primary": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/block" } },
+            "secondary": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/block" } },
+            "tertiary": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/block" } }
+          }
+        }
+      }
+    },
+
+    "day": {
+      "type": "object",
+      "required": ["type"],
+      "oneOf": [
+        { "additionalProperties": false, "properties": { "type": { "const": "lift" }, "notes": { "type": "string" } } },
+        {
+          "additionalProperties": false,
+          "required": ["activity"],
+          "properties": { "type": { "const": "conditioning" }, "activity": { "$ref": "#/$defs/text" }, "minutes": { "$ref": "#/$defs/range" }, "notes": { "type": "string" } }
+        },
+        { "additionalProperties": false, "properties": { "type": { "enum": ["free", "rest"] }, "notes": { "type": "string" } } }
+      ]
+    },
+    "week": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "days", "rotation"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "$ref": "#/$defs/text" },
+        "rotation": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/id" } },
+        "days": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mon", "tue", "wed", "thu", "fri", "sat", "sun"],
+          "properties": {
+            "mon": { "$ref": "#/$defs/day" }, "tue": { "$ref": "#/$defs/day" }, "wed": { "$ref": "#/$defs/day" }, "thu": { "$ref": "#/$defs/day" },
+            "fri": { "$ref": "#/$defs/day" }, "sat": { "$ref": "#/$defs/day" }, "sun": { "$ref": "#/$defs/day" }
+          }
+        }
+      }
+    },
+
+    "gate": {
+      "type": "object",
+      "required": ["type"],
+      "oneOf": [
+        { "additionalProperties": false, "required": ["text"], "properties": { "type": { "const": "text" }, "text": { "$ref": "#/$defs/text" } } },
+        {
+          "additionalProperties": false,
+          "required": ["exercise", "kg", "reps"],
+          "properties": {
+            "type": { "const": "lift" }, "exercise": { "$ref": "#/$defs/id" }, "kg": { "$ref": "#/$defs/kg" },
+            "reps": { "type": "integer", "minimum": 1 }, "sets": { "type": "integer", "minimum": 1 }
+          }
+        }
+      ]
+    },
+    "trainingBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "week", "weeks"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "$ref": "#/$defs/text" },
+        "week": { "$ref": "#/$defs/id" },
+        "weeks": { "oneOf": [{ "type": "integer", "minimum": 1, "maximum": 104 }, { "type": "null" }] },
+        "deload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["setsPercent", "loadPercent"],
+          "anyOf": [{ "required": ["everyWeeks"] }, { "required": ["afterStalls"] }],
+          "properties": {
+            "everyWeeks": { "type": "integer", "minimum": 2 },
+            "afterStalls": { "type": "integer", "minimum": 1 },
+            "setsPercent": { "$ref": "#/$defs/percent" },
+            "loadPercent": { "$ref": "#/$defs/percent" }
+          }
+        },
+        "endWhen": { "type": "string" }
+      }
+    },
+    "phase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "blocks"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "$ref": "#/$defs/text" },
+        "focus": { "type": "string" },
+        "blocks": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/trainingBlock" } },
+        "gates": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "entry": { "type": "array", "items": { "$ref": "#/$defs/gate" } },
+            "exit": { "type": "array", "items": { "$ref": "#/$defs/gate" } }
+          }
+        }
+      }
+    },
+
+    "rule": {
+      "type": "object",
+      "required": ["rule"],
+      "oneOf": [
+        { "additionalProperties": false, "required": ["percent"], "properties": { "rule": { "const": "setsPercent" }, "tier": { "$ref": "#/$defs/tierName" }, "percent": { "$ref": "#/$defs/percent" } } },
+        { "additionalProperties": false, "required": ["tier", "sets"], "properties": { "rule": { "const": "setsTo" }, "tier": { "$ref": "#/$defs/tierName" }, "sets": { "type": "integer", "minimum": 1 } } },
+        { "additionalProperties": false, "required": ["tier"], "properties": { "rule": { "const": "dropTier" }, "tier": { "$ref": "#/$defs/tierName" } } },
+        { "additionalProperties": false, "required": ["flag"], "properties": { "rule": { "enum": ["dropFlagged", "swapFlagged"] }, "flag": { "$ref": "#/$defs/flag" } } },
+        { "additionalProperties": false, "required": ["reps"], "properties": { "rule": { "const": "addRir" }, "reps": { "type": "integer", "minimum": 1, "maximum": 5 } } },
+        { "additionalProperties": false, "required": ["session"], "properties": { "rule": { "const": "replaceSession" }, "session": { "$ref": "#/$defs/id" } } },
+        { "additionalProperties": false, "properties": { "rule": { "const": "noLifting" } } }
+      ]
+    },
+    "level": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "description", "rules", "progressionOnThisDay"],
+      "properties": {
+        "label": { "$ref": "#/$defs/text" },
+        "description": { "type": "string" },
+        "rules": { "type": "array", "items": { "$ref": "#/$defs/rule" } },
+        "progressionOnThisDay": { "enum": ["normal", "hold", "skip"] }
+      }
+    },
+    "readiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["preset"],
+      "properties": {
+        "preset": { "enum": ["freshness", "injury", "off"] },
+        "check48h": { "type": "boolean" },
+        "levels": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["green", "amber", "red"],
+          "properties": { "green": { "$ref": "#/$defs/level" }, "amber": { "$ref": "#/$defs/level" }, "red": { "$ref": "#/$defs/level" } }
+        }
+      },
+      "if": { "properties": { "preset": { "enum": ["freshness", "injury"] } } },
+      "then": { "required": ["levels"] }
+    },
+
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exercise"],
+      "properties": {
+        "exercise": { "$ref": "#/$defs/id" },
+        "kg": { "$ref": "#/$defs/kg" },
+        "reps": { "type": "integer", "minimum": 1 },
+        "sets": { "type": "integer", "minimum": 1 },
+        "seconds": { "type": "integer", "minimum": 1 },
+        "metres": { "type": "integer", "minimum": 1 },
+        "label": { "type": "string" }
+      }
+    }
+  }
+}

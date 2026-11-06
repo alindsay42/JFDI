@@ -1,0 +1,739 @@
+{
+ "format": "jfdi-programme",
+ "formatVersion": 1,
+ "id": "strength-block-1",
+ "name": "Strength Programme, Block 1",
+ "description": "Two full-body sessions a week alongside classes. A simple linear progression back from recent numbers to previous bests.",
+ "goal": "Build strength and keep muscle mass",
+ "daysPerWeek": 2,
+ "createdAt": "2026-11-06T09:40:00Z",
+ "updatedAt": "2026-11-06T09:40:00Z",
+ "equipment": [
+  {
+   "id": "bar-standard",
+   "name": "Standard barbell",
+   "kg": 20
+  },
+  {
+   "id": "bar-junior",
+   "name": "Junior barbell",
+   "kg": 10
+  },
+  {
+   "id": "bar-ez",
+   "name": "EZ curl bar",
+   "kg": 8
+  }
+ ],
+ "exercises": [
+  {
+   "id": "back-squat",
+   "name": "Back squat",
+   "measure": "load",
+   "implement": "barbell",
+   "bar": "bar-standard",
+   "pattern": "squat",
+   "muscles": [
+    "quads",
+    "glutes",
+    "adductors"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 180
+  },
+  {
+   "id": "bench-press",
+   "name": "Bench press",
+   "measure": "load",
+   "implement": "barbell",
+   "bar": "bar-standard",
+   "pattern": "push",
+   "muscles": [
+    "chest",
+    "triceps",
+    "front-delts"
+   ],
+   "restSec": 150
+  },
+  {
+   "id": "barbell-row",
+   "name": "Barbell row",
+   "measure": "load",
+   "implement": "barbell",
+   "bar": "bar-junior",
+   "pattern": "pull",
+   "muscles": [
+    "upper-back",
+    "lats",
+    "biceps"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 120
+  },
+  {
+   "id": "romanian-deadlift",
+   "name": "Romanian deadlift",
+   "measure": "load",
+   "implement": "barbell",
+   "bar": "bar-standard",
+   "pattern": "hinge",
+   "muscles": [
+    "hamstrings",
+    "glutes"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 120
+  },
+  {
+   "id": "deadlift",
+   "name": "Deadlift",
+   "measure": "load",
+   "implement": "barbell",
+   "bar": "bar-standard",
+   "pattern": "hinge",
+   "muscles": [
+    "glutes",
+    "hamstrings",
+    "back"
+   ],
+   "flags": [
+    "spineLoading"
+   ],
+   "restSec": 180
+  },
+  {
+   "id": "overhead-press-ez",
+   "name": "Overhead press (EZ bar)",
+   "measure": "load",
+   "implement": "barbell",
+   "bar": "bar-ez",
+   "pattern": "push",
+   "muscles": [
+    "shoulders",
+    "triceps"
+   ],
+   "flags": [
+    "overhead"
+   ],
+   "restSec": 150
+  },
+  {
+   "id": "band-pull-up",
+   "name": "Band-assisted pull-up",
+   "measure": "reps",
+   "implement": "band",
+   "pattern": "pull",
+   "muscles": [
+    "lats",
+    "biceps"
+   ],
+   "notes": "Pick a band that leaves 2 reps in reserve."
+  },
+  {
+   "id": "chest-supported-db-row",
+   "name": "Chest-supported DB row",
+   "measure": "load",
+   "implement": "dumbbell",
+   "loadPer": "each",
+   "pattern": "pull",
+   "muscles": [
+    "upper-back",
+    "lats"
+   ]
+  },
+  {
+   "id": "goblet-squat",
+   "name": "Goblet squat",
+   "measure": "load",
+   "implement": "dumbbell",
+   "pattern": "squat",
+   "muscles": [
+    "quads",
+    "glutes"
+   ],
+   "restSec": 90
+  },
+  {
+   "id": "db-lateral-raise",
+   "name": "DB lateral raise",
+   "measure": "load",
+   "implement": "dumbbell",
+   "loadPer": "each",
+   "pattern": "isolation",
+   "muscles": [
+    "side-delts"
+   ]
+  },
+  {
+   "id": "plank",
+   "name": "Plank",
+   "measure": "time",
+   "implement": "bodyweight",
+   "pattern": "core"
+  },
+  {
+   "id": "battle-ropes",
+   "name": "Battle ropes, double waves",
+   "measure": "time",
+   "implement": "other",
+   "pattern": "conditioning"
+  },
+  {
+   "id": "db-curl",
+   "name": "DB curl",
+   "measure": "load",
+   "implement": "dumbbell",
+   "loadPer": "each",
+   "pattern": "isolation",
+   "muscles": [
+    "biceps"
+   ]
+  },
+  {
+   "id": "cable-pushdown",
+   "name": "Cable triceps pushdown",
+   "measure": "load",
+   "implement": "cable",
+   "pattern": "isolation",
+   "muscles": [
+    "triceps"
+   ]
+  },
+  {
+   "id": "farmers-carry",
+   "name": "Farmer's carry",
+   "measure": "distance",
+   "implement": "dumbbell",
+   "loadPer": "each",
+   "pattern": "carry",
+   "muscles": [
+    "grip",
+    "traps",
+    "core"
+   ]
+  },
+  {
+   "id": "mobility-hips",
+   "name": "Hip mobility flow",
+   "measure": "time",
+   "implement": "bodyweight",
+   "pattern": "mobility"
+  },
+  {
+   "id": "mobility-hamstrings",
+   "name": "Hamstring stretch",
+   "measure": "time",
+   "implement": "bodyweight",
+   "pattern": "mobility",
+   "perSide": true
+  },
+  {
+   "id": "mobility-upper-back",
+   "name": "Upper back and shoulder mobility",
+   "measure": "time",
+   "implement": "bodyweight",
+   "pattern": "mobility"
+  }
+ ],
+ "progressions": [
+  {
+   "id": "linear-2-5",
+   "type": "linear",
+   "incrementKg": 2.5,
+   "holdIfRpeAtLeast": 9,
+   "stall": {
+    "misses": 2,
+    "reducePercent": 10
+   }
+  },
+  {
+   "id": "double-2-5",
+   "type": "double",
+   "incrementKg": 2.5,
+   "holdIfRpeAtLeast": 9
+  },
+  {
+   "id": "accessory",
+   "type": "double",
+   "incrementKg": 1
+  },
+  {
+   "id": "none",
+   "type": "none"
+  }
+ ],
+ "sessions": [
+  {
+   "id": "session-a",
+   "name": "Session A",
+   "subtitle": "Squat, bench and rows",
+   "estimatedMinutes": 65,
+   "tiers": {
+    "primary": [
+     {
+      "type": "straight",
+      "restSec": 180,
+      "slots": [
+       {
+        "exercise": "back-squat",
+        "sets": 5,
+        "reps": {
+         "min": 5,
+         "max": 5
+        },
+        "progression": "linear-2-5",
+        "start": {
+         "kg": 30
+        }
+       }
+      ]
+     }
+    ],
+    "secondary": [
+     {
+      "type": "superset",
+      "restSec": 120,
+      "slots": [
+       {
+        "exercise": "bench-press",
+        "sets": 5,
+        "reps": {
+         "min": 5,
+         "max": 5
+        },
+        "progression": "linear-2-5",
+        "start": {
+         "kg": "bar"
+        }
+       },
+       {
+        "exercise": "barbell-row",
+        "sets": 3,
+        "reps": {
+         "min": 6,
+         "max": 8
+        },
+        "progression": "double-2-5",
+        "start": {
+         "kg": 15
+        }
+       }
+      ]
+     },
+     {
+      "type": "straight",
+      "restSec": 120,
+      "slots": [
+       {
+        "exercise": "romanian-deadlift",
+        "sets": 3,
+        "reps": {
+         "min": 6,
+         "max": 8
+        },
+        "progression": "double-2-5",
+        "start": {
+         "kg": 30
+        }
+       }
+      ]
+     }
+    ],
+    "tertiary": [
+     {
+      "type": "giant",
+      "rounds": 3,
+      "transitionSec": 0,
+      "restSec": 90,
+      "slots": [
+       {
+        "exercise": "db-lateral-raise",
+        "reps": {
+         "min": 12,
+         "max": 15
+        },
+        "progression": "accessory",
+        "start": {
+         "note": "Light"
+        }
+       },
+       {
+        "exercise": "plank",
+        "seconds": {
+         "min": 30,
+         "max": 45
+        },
+        "progression": "accessory"
+       },
+       {
+        "exercise": "battle-ropes",
+        "seconds": {
+         "min": 20,
+         "max": 30
+        },
+        "progression": "accessory"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "session-b",
+   "name": "Session B",
+   "subtitle": "Deadlift and overhead press",
+   "estimatedMinutes": 65,
+   "tiers": {
+    "primary": [
+     {
+      "type": "straight",
+      "restSec": 180,
+      "slots": [
+       {
+        "exercise": "deadlift",
+        "sets": 3,
+        "reps": {
+         "min": 5,
+         "max": 5
+        },
+        "progression": "linear-2-5",
+        "start": {
+         "kg": 55
+        }
+       }
+      ]
+     }
+    ],
+    "secondary": [
+     {
+      "type": "superset",
+      "restSec": 120,
+      "slots": [
+       {
+        "exercise": "overhead-press-ez",
+        "sets": 5,
+        "reps": {
+         "min": 5,
+         "max": 5
+        },
+        "progression": "linear-2-5",
+        "incrementKg": 1,
+        "start": {
+         "kg": 15.5
+        },
+        "notes": "1kg jumps with fractional plates. Without them, 2.5kg every second successful session."
+       },
+       {
+        "exercise": "band-pull-up",
+        "sets": 3,
+        "reps": {
+         "min": 6,
+         "max": 10
+        },
+        "progression": "accessory",
+        "alternatives": [
+         "chest-supported-db-row"
+        ],
+        "start": {
+         "note": "Choose a band that leaves 2 reps in reserve"
+        }
+       }
+      ]
+     },
+     {
+      "type": "straight",
+      "restSec": 90,
+      "slots": [
+       {
+        "exercise": "goblet-squat",
+        "sets": 2,
+        "reps": {
+         "min": 10,
+         "max": 12
+        },
+        "progression": "double-2-5",
+        "start": {
+         "kg": 12.5
+        }
+       }
+      ]
+     }
+    ],
+    "tertiary": [
+     {
+      "type": "giant",
+      "rounds": 3,
+      "transitionSec": 0,
+      "restSec": 90,
+      "slots": [
+       {
+        "exercise": "db-curl",
+        "reps": {
+         "min": 10,
+         "max": 12
+        },
+        "progression": "accessory",
+        "start": {
+         "note": "Light"
+        }
+       },
+       {
+        "exercise": "cable-pushdown",
+        "reps": {
+         "min": 12,
+         "max": 15
+        },
+        "progression": "accessory",
+        "start": {
+         "note": "Light"
+        }
+       },
+       {
+        "exercise": "farmers-carry",
+        "metres": {
+         "min": 30,
+         "max": 30
+        },
+        "progression": "accessory",
+        "start": {
+         "kg": 12.5
+        }
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "mobility",
+   "name": "Mobility",
+   "subtitle": "Red day: 20 to 30 minutes",
+   "estimatedMinutes": 25,
+   "inRotation": false,
+   "tiers": {
+    "primary": [
+     {
+      "type": "giant",
+      "rounds": 2,
+      "transitionSec": 15,
+      "restSec": 30,
+      "slots": [
+       {
+        "exercise": "mobility-hips",
+        "seconds": {
+         "min": 120,
+         "max": 180
+        },
+        "progression": "none"
+       },
+       {
+        "exercise": "mobility-hamstrings",
+        "seconds": {
+         "min": 60,
+         "max": 90
+        },
+        "progression": "none"
+       },
+       {
+        "exercise": "mobility-upper-back",
+        "seconds": {
+         "min": 120,
+         "max": 180
+        },
+        "progression": "none"
+       }
+      ]
+     }
+    ]
+   }
+  }
+ ],
+ "weeks": [
+  {
+   "id": "two-day",
+   "name": "Two lifting days",
+   "rotation": [
+    "session-a",
+    "session-b",
+    "mobility"
+   ],
+   "days": {
+    "mon": {
+     "type": "lift"
+    },
+    "tue": {
+     "type": "free",
+     "notes": "Classes"
+    },
+    "wed": {
+     "type": "free",
+     "notes": "Classes"
+    },
+    "thu": {
+     "type": "lift"
+    },
+    "fri": {
+     "type": "free",
+     "notes": "Classes"
+    },
+    "sat": {
+     "type": "free"
+    },
+    "sun": {
+     "type": "rest"
+    }
+   }
+  }
+ ],
+ "phases": [
+  {
+   "id": "return-to-bests",
+   "name": "Back to previous bests",
+   "focus": "Linear progression from recent numbers",
+   "blocks": [
+    {
+     "id": "block-1",
+     "name": "Block 1",
+     "week": "two-day",
+     "weeks": null,
+     "deload": {
+      "everyWeeks": 6,
+      "afterStalls": 2,
+      "setsPercent": 60,
+      "loadPercent": 60
+     },
+     "endWhen": "Most main lifts have stalled once, around 8 to 12 weeks"
+    }
+   ],
+   "gates": {
+    "exit": [
+     {
+      "type": "lift",
+      "exercise": "back-squat",
+      "kg": 40,
+      "reps": 5,
+      "sets": 5
+     },
+     {
+      "type": "lift",
+      "exercise": "bench-press",
+      "kg": 27.5,
+      "reps": 5,
+      "sets": 5
+     },
+     {
+      "type": "lift",
+      "exercise": "deadlift",
+      "kg": 60,
+      "reps": 5,
+      "sets": 3
+     },
+     {
+      "type": "lift",
+      "exercise": "overhead-press-ez",
+      "kg": 18,
+      "reps": 5,
+      "sets": 5
+     },
+     {
+      "type": "text",
+      "text": "Plan Block 2 from the weights actually being lifted"
+     }
+    ]
+   }
+  }
+ ],
+ "readiness": {
+  "preset": "freshness",
+  "check48h": false,
+  "levels": {
+   "green": {
+    "label": "Green",
+    "description": "Feeling 90 to 100%. Hit it full on.",
+    "rules": [],
+    "progressionOnThisDay": "normal"
+   },
+   "amber": {
+    "label": "Amber",
+    "description": "Feeling 60 to 89%. A bit off but still want to train.",
+    "rules": [
+     {
+      "rule": "setsTo",
+      "tier": "primary",
+      "sets": 3
+     },
+     {
+      "rule": "dropTier",
+      "tier": "tertiary"
+     },
+     {
+      "rule": "addRir",
+      "reps": 2
+     }
+    ],
+    "progressionOnThisDay": "normal"
+   },
+   "red": {
+    "label": "Red",
+    "description": "Under 60%. Mobility and stretching instead.",
+    "rules": [
+     {
+      "rule": "replaceSession",
+      "session": "mobility"
+     }
+    ],
+    "progressionOnThisDay": "skip"
+   }
+  }
+ },
+ "targets": [
+  {
+   "exercise": "back-squat",
+   "kg": 40,
+   "reps": 5,
+   "sets": 5,
+   "label": "Previous best"
+  },
+  {
+   "exercise": "bench-press",
+   "kg": 27.5,
+   "reps": 5,
+   "sets": 5,
+   "label": "Previous best"
+  },
+  {
+   "exercise": "overhead-press-ez",
+   "kg": 18,
+   "reps": 5,
+   "sets": 5,
+   "label": "Previous best"
+  },
+  {
+   "exercise": "deadlift",
+   "kg": 60,
+   "reps": 5,
+   "sets": 3,
+   "label": "Previous best"
+  },
+  {
+   "exercise": "romanian-deadlift",
+   "kg": 40,
+   "reps": 7,
+   "sets": 3,
+   "label": "Previous best"
+  },
+  {
+   "exercise": "barbell-row",
+   "kg": 22.5,
+   "reps": 8,
+   "sets": 3,
+   "label": "Previous best"
+  }
+ ]
+}
