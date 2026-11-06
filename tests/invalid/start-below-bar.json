@@ -7,7 +7,7 @@
  "goal": "Build strength and keep muscle mass",
  "daysPerWeek": 2,
  "createdAt": "2026-11-06T09:40:00Z",
- "updatedAt": "2026-11-06T09:40:00Z",
+ "updatedAt": "2026-11-06T23:30:00Z",
  "equipment": [
   {
    "id": "bar-standard",
@@ -217,28 +217,6 @@
     "traps",
     "core"
    ]
-  },
-  {
-   "id": "mobility-hips",
-   "name": "Hip mobility flow",
-   "measure": "time",
-   "implement": "bodyweight",
-   "pattern": "mobility"
-  },
-  {
-   "id": "mobility-hamstrings",
-   "name": "Hamstring stretch",
-   "measure": "time",
-   "implement": "bodyweight",
-   "pattern": "mobility",
-   "perSide": true
-  },
-  {
-   "id": "mobility-upper-back",
-   "name": "Upper back and shoulder mobility",
-   "measure": "time",
-   "implement": "bodyweight",
-   "pattern": "mobility"
   }
  ],
  "progressions": [
@@ -509,84 +487,23 @@
      }
     ]
    }
-  },
-  {
-   "id": "mobility",
-   "name": "Mobility",
-   "subtitle": "Red day: 20 to 30 minutes",
-   "estimatedMinutes": 25,
-   "inRotation": false,
-   "tiers": {
-    "primary": [
-     {
-      "type": "giant",
-      "rounds": 2,
-      "transitionSec": 15,
-      "restSec": 30,
-      "slots": [
-       {
-        "exercise": "mobility-hips",
-        "seconds": {
-         "min": 120,
-         "max": 180
-        },
-        "progression": "none"
-       },
-       {
-        "exercise": "mobility-hamstrings",
-        "seconds": {
-         "min": 60,
-         "max": 90
-        },
-        "progression": "none"
-       },
-       {
-        "exercise": "mobility-upper-back",
-        "seconds": {
-         "min": 120,
-         "max": 180
-        },
-        "progression": "none"
-       }
-      ]
-     }
-    ]
-   }
   }
  ],
  "weeks": [
   {
-   "id": "two-day",
-   "name": "Two lifting days",
+   "id": "two-a-week",
+   "name": "Two lifting days a week",
    "rotation": [
     "session-a",
     "session-b"
    ],
-   "days": {
-    "mon": {
-     "type": "lift"
-    },
-    "tue": {
-     "type": "free",
-     "notes": "Classes"
-    },
-    "wed": {
-     "type": "free",
-     "notes": "Classes"
-    },
-    "thu": {
-     "type": "lift"
-    },
-    "fri": {
-     "type": "free",
-     "notes": "Classes"
-    },
-    "sat": {
-     "type": "free"
-    },
-    "sun": {
-     "type": "rest"
-    }
+   "perWeek": {
+    "liftDays": 2,
+    "minRestDays": 2
+   },
+   "otherDays": {
+    "type": "free",
+    "notes": "Classes, or rest"
    }
   }
  ],
@@ -599,7 +516,7 @@
     {
      "id": "block-1",
      "name": "Block 1",
-     "week": "two-day",
+     "week": "two-a-week",
      "weeks": null,
      "deload": {
       "everyWeeks": 6,
@@ -680,11 +597,10 @@
    },
    "red": {
     "label": "Red",
-    "description": "Under 60%. Mobility and stretching instead.",
+    "description": "Under 60%. No session today. The planned session moves to next time.",
     "rules": [
      {
-      "rule": "replaceSession",
-      "session": "mobility"
+      "rule": "noLifting"
      }
     ],
     "progressionOnThisDay": "skip"
