@@ -137,14 +137,18 @@ export function validateProgramme(p) {
   }
 
   for (const w of p.weeks) {
-    const lifts = Object.values(w.days).filter(d => d.type === "lift").length;
-    if (lifts === 0) errors.push(`week "${w.id}": no lifting days`);
+    if (w.days) {
+      const lifts = Object.values(w.days).filter(d => d.type === "lift").length;
+      if (lifts === 0) errors.push(`week "${w.id}": no lifting days`);
+    }
+    if (w.otherDays?.type === "lift") errors.push(`week "${w.id}": otherDays can't be lifting days`);
+    if (w.perWeek && w.perWeek.liftDays * ((w.perWeek.minRestDays ?? 0) + 1) > 7) errors.push(`week "${w.id}": ${w.perWeek.liftDays} lifting days with ${w.perWeek.minRestDays} days between them don't fit in a week`);
     for (const id of w.rotation) {
       const s = sessions.get(id);
       if (!s) errors.push(`week "${w.id}": rotation has unknown session "${id}"`);
       else if (s.inRotation === false) errors.push(`week "${w.id}": session "${id}" is marked as not in rotation`);
     }
-    for (const d of Object.values(w.days)) checkRange(d.minutes, `week "${w.id}" minutes`);
+    for (const d of [...Object.values(w.days || {}), w.otherDays].filter(Boolean)) checkRange(d.minutes, `week "${w.id}" minutes`);
   }
 
   for (const ph of p.phases) {

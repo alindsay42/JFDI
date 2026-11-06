@@ -138,18 +138,25 @@ A session is three **tiers** in order: `primary`, `secondary`, `tertiary`. A ses
 | `id`, `name` | `session-a`, "Session A" |
 | `subtitle` | "Squat, bench and rows" |
 | `estimatedMinutes` | For planning |
-| `inRotation` | `false` for sessions only used by readiness rules, such as a mobility session for Red days. Default `true` |
+| `inRotation` | `false` for sessions only used by readiness rules, such as a light session a programme swaps in on Red days. Default `true` |
 | `tiers` | `{ "primary": [blocks], "secondary": [blocks], "tertiary": [blocks] }` |
 
 ## Weeks
 
-A week says what each day is. Lifting days take the **next session in the rotation**, so a missed or moved day shifts the sessions along and none is skipped. The rotation carries on across weeks: with two lifting days and a rotation of A, B, week 1 is A then B, and week 2 is A then B again. With three lifting days and two sessions, it alternates A, B, A then B, A, B.
+A week says how often to lift and what the other days are. Lifting days take the **next session in the rotation**, so a missed or moved day shifts the sessions along and none is skipped. The rotation carries on across weeks: with two lifting days and a rotation of A, B, every week is A then B. With three lifting days and two sessions, it alternates A, B, A then B, A, B.
+
+A week is written one of two ways:
+
+- **`perWeek`:** a number of lifting days, on any days, with a minimum gap between them. Suits someone whose other commitments move about, such as classes. The person picks the day; the app counts the week's sessions and warns if two are too close together.
+- **`days`:** a named day for each day of the week (Monday lift, Tuesday walk and so on). Suits a fixed routine, and gives the calendar exact planned days.
 
 | Field | Meaning |
 | --- | --- |
 | `id`, `name` | |
-| `days` | `mon` to `sun`, each one of the day types below |
 | `rotation` | Session ids in order |
+| `perWeek` | `{ "liftDays": 2, "minRestDays": 2 }`: lifting days a week, and full days off needed between them. Use this or `days` |
+| `days` | `mon` to `sun`, each one of the day types below. Use this or `perWeek` |
+| `otherDays` | With `perWeek` only: what the non-lifting days are, as one day type, such as `{ "type": "free", "notes": "Classes" }` |
 
 Day types:
 
@@ -160,7 +167,7 @@ Day types:
 | `free` | Nothing planned. Classes, sport or rest are up to the person | `notes` |
 | `rest` | Planned rest | `notes` |
 
-Training early is always allowed. If a session is done on a non-lifting day, the next lifting day becomes a `free` day, so nobody ends up lifting on back-to-back days by accident. A session done to make up a missed day doesn't move anything.
+Training early is always allowed. With `days`, if a session is done on a non-lifting day, the next lifting day becomes a `free` day, so nobody ends up lifting on back-to-back days by accident. A session done to make up a missed day doesn't move anything. With `perWeek`, there are no planned days to move: the week simply counts what's been done.
 
 ## Phases and blocks of weeks
 
@@ -228,7 +235,7 @@ Charts convert targets and logged sets to an estimated one-rep max using the dos
 
 | Lives in | What |
 | --- | --- |
-| The profile | Who runs the programme, start date, starting loads from their own history, adopted targets, bars they can't use (the SSB for your wife) |
+| The profile | Who runs the programme, start date, a starting load per exercise (a profile's own numbers win over a slot's `start`), adopted targets, bars they can't use (the SSB for your wife) |
 | The log | Every session as performed, with a copy of its prescription; daily lights; walks; bodyweight |
 | The household | The equipment list with real bar weights, the shared exercise library |
 
@@ -241,8 +248,10 @@ These come in later versions of the format. Files written now will be upgraded a
 - **Uneven jumps**, such as "2.5kg every second successful session" on a light overhead press. For now the example covers this with a note on the slot.
 - **Chains** (EQ-4): logged on the set, so they belong to the log format rather than the programme.
 
-## Open questions
+## Decisions
 
-1. **Day names or "lifting days per week".** This draft uses named days (Monday and Thursday). The alternative is "2 lifting days per week, any days, at least 2 days apart", which suits someone with classes that move about. Named days are simpler and match the calendar, so they're the default here.
-2. **Profile starting loads.** Should the profile hold a starting load per exercise, or just a list of recent sets that the app reads like history? The second is closer to how the log already works.
-3. **Mobility on Red days.** The example uses a short mobility session marked `inRotation: false`. Is that the right shape, or should Red days point at a separate library of mobility routines?
+Settled on 6 Nov:
+
+1. **Days:** both styles are supported. Block 1 uses `perWeek`: 2 lifting days a week, any days, at least 2 days apart.
+2. **Starting loads:** a number per exercise, held in the profile. For Block 1, these are the lowest of her recent numbers.
+3. **Red days:** no mobility session. In Block 1, Red means no session today, and the planned session moves to next time.

@@ -219,11 +219,23 @@
     "week": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "name", "days", "rotation"],
+      "required": ["id", "name", "rotation"],
+      "oneOf": [{ "required": ["perWeek"] }, { "required": ["days"] }],
+      "dependentRequired": { "otherDays": ["perWeek"] },
       "properties": {
         "id": { "$ref": "#/$defs/id" },
         "name": { "$ref": "#/$defs/text" },
         "rotation": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/id" } },
+        "perWeek": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["liftDays"],
+          "properties": {
+            "liftDays": { "type": "integer", "minimum": 1, "maximum": 7 },
+            "minRestDays": { "type": "integer", "minimum": 0, "maximum": 6, "description": "Full days off between lifting days" }
+          }
+        },
+        "otherDays": { "$ref": "#/$defs/day" },
         "days": {
           "type": "object",
           "additionalProperties": false,
