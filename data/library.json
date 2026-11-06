@@ -1713,6 +1713,22 @@
    "notes": "Load is the added weight on the belt."
   },
   {
+   "id": "neutral-grip-pull-up",
+   "name": "Neutral-grip pull-up",
+   "family": "vertical-pull",
+   "measure": "reps",
+   "implement": "bodyweight",
+   "pattern": "pull",
+   "requires": [
+    "pull-up-bar"
+   ],
+   "muscles": [
+    "lats",
+    "biceps"
+   ],
+   "notes": "Palms facing. On parallel handles if the bar has them, or on the rings."
+  },
+  {
    "id": "band-pull-up",
    "name": "Band-assisted pull-up",
    "family": "vertical-pull",

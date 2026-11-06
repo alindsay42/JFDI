@@ -1,0 +1,103 @@
+{
+ "format": "jfdi-profile",
+ "formatVersion": 1,
+ "id": "wife",
+ "name": "Wife",
+ "colour": "#b4447a",
+ "createdAt": "2026-11-06T23:40:00Z",
+ "updatedAt": "2026-11-06T23:40:00Z",
+ "display": {
+  "weightUnits": "kg",
+  "theme": "device"
+ },
+ "unavailableEquipment": [
+  "bar-ssb"
+ ],
+ "programmes": {
+  "active": {
+   "programme": "strength-block-1",
+   "programmeUpdatedAt": "2026-11-06T23:30:00Z",
+   "startDate": "2026-11-09",
+   "startingLoads": {
+    "back-squat": {
+     "kg": 30,
+     "reps": 5,
+     "sets": 5
+    },
+    "bench-press": {
+     "kg": 25,
+     "reps": 5,
+     "sets": 5
+    },
+    "overhead-press-ez": {
+     "kg": 15.5,
+     "reps": 5,
+     "sets": 5
+    },
+    "deadlift": {
+     "kg": 55,
+     "reps": 5,
+     "sets": 1
+    },
+    "romanian-deadlift": {
+     "kg": 30,
+     "reps": 6,
+     "sets": 3
+    },
+    "barbell-row": {
+     "kg": 15,
+     "reps": 7,
+     "sets": 1
+    },
+    "front-squat": {
+     "kg": 30
+    }
+   }
+  },
+  "history": []
+ },
+ "targets": [
+  {
+   "exercise": "back-squat",
+   "kg": 40,
+   "reps": 5,
+   "sets": 5,
+   "label": "Previous best"
+  },
+  {
+   "exercise": "bench-press",
+   "kg": 27.5,
+   "reps": 5,
+   "sets": 5,
+   "label": "Previous best"
+  },
+  {
+   "exercise": "overhead-press-ez",
+   "kg": 18,
+   "reps": 5,
+   "sets": 5,
+   "label": "Previous best"
+  },
+  {
+   "exercise": "deadlift",
+   "kg": 60,
+   "reps": 5,
+   "sets": 3,
+   "label": "Previous best"
+  },
+  {
+   "exercise": "romanian-deadlift",
+   "kg": 40,
+   "reps": 7,
+   "sets": 3,
+   "label": "Previous best"
+  },
+  {
+   "exercise": "barbell-row",
+   "kg": 22.5,
+   "reps": 8,
+   "sets": 3,
+   "label": "Previous best"
+  }
+ ]
+}

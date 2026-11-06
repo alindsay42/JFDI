@@ -8,12 +8,15 @@ Build training programmes and run them in the gym. One app with two modes: Train
 | --- | --- |
 | [`docs/programme-format.md`](docs/programme-format.md) | The programme file format: what a plan looks like as data |
 | [`docs/equipment-and-library.md`](docs/equipment-and-library.md) | The household equipment list and the exercise library: formats and rules |
+| [`docs/profile-and-log.md`](docs/profile-and-log.md) | Profiles (one per person) and the training log, plus importing from Rebuild Log |
 | [`docs/catalogue.md`](docs/catalogue.md) | Every piece of equipment and every exercise, as tables (generated) |
 | [`data/`](data/) | The household equipment list and the exercise library |
-| [`schema/`](schema/) | JSON Schemas for programmes, equipment and the library |
-| [`examples/`](examples/) | Programme files that must always pass validation |
-| [`tests/invalid/`](tests/invalid/) | Broken programme files that must always be rejected |
-| [`scripts/validate.mjs`](scripts/validate.mjs) | Checks files against the schema and the cross-reference rules |
+| [`schema/`](schema/) | JSON Schemas for programmes, equipment, the library, profiles and logs |
+| [`examples/`](examples/) | Programmes, profiles and logs that must always pass validation |
+| [`tests/invalid/`](tests/invalid/) | Broken files that must always be rejected, each for the reason listed in `expected-errors.json` |
+| [`tests/fixtures/`](tests/fixtures/) | A sample Rebuild Log backup for testing the importer |
+| [`scripts/validate.mjs`](scripts/validate.mjs) | Checks every file against its schema and the cross-reference rules |
+| [`scripts/import-rebuild-log.mjs`](scripts/import-rebuild-log.mjs) | Converts a Rebuild Log backup into a J.F.D.I training log |
 
 ## Checking programme files
 
@@ -21,7 +24,7 @@ Build training programmes and run them in the gym. One app with two modes: Train
 npm install
 npm run validate          # data/ and every file in examples/
 npm run catalogue         # regenerate docs/catalogue.md after changing data/
-npm test                  # all of the above, plus every file in tests/invalid/ must be rejected for its expected reason
+npm test                  # all of the above, the Rebuild Log import, and every file in tests/invalid/ rejected for its listed reason
 ```
 
 ## Conventions

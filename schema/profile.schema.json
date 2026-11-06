@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alindsay42.github.io/jfdi/schema/profile.schema.json",
+  "title": "J.F.D.I profile",
+  "description": "One person in the household: who they are, what they're running, and their own limits and starting points. See docs/profile-and-log.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "formatVersion", "id", "name", "colour", "createdAt", "updatedAt", "programmes"],
+  "properties": {
+    "format": { "const": "jfdi-profile" },
+    "formatVersion": { "const": 1 },
+    "id": { "$ref": "#/$defs/id" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 40 },
+    "colour": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$", "description": "Shown on every Train screen so nobody logs into the wrong profile" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "display": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "weightUnits": { "enum": ["kg", "kg-and-lb"], "description": "Everything is stored in kg. This only changes what's shown" },
+        "theme": { "enum": ["device", "light", "dark"] }
+      }
+    },
+    "unavailableEquipment": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/id" },
+      "description": "Household equipment this person can't use, such as bar-ssb. Exercises that need it are never offered"
+    },
+    "excludedExercises": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/id" },
+      "description": "Library exercises this person doesn't want offered, for any reason"
+    },
+    "readiness": {
+      "description": "Optional override of the active programme's daily check, in the same shape as a programme's readiness",
+      "$ref": "programme.schema.json#/$defs/readiness"
+    },
+    "programmes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["history"],
+      "properties": {
+        "active": { "$ref": "#/$defs/assignment" },
+        "history": { "type": "array", "items": { "$ref": "#/$defs/pastAssignment" } }
+      }
+    },
+    "targets": { "type": "array", "items": { "$ref": "#/$defs/target" } }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 64 },
+    "date": { "type": "string", "format": "date" },
+    "kg": { "type": "number", "minimum": 0, "maximum": 1000 },
+    "startingLoad": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kg"],
+      "properties": {
+        "kg": { "$ref": "#/$defs/kg" },
+        "reps": { "type": "integer", "minimum": 1 },
+        "sets": { "type": "integer", "minimum": 1 },
+        "note": { "type": "string" }
+      }
+    },
+    "assignment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["programme", "programmeUpdatedAt", "startDate"],
+      "properties": {
+        "programme": { "$ref": "#/$defs/id", "description": "Programme id" },
+        "programmeUpdatedAt": { "type": "string", "format": "date-time", "description": "Which version of the programme is being run" },
+        "startDate": { "$ref": "#/$defs/date" },
+        "startingLoads": {
+          "type": "object",
+          "propertyNames": { "$ref": "#/$defs/id" },
+          "additionalProperties": { "$ref": "#/$defs/startingLoad" },
+          "description": "Exercise id to starting load. Used until the log has history for that exercise"
+        }
+      }
+    },
+    "pastAssignment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["programme", "programmeUpdatedAt", "startDate", "endDate", "ended"],
+      "properties": {
+        "programme": { "$ref": "#/$defs/id" },
+        "programmeUpdatedAt": { "type": "string", "format": "date-time" },
+        "startDate": { "$ref": "#/$defs/date" },
+        "endDate": { "$ref": "#/$defs/date" },
+        "ended": { "enum": ["completed", "early"] },
+        "notes": { "type": "string" }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exercise"],
+      "properties": {
+        "exercise": { "$ref": "#/$defs/id" },
+        "kg": { "$ref": "#/$defs/kg" },
+        "reps": { "type": "integer", "minimum": 1 },
+        "sets": { "type": "integer", "minimum": 1 },
+        "seconds": { "type": "integer", "minimum": 1 },
+        "metres": { "type": "integer", "minimum": 1 },
+        "by": { "$ref": "#/$defs/date" },
+        "label": { "type": "string" }
+      }
+    }
+  }
+}

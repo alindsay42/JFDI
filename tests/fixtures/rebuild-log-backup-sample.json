@@ -1,0 +1,7375 @@
+{
+ "app": "rebuild-log",
+ "version": 1,
+ "exportedAt": "2026-11-05T18:00:00Z",
+ "sessions": {
+  "2026-09-07-mock01": {
+   "id": "2026-09-07-mock01",
+   "phase": 1,
+   "key": "A",
+   "title": "Session A",
+   "sub": "Squat and press",
+   "date": "2026-09-07",
+   "week": 1,
+   "light": "green",
+   "status": "done",
+   "startedAt": 1788797520000,
+   "finishedAt": 1788802140000,
+   "notes": "",
+   "endedEarly": null,
+   "check": {
+    "status": "same",
+    "at": 1788970320000
+   },
+   "exercises": [
+    {
+     "id": "ssb",
+     "lo": 6,
+     "hi": 8,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 6\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "40",
+       "reps": "6",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "40",
+       "reps": "6",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "40",
+       "reps": "6",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbpress",
+     "lo": 8,
+     "hi": 12,
+     "ss": "p",
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "15",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "15",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "15",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pullup",
+     "lo": 5,
+     "hi": 8,
+     "ss": "p",
+     "plannedSets": 3,
+     "target": "3 \u00d7 5\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "5",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "5",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "4",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "hyper",
+     "lo": 8,
+     "hi": 12,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "10",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "10",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "10",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "10",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "9",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "17.5",
+       "reps": "10",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "17.5",
+       "reps": "9",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pallof",
+     "lo": 8,
+     "hi": 8,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 8 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "10",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "10",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "splank",
+     "lo": 20,
+     "hi": 30,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 20\u201330s each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "20",
+       "ph": "30",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "25",
+       "ph": "30",
+       "done": true
+      }
+     ]
+    }
+   ]
+  },
+  "2026-09-09-mock02": {
+   "id": "2026-09-09-mock02",
+   "phase": 1,
+   "key": "B",
+   "title": "Session B",
+   "sub": "Bench and legs",
+   "date": "2026-09-09",
+   "week": 1,
+   "light": "green",
+   "status": "done",
+   "startedAt": 1788969720000,
+   "finishedAt": 1788974400000,
+   "notes": "Slept badly, kept it controlled.",
+   "endedEarly": null,
+   "check": {
+    "status": "same",
+    "at": 1789142520000
+   },
+   "exercises": [
+    {
+     "id": "goblet",
+     "lo": 8,
+     "hi": 10,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201310",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "8",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "8",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "8",
+       "ph": "10",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "bench",
+     "lo": 6,
+     "hi": 8,
+     "ss": "b",
+     "plannedSets": 3,
+     "target": "3 \u00d7 6\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "60",
+       "reps": "6",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "60",
+       "reps": "6",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "60",
+       "reps": "5",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "csrow",
+     "lo": 8,
+     "hi": 12,
+     "ss": "b",
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "7",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "11",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "11",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "17.5",
+       "reps": "11",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "17.5",
+       "reps": "10",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "calfseat",
+     "lo": 12,
+     "hi": 15,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 12\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "11",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbcurl",
+     "lo": 8,
+     "hi": 12,
+     "ss": "a",
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "12.5",
+       "reps": "7",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pushdown",
+     "lo": 10,
+     "hi": 15,
+     "ss": "a",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "10",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "9",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "deadbug",
+     "lo": 5,
+     "hi": 5,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 5 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "5",
+       "ph": "5",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "4",
+       "ph": "5",
+       "done": true
+      }
+     ]
+    }
+   ]
+  },
+  "2026-09-11-mock03": {
+   "id": "2026-09-11-mock03",
+   "phase": 1,
+   "key": "A",
+   "title": "Session A",
+   "sub": "Squat and press",
+   "date": "2026-09-11",
+   "week": 1,
+   "light": "green",
+   "status": "done",
+   "startedAt": 1789143780000,
+   "finishedAt": 1789147740000,
+   "notes": "Bit of nerve tingling in the left calf afterwards, gone by evening.",
+   "endedEarly": null,
+   "check": {
+    "status": "same",
+    "at": 1789316580000
+   },
+   "exercises": [
+    {
+     "id": "ssb",
+     "lo": 6,
+     "hi": 8,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 6\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "40",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "40",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "40",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbpress",
+     "lo": 8,
+     "hi": 12,
+     "ss": "p",
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "15",
+       "reps": "9",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "15",
+       "reps": "9",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "15",
+       "reps": "9",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pullup",
+     "lo": 5,
+     "hi": 8,
+     "ss": "p",
+     "plannedSets": 3,
+     "target": "3 \u00d7 5\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "6",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "6",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "6",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "hyper",
+     "lo": 8,
+     "hi": 12,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "10",
+       "reps": "9",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "10",
+       "reps": "9",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "10",
+       "reps": "9",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "17.5",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "17.5",
+       "reps": "11",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pallof",
+     "lo": 8,
+     "hi": 8,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 8 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "10",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "10",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "splank",
+     "lo": 20,
+     "hi": 30,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 20\u201330s each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "25",
+       "ph": "30",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "25",
+       "ph": "30",
+       "done": true
+      }
+     ]
+    }
+   ]
+  },
+  "2026-09-14-mock04": {
+   "id": "2026-09-14-mock04",
+   "phase": 1,
+   "key": "B",
+   "title": "Session B",
+   "sub": "Bench and legs",
+   "date": "2026-09-14",
+   "week": 2,
+   "light": "green",
+   "status": "done",
+   "startedAt": 1789402800000,
+   "finishedAt": 1789406460000,
+   "notes": "Bit of nerve tingling in the left calf afterwards, gone by evening.",
+   "endedEarly": null,
+   "check": {
+    "status": "same",
+    "at": 1789575600000
+   },
+   "exercises": [
+    {
+     "id": "goblet",
+     "lo": 8,
+     "hi": 10,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201310",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "9",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "9",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "9",
+       "ph": "10",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "bench",
+     "lo": 6,
+     "hi": 8,
+     "ss": "b",
+     "plannedSets": 3,
+     "target": "3 \u00d7 6\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "60",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "60",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "60",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "csrow",
+     "lo": 8,
+     "hi": 12,
+     "ss": "b",
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "9",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "9",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "13",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "17.5",
+       "reps": "13",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "17.5",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "calfseat",
+     "lo": 12,
+     "hi": 15,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 12\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "13",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "13",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbcurl",
+     "lo": 8,
+     "hi": 12,
+     "ss": "a",
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "9",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "12.5",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pushdown",
+     "lo": 10,
+     "hi": 15,
+     "ss": "a",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "11",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "11",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "deadbug",
+     "lo": 5,
+     "hi": 5,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 5 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "5",
+       "ph": "5",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "5",
+       "ph": "5",
+       "done": true
+      }
+     ]
+    }
+   ]
+  },
+  "2026-09-16-mock05": {
+   "id": "2026-09-16-mock05",
+   "phase": 1,
+   "key": "A",
+   "title": "Session A",
+   "sub": "Squat and press",
+   "date": "2026-09-16",
+   "week": 2,
+   "light": "green",
+   "status": "done",
+   "startedAt": 1789576800000,
+   "finishedAt": 1789580400000,
+   "notes": "Felt solid, back quiet.",
+   "endedEarly": null,
+   "check": {
+    "status": "same",
+    "at": 1789749600000
+   },
+   "exercises": [
+    {
+     "id": "ssb",
+     "lo": 6,
+     "hi": 8,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 6\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "40",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "40",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "40",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbpress",
+     "lo": 8,
+     "hi": 12,
+     "ss": "p",
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "15",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "15",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "15",
+       "reps": "9",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pullup",
+     "lo": 5,
+     "hi": 8,
+     "ss": "p",
+     "plannedSets": 3,
+     "target": "3 \u00d7 5\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "6",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "hyper",
+     "lo": 8,
+     "hi": 12,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "10",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "10",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "10",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "14",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "14",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "17.5",
+       "reps": "14",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "17.5",
+       "reps": "13",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pallof",
+     "lo": 8,
+     "hi": 8,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 8 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "10",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "10",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "splank",
+     "lo": 20,
+     "hi": 30,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 20\u201330s each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "30",
+       "ph": "30",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "30",
+       "ph": "30",
+       "done": true
+      }
+     ]
+    }
+   ]
+  },
+  "2026-09-18-mock06": {
+   "id": "2026-09-18-mock06",
+   "phase": 1,
+   "key": "B",
+   "title": "Session B",
+   "sub": "Bench and legs",
+   "date": "2026-09-18",
+   "week": 2,
+   "light": "green",
+   "status": "done",
+   "startedAt": 1789748160000,
+   "finishedAt": 1789752420000,
+   "notes": "",
+   "endedEarly": null,
+   "check": {
+    "status": "same",
+    "at": 1789920960000
+   },
+   "exercises": [
+    {
+     "id": "goblet",
+     "lo": 8,
+     "hi": 10,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201310",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "10",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "10",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "10",
+       "ph": "10",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "bench",
+     "lo": 6,
+     "hi": 8,
+     "ss": "b",
+     "plannedSets": 3,
+     "target": "3 \u00d7 6\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "60",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "60",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "60",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "csrow",
+     "lo": 8,
+     "hi": 12,
+     "ss": "b",
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "17.5",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "17.5",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "calfseat",
+     "lo": 12,
+     "hi": 15,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 12\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "14",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "14",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "13",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbcurl",
+     "lo": 8,
+     "hi": 12,
+     "ss": "a",
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "12.5",
+       "reps": "9",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pushdown",
+     "lo": 10,
+     "hi": 15,
+     "ss": "a",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "11",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "deadbug",
+     "lo": 5,
+     "hi": 5,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 5 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "5",
+       "ph": "5",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "4",
+       "ph": "5",
+       "done": true
+      }
+     ]
+    }
+   ]
+  },
+  "2026-09-21-mock07": {
+   "id": "2026-09-21-mock07",
+   "phase": 1,
+   "key": "A",
+   "title": "Session A",
+   "sub": "Squat and press",
+   "date": "2026-09-21",
+   "week": 3,
+   "light": "green",
+   "status": "done",
+   "startedAt": 1790008560000,
+   "finishedAt": 1790011980000,
+   "notes": "Slept badly, kept it controlled.",
+   "endedEarly": null,
+   "check": {
+    "status": "worse",
+    "at": 1790181360000
+   },
+   "exercises": [
+    {
+     "id": "ssb",
+     "lo": 6,
+     "hi": 8,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 6\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "45",
+       "reps": "6",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "45",
+       "reps": "6",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "45",
+       "reps": "5",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbpress",
+     "lo": 8,
+     "hi": 12,
+     "ss": "p",
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "15",
+       "reps": "11",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "15",
+       "reps": "11",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "15",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pullup",
+     "lo": 5,
+     "hi": 8,
+     "ss": "p",
+     "plannedSets": 3,
+     "target": "3 \u00d7 5\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "hyper",
+     "lo": 8,
+     "hi": 12,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "10",
+       "reps": "11",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "10",
+       "reps": "11",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "10",
+       "reps": "11",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "10",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "10",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "10",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "10",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pallof",
+     "lo": 8,
+     "hi": 8,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 8 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "10",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "10",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "splank",
+     "lo": 20,
+     "hi": 30,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 20\u201330s each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "35",
+       "ph": "30",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "35",
+       "ph": "30",
+       "done": true
+      }
+     ]
+    }
+   ]
+  },
+  "2026-09-23-mock08": {
+   "id": "2026-09-23-mock08",
+   "phase": 1,
+   "key": "B",
+   "title": "Session B",
+   "sub": "Bench and legs",
+   "date": "2026-09-23",
+   "week": 3,
+   "light": "amber",
+   "status": "done",
+   "startedAt": 1790181180000,
+   "finishedAt": 1790185320000,
+   "notes": "Tight hamstrings to start, fine once warm.",
+   "endedEarly": null,
+   "check": {
+    "status": "settling",
+    "at": 1790353980000
+   },
+   "exercises": [
+    {
+     "id": "goblet",
+     "lo": 8,
+     "hi": 10,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201310",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "8",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "8",
+       "ph": "10",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "bench",
+     "lo": 6,
+     "hi": 8,
+     "ss": "b",
+     "plannedSets": 2,
+     "target": "2 \u00d7 6\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "60",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "60",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "csrow",
+     "lo": 8,
+     "hi": 12,
+     "ss": "b",
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "11",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "11",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 1,
+     "target": "1 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "11",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 1,
+     "target": "1 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "11",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "calfseat",
+     "lo": 12,
+     "hi": 15,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 12\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbcurl",
+     "lo": 8,
+     "hi": 12,
+     "ss": "a",
+     "plannedSets": 1,
+     "target": "1 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pushdown",
+     "lo": 10,
+     "hi": 15,
+     "ss": "a",
+     "plannedSets": 1,
+     "target": "1 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "13",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "deadbug",
+     "lo": 5,
+     "hi": 5,
+     "ss": null,
+     "plannedSets": 1,
+     "target": "1 \u00d7 5 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "4",
+       "ph": "5",
+       "done": true
+      }
+     ]
+    }
+   ]
+  },
+  "2026-09-25-mock09": {
+   "id": "2026-09-25-mock09",
+   "phase": 1,
+   "key": "A",
+   "title": "Session A",
+   "sub": "Squat and press",
+   "date": "2026-09-25",
+   "week": 3,
+   "light": "green",
+   "status": "done",
+   "startedAt": 1790354040000,
+   "finishedAt": 1790357580000,
+   "notes": "",
+   "endedEarly": null,
+   "check": {
+    "status": "same",
+    "at": 1790526840000
+   },
+   "exercises": [
+    {
+     "id": "ssb",
+     "lo": 6,
+     "hi": 8,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 6\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "45",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "45",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "45",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbpress",
+     "lo": 8,
+     "hi": 12,
+     "ss": "p",
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "15",
+       "reps": "12",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "15",
+       "reps": "12",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "15",
+       "reps": "11",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pullup",
+     "lo": 5,
+     "hi": 8,
+     "ss": "p",
+     "plannedSets": 3,
+     "target": "3 \u00d7 5\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "hyper",
+     "lo": 8,
+     "hi": 12,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "10",
+       "reps": "12",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "10",
+       "reps": "12",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "10",
+       "reps": "11",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "11",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "10",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "11",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "11",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pallof",
+     "lo": 8,
+     "hi": 8,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 8 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "10",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "10",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "splank",
+     "lo": 20,
+     "hi": 30,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 20\u201330s each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [],
+     "removed": {
+      "reason": "Short on time",
+      "at": 0,
+      "sets": [
+       {
+        "kg": "",
+        "reps": "40",
+        "ph": "30",
+        "done": true
+       },
+       {
+        "kg": "",
+        "reps": "40",
+        "ph": "30",
+        "done": true
+       }
+      ]
+     }
+    }
+   ]
+  },
+  "2026-09-28-mock10": {
+   "id": "2026-09-28-mock10",
+   "phase": 1,
+   "key": "B",
+   "title": "Session B",
+   "sub": "Bench and legs",
+   "date": "2026-09-28",
+   "week": 4,
+   "light": "green",
+   "status": "done",
+   "startedAt": 1790611860000,
+   "finishedAt": 1790615640000,
+   "notes": "",
+   "endedEarly": null,
+   "check": {
+    "status": "same",
+    "at": 1790784660000
+   },
+   "exercises": [
+    {
+     "id": "goblet",
+     "lo": 8,
+     "hi": 10,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201310",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "8",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "8",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "8",
+       "ph": "10",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "bench",
+     "lo": 6,
+     "hi": 8,
+     "ss": "b",
+     "plannedSets": 3,
+     "target": "3 \u00d7 6\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "60",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "60",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "60",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "csrow",
+     "lo": 8,
+     "hi": 12,
+     "ss": "b",
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "11",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "11",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "calfseat",
+     "lo": 12,
+     "hi": 15,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 12\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "14",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbcurl",
+     "lo": 8,
+     "hi": 12,
+     "ss": "a",
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "11",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "12.5",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pushdown",
+     "lo": 10,
+     "hi": 15,
+     "ss": "a",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "13",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "13",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "deadbug",
+     "lo": 5,
+     "hi": 5,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 5 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "5",
+       "ph": "5",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "4",
+       "ph": "5",
+       "done": true
+      }
+     ]
+    }
+   ]
+  },
+  "2026-09-30-mock11": {
+   "id": "2026-09-30-mock11",
+   "phase": 1,
+   "key": "A",
+   "title": "Session A",
+   "sub": "Squat and press",
+   "date": "2026-09-30",
+   "week": 4,
+   "light": "green",
+   "status": "done",
+   "startedAt": 1790784180000,
+   "finishedAt": 1790787780000,
+   "notes": "",
+   "endedEarly": null,
+   "check": {
+    "status": "same",
+    "at": 1790956980000
+   },
+   "exercises": [
+    {
+     "id": "ssb",
+     "lo": 6,
+     "hi": 8,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 6\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "45",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "45",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "45",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbpress",
+     "lo": 8,
+     "hi": 12,
+     "ss": "p",
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "15",
+       "reps": "12",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "15",
+       "reps": "12",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "15",
+       "reps": "12",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pullup",
+     "lo": 5,
+     "hi": 8,
+     "ss": "p",
+     "plannedSets": 3,
+     "target": "3 \u00d7 5\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "hyper",
+     "lo": 8,
+     "hi": 12,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "10",
+       "reps": "12",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "10",
+       "reps": "12",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "10",
+       "reps": "12",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "13",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "13",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "13",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pallof",
+     "lo": 8,
+     "hi": 8,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 8 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "10",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "10",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "splank",
+     "lo": 20,
+     "hi": 30,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 20\u201330s each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "40",
+       "ph": "30",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "40",
+       "ph": "30",
+       "done": true
+      }
+     ]
+    }
+   ]
+  },
+  "2026-10-02-mock12": {
+   "id": "2026-10-02-mock12",
+   "phase": 1,
+   "key": "B",
+   "title": "Session B",
+   "sub": "Bench and legs",
+   "date": "2026-10-02",
+   "week": 4,
+   "light": "green",
+   "status": "done",
+   "startedAt": 1790958600000,
+   "finishedAt": 1790962860000,
+   "notes": "",
+   "endedEarly": null,
+   "check": {
+    "status": "same",
+    "at": 1791131400000
+   },
+   "exercises": [
+    {
+     "id": "goblet",
+     "lo": 8,
+     "hi": 10,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201310",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "9",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "9",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "9",
+       "ph": "10",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "bench",
+     "lo": 6,
+     "hi": 8,
+     "ss": "b",
+     "plannedSets": 3,
+     "target": "3 \u00d7 6\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "62.5",
+       "reps": "6",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "62.5",
+       "reps": "6",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "62.5",
+       "reps": "6",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "csrow",
+     "lo": 8,
+     "hi": 12,
+     "ss": "b",
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "12",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "12",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "11",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "14",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "13",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "14",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "13",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "calfseat",
+     "lo": 12,
+     "hi": 15,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 12\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbcurl",
+     "lo": 8,
+     "hi": 12,
+     "ss": "a",
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "12",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "12.5",
+       "reps": "11",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pushdown",
+     "lo": 10,
+     "hi": 15,
+     "ss": "a",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "14",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "13",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "deadbug",
+     "lo": 5,
+     "hi": 5,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 5 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "5",
+       "ph": "5",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "4",
+       "ph": "5",
+       "done": true
+      }
+     ]
+    }
+   ]
+  },
+  "2026-10-05-mock13": {
+   "id": "2026-10-05-mock13",
+   "phase": 1,
+   "key": "A",
+   "title": "Session A",
+   "sub": "Squat and press",
+   "date": "2026-10-05",
+   "week": 5,
+   "light": "green",
+   "status": "done",
+   "startedAt": 1791217200000,
+   "finishedAt": 1791220920000,
+   "notes": "Bit of nerve tingling in the left calf afterwards, gone by evening.",
+   "endedEarly": null,
+   "check": {
+    "status": "same",
+    "at": 1791390000000
+   },
+   "exercises": [
+    {
+     "id": "ssb",
+     "lo": 6,
+     "hi": 8,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 6\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "30",
+       "reps": "6",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "30",
+       "reps": "5",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbpress",
+     "lo": 8,
+     "hi": 12,
+     "ss": "p",
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "10",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "10",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pullup",
+     "lo": 5,
+     "hi": 8,
+     "ss": "p",
+     "plannedSets": 2,
+     "target": "2 \u00d7 5\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "hyper",
+     "lo": 8,
+     "hi": 12,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "7.5",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "7.5",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 1,
+     "target": "1 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 1,
+     "target": "1 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pallof",
+     "lo": 8,
+     "hi": 8,
+     "ss": null,
+     "plannedSets": 1,
+     "target": "1 \u00d7 8 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "10",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "splank",
+     "lo": 20,
+     "hi": 30,
+     "ss": null,
+     "plannedSets": 1,
+     "target": "1 \u00d7 20\u201330s each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "40",
+       "ph": "30",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "carry",
+     "lo": 30,
+     "hi": 30,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 30m",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "30",
+       "reps": "30",
+       "ph": "30",
+       "done": true
+      },
+      {
+       "kg": "30",
+       "reps": "30",
+       "ph": "30",
+       "done": true
+      }
+     ]
+    }
+   ]
+  },
+  "2026-10-07-mock14": {
+   "id": "2026-10-07-mock14",
+   "phase": 1,
+   "key": "B",
+   "title": "Session B",
+   "sub": "Bench and legs",
+   "date": "2026-10-07",
+   "week": 5,
+   "light": "green",
+   "status": "done",
+   "startedAt": 1791391140000,
+   "finishedAt": 1791395940000,
+   "notes": "Good session. Bracing felt better.",
+   "endedEarly": null,
+   "check": {
+    "status": "same",
+    "at": 1791563940000
+   },
+   "exercises": [
+    {
+     "id": "goblet",
+     "lo": 8,
+     "hi": 10,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201310",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "10",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "12.5",
+       "reps": "9",
+       "ph": "10",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "bench",
+     "lo": 6,
+     "hi": 8,
+     "ss": "b",
+     "plannedSets": 2,
+     "target": "2 \u00d7 6\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "37.5",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "37.5",
+       "reps": "6",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "csrow",
+     "lo": 8,
+     "hi": 12,
+     "ss": "b",
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "12",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "12.5",
+       "reps": "11",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbrdl",
+     "lo": 10,
+     "hi": 10,
+     "ss": null,
+     "plannedSets": 1,
+     "target": "1 \u00d7 10",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "10",
+       "ph": "10",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 1,
+     "target": "1 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 1,
+     "target": "1 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "calfseat",
+     "lo": 12,
+     "hi": 15,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 12\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "12.5",
+       "reps": "11",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbcurl",
+     "lo": 8,
+     "hi": 12,
+     "ss": "a",
+     "plannedSets": 1,
+     "target": "1 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "7.5",
+       "reps": "11",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pushdown",
+     "lo": 10,
+     "hi": 15,
+     "ss": "a",
+     "plannedSets": 1,
+     "target": "1 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "deadbug",
+     "lo": 5,
+     "hi": 5,
+     "ss": null,
+     "plannedSets": 1,
+     "target": "1 \u00d7 5 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "5",
+       "ph": "5",
+       "done": true
+      }
+     ]
+    }
+   ]
+  },
+  "2026-10-09-mock15": {
+   "id": "2026-10-09-mock15",
+   "phase": 1,
+   "key": "A",
+   "title": "Session A",
+   "sub": "Squat and press",
+   "date": "2026-10-09",
+   "week": 5,
+   "light": "green",
+   "status": "done",
+   "startedAt": 1791562560000,
+   "finishedAt": 1791565920000,
+   "notes": "Tight hamstrings to start, fine once warm.",
+   "endedEarly": null,
+   "check": {
+    "status": "settling",
+    "at": 1791735360000
+   },
+   "exercises": [
+    {
+     "id": "ssb",
+     "lo": 6,
+     "hi": 8,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 6\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "30",
+       "reps": "6",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "30",
+       "reps": "6",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbpress",
+     "lo": 8,
+     "hi": 12,
+     "ss": "p",
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "10",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "10",
+       "reps": "7",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pullup",
+     "lo": 5,
+     "hi": 8,
+     "ss": "p",
+     "plannedSets": 2,
+     "target": "2 \u00d7 5\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [],
+     "removed": {
+      "reason": "No equipment",
+      "at": 0,
+      "sets": [
+       {
+        "kg": "",
+        "reps": "8",
+        "ph": "8",
+        "done": true
+       },
+       {
+        "kg": "",
+        "reps": "8",
+        "ph": "8",
+        "done": true
+       }
+      ]
+     }
+    },
+    {
+     "id": "csrow",
+     "lo": 8,
+     "hi": 12,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "added": true,
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "12",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "12",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "12",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "hyper",
+     "lo": 8,
+     "hi": 12,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "7.5",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "7.5",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 1,
+     "target": "1 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "14",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 1,
+     "target": "1 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pallof",
+     "lo": 8,
+     "hi": 8,
+     "ss": null,
+     "plannedSets": 1,
+     "target": "1 \u00d7 8 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "10",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "splank",
+     "lo": 20,
+     "hi": 30,
+     "ss": null,
+     "plannedSets": 1,
+     "target": "1 \u00d7 20\u201330s each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "40",
+       "ph": "30",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "carry",
+     "lo": 30,
+     "hi": 30,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 30m",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "30",
+       "reps": "30",
+       "ph": "30",
+       "done": true
+      },
+      {
+       "kg": "30",
+       "reps": "30",
+       "ph": "30",
+       "done": true
+      }
+     ]
+    }
+   ]
+  },
+  "2026-10-12-mock16": {
+   "id": "2026-10-12-mock16",
+   "phase": 1,
+   "key": "B",
+   "title": "Session B",
+   "sub": "Bench and legs",
+   "date": "2026-10-12",
+   "week": 6,
+   "light": "green",
+   "status": "done",
+   "startedAt": 1791820920000,
+   "finishedAt": 1791824880000,
+   "notes": "Left knee twinge on the last squat set, settled quickly.",
+   "endedEarly": null,
+   "check": {
+    "status": "worse",
+    "at": 1791993720000
+   },
+   "exercises": [
+    {
+     "id": "goblet",
+     "lo": 8,
+     "hi": 10,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201310",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "10",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "10",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "10",
+       "ph": "10",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "bench",
+     "lo": 6,
+     "hi": 8,
+     "ss": "b",
+     "plannedSets": 3,
+     "target": "3 \u00d7 6\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "62.5",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "62.5",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "62.5",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "csrow",
+     "lo": 8,
+     "hi": 12,
+     "ss": "b",
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "12",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "12",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "12",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbrdl",
+     "lo": 10,
+     "hi": 10,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 10",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "10",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "10",
+       "ph": "10",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "14",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "calfseat",
+     "lo": 12,
+     "hi": 15,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 12\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "11",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbcurl",
+     "lo": 8,
+     "hi": 12,
+     "ss": "a",
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "12",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "12.5",
+       "reps": "11",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pushdown",
+     "lo": 10,
+     "hi": 15,
+     "ss": "a",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "deadbug",
+     "lo": 5,
+     "hi": 5,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 5 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "5",
+       "ph": "5",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "5",
+       "ph": "5",
+       "done": true
+      }
+     ]
+    }
+   ]
+  },
+  "2026-10-14-mock17": {
+   "id": "2026-10-14-mock17",
+   "phase": 1,
+   "key": "A",
+   "title": "Session A",
+   "sub": "Squat and press",
+   "date": "2026-10-14",
+   "week": 6,
+   "light": "amber",
+   "status": "done",
+   "startedAt": 1791994500000,
+   "finishedAt": 1791998280000,
+   "notes": "Bit of nerve tingling in the left calf afterwards, gone by evening.",
+   "endedEarly": null,
+   "check": {
+    "status": "worse",
+    "at": 1792167300000
+   },
+   "exercises": [
+    {
+     "id": "goblet",
+     "lo": 8,
+     "hi": 10,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201310",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "25",
+       "reps": "8",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "25",
+       "reps": "8",
+       "ph": "10",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbpress",
+     "lo": 8,
+     "hi": 12,
+     "ss": "p",
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "17.5",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "17.5",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pullup",
+     "lo": 5,
+     "hi": 8,
+     "ss": "p",
+     "plannedSets": 2,
+     "target": "2 \u00d7 5\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "hyper",
+     "lo": 8,
+     "hi": 12,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "12.5",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 1,
+     "target": "1 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "25",
+       "reps": "9",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 1,
+     "target": "1 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pallof",
+     "lo": 8,
+     "hi": 8,
+     "ss": null,
+     "plannedSets": 1,
+     "target": "1 \u00d7 8 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "10",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "splank",
+     "lo": 20,
+     "hi": 30,
+     "ss": null,
+     "plannedSets": 1,
+     "target": "1 \u00d7 20\u201330s each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "40",
+       "ph": "30",
+       "done": true
+      }
+     ]
+    }
+   ]
+  },
+  "2026-10-16-mock18": {
+   "id": "2026-10-16-mock18",
+   "phase": 1,
+   "key": "B",
+   "title": "Session B",
+   "sub": "Bench and legs",
+   "date": "2026-10-16",
+   "week": 6,
+   "light": "amber",
+   "status": "done",
+   "startedAt": 1792167720000,
+   "finishedAt": 1792172220000,
+   "notes": "",
+   "endedEarly": null,
+   "check": {
+    "status": "same",
+    "at": 1792340520000
+   },
+   "exercises": [
+    {
+     "id": "goblet",
+     "lo": 8,
+     "hi": 10,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201310",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "25",
+       "reps": "8",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "25",
+       "reps": "7",
+       "ph": "10",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "bench",
+     "lo": 6,
+     "hi": 8,
+     "ss": "b",
+     "plannedSets": 2,
+     "target": "2 \u00d7 6\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "62.5",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "62.5",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "csrow",
+     "lo": 8,
+     "hi": 12,
+     "ss": "b",
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 1,
+     "target": "1 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "25",
+       "reps": "9",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 1,
+     "target": "1 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "calfseat",
+     "lo": 12,
+     "hi": 15,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 12\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "13",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbcurl",
+     "lo": 8,
+     "hi": 12,
+     "ss": "a",
+     "plannedSets": 1,
+     "target": "1 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "11",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pushdown",
+     "lo": 10,
+     "hi": 15,
+     "ss": "a",
+     "plannedSets": 1,
+     "target": "1 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "9",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "deadbug",
+     "lo": 5,
+     "hi": 5,
+     "ss": null,
+     "plannedSets": 1,
+     "target": "1 \u00d7 5 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "5",
+       "ph": "5",
+       "done": true
+      }
+     ]
+    }
+   ]
+  },
+  "2026-10-19-mock19": {
+   "id": "2026-10-19-mock19",
+   "phase": 1,
+   "key": "A",
+   "title": "Session A",
+   "sub": "Squat and press",
+   "date": "2026-10-19",
+   "week": 7,
+   "light": "green",
+   "status": "done",
+   "startedAt": 1792426320000,
+   "finishedAt": 1792430280000,
+   "notes": "",
+   "endedEarly": null,
+   "check": {
+    "status": "same",
+    "at": 1792599120000
+   },
+   "exercises": [
+    {
+     "id": "ssb",
+     "lo": 6,
+     "hi": 8,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 6\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "50",
+       "reps": "6",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "50",
+       "reps": "6",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "50",
+       "reps": "6",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbpress",
+     "lo": 8,
+     "hi": 12,
+     "ss": "p",
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "17.5",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "17.5",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "17.5",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pullup",
+     "lo": 5,
+     "hi": 8,
+     "ss": "p",
+     "plannedSets": 3,
+     "target": "3 \u00d7 5\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "hyper",
+     "lo": 8,
+     "hi": 12,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "12.5",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "12.5",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "25",
+       "reps": "10",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "25",
+       "reps": "9",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "20",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "20",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pallof",
+     "lo": 8,
+     "hi": 8,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 8 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "10",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "10",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "splank",
+     "lo": 20,
+     "hi": 30,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 20\u201330s each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "45",
+       "ph": "30",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "45",
+       "ph": "30",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "carry",
+     "lo": 30,
+     "hi": 30,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 30m",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "30",
+       "reps": "30",
+       "ph": "30",
+       "done": true
+      },
+      {
+       "kg": "30",
+       "reps": "30",
+       "ph": "30",
+       "done": true
+      },
+      {
+       "kg": "30",
+       "reps": "30",
+       "ph": "30",
+       "done": true
+      }
+     ]
+    }
+   ]
+  },
+  "2026-10-21-mock20": {
+   "id": "2026-10-21-mock20",
+   "phase": 1,
+   "key": "B",
+   "title": "Session B",
+   "sub": "Bench and legs",
+   "date": "2026-10-21",
+   "week": 7,
+   "light": "green",
+   "status": "done",
+   "startedAt": 1792599540000,
+   "finishedAt": 1792601220000,
+   "notes": "Felt light-headed after the hypers, stopped and sat down.",
+   "endedEarly": "Light-headed or sick",
+   "check": {
+    "status": "same",
+    "at": 1792772340000
+   },
+   "exercises": [
+    {
+     "id": "goblet",
+     "lo": 8,
+     "hi": 10,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201310",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "25",
+       "reps": "8",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "25",
+       "reps": "8",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "25",
+       "reps": "7",
+       "ph": "10",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "bench",
+     "lo": 6,
+     "hi": 8,
+     "ss": "b",
+     "plannedSets": 3,
+     "target": "3 \u00d7 6\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "62.5",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "62.5",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "62.5",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "csrow",
+     "lo": 8,
+     "hi": 12,
+     "ss": "b",
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbrdl",
+     "lo": 10,
+     "hi": 10,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 10",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "10",
+       "ph": "10",
+       "done": false
+      },
+      {
+       "kg": "22.5",
+       "reps": "9",
+       "ph": "10",
+       "done": false
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "25",
+       "reps": "11",
+       "ph": "15",
+       "done": false
+      },
+      {
+       "kg": "25",
+       "reps": "10",
+       "ph": "15",
+       "done": false
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "10",
+       "ph": "15",
+       "done": false
+      },
+      {
+       "kg": "22.5",
+       "reps": "10",
+       "ph": "15",
+       "done": false
+      }
+     ]
+    },
+    {
+     "id": "calfseat",
+     "lo": 12,
+     "hi": 15,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 12\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "13",
+       "ph": "15",
+       "done": false
+      },
+      {
+       "kg": "22.5",
+       "reps": "13",
+       "ph": "15",
+       "done": false
+      },
+      {
+       "kg": "22.5",
+       "reps": "13",
+       "ph": "15",
+       "done": false
+      }
+     ]
+    },
+    {
+     "id": "dbcurl",
+     "lo": 8,
+     "hi": 12,
+     "ss": "a",
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "12",
+       "ph": "12",
+       "done": false
+      },
+      {
+       "kg": "12.5",
+       "reps": "12",
+       "ph": "12",
+       "done": false
+      }
+     ]
+    },
+    {
+     "id": "pushdown",
+     "lo": 10,
+     "hi": 15,
+     "ss": "a",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "10",
+       "ph": "15",
+       "done": false
+      },
+      {
+       "kg": "22.5",
+       "reps": "10",
+       "ph": "15",
+       "done": false
+      }
+     ]
+    },
+    {
+     "id": "deadbug",
+     "lo": 5,
+     "hi": 5,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 5 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "5",
+       "ph": "5",
+       "done": false
+      },
+      {
+       "kg": "",
+       "reps": "5",
+       "ph": "5",
+       "done": false
+      }
+     ]
+    }
+   ]
+  },
+  "2026-10-23-mock21": {
+   "id": "2026-10-23-mock21",
+   "phase": 1,
+   "key": "A",
+   "title": "Session A",
+   "sub": "Squat and press",
+   "date": "2026-10-23",
+   "week": 7,
+   "light": "green",
+   "status": "done",
+   "startedAt": 1792773600000,
+   "finishedAt": 1792778040000,
+   "notes": "",
+   "endedEarly": null,
+   "check": {
+    "status": "same",
+    "at": 1792950000000
+   },
+   "exercises": [
+    {
+     "id": "ssb",
+     "lo": 6,
+     "hi": 8,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 6\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "50",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "50",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "50",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbpress",
+     "lo": 8,
+     "hi": 12,
+     "ss": "p",
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "17.5",
+       "reps": "9",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "17.5",
+       "reps": "9",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "17.5",
+       "reps": "9",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pullup",
+     "lo": 5,
+     "hi": 8,
+     "ss": "p",
+     "plannedSets": 3,
+     "target": "3 \u00d7 5\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "hyper",
+     "lo": 8,
+     "hi": 12,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "9",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "12.5",
+       "reps": "9",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "12.5",
+       "reps": "9",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "25",
+       "reps": "11",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "25",
+       "reps": "11",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "10",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "10",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pallof",
+     "lo": 8,
+     "hi": 8,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 8 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "10",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "10",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "splank",
+     "lo": 20,
+     "hi": 30,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 20\u201330s each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "40",
+       "ph": "30",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "45",
+       "ph": "30",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "carry",
+     "lo": 30,
+     "hi": 30,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 30m",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "30",
+       "reps": "30",
+       "ph": "30",
+       "done": true
+      },
+      {
+       "kg": "30",
+       "reps": "30",
+       "ph": "30",
+       "done": true
+      },
+      {
+       "kg": "30",
+       "reps": "30",
+       "ph": "30",
+       "done": true
+      }
+     ]
+    }
+   ]
+  },
+  "2026-10-26-mock22": {
+   "id": "2026-10-26-mock22",
+   "phase": 1,
+   "key": "B",
+   "title": "Session B",
+   "sub": "Bench and legs",
+   "date": "2026-10-26",
+   "week": 8,
+   "light": "green",
+   "status": "done",
+   "startedAt": 1793034660000,
+   "finishedAt": 1793039460000,
+   "notes": "",
+   "endedEarly": null,
+   "check": {
+    "status": "worse",
+    "at": 1793207460000
+   },
+   "exercises": [
+    {
+     "id": "goblet",
+     "lo": 8,
+     "hi": 10,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201310",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "25",
+       "reps": "9",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "25",
+       "reps": "9",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "25",
+       "reps": "8",
+       "ph": "10",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "bench",
+     "lo": 6,
+     "hi": 8,
+     "ss": "b",
+     "plannedSets": 3,
+     "target": "3 \u00d7 6\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "65",
+       "reps": "6",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "65",
+       "reps": "6",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "65",
+       "reps": "6",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "csrow",
+     "lo": 8,
+     "hi": 12,
+     "ss": "b",
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "9",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "9",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "9",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbrdl",
+     "lo": 10,
+     "hi": 10,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 10",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "10",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "9",
+       "ph": "10",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "25",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "25",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "11",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "10",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "calfseat",
+     "lo": 12,
+     "hi": 15,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 12\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "13",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "13",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "13",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbcurl",
+     "lo": 8,
+     "hi": 12,
+     "ss": "a",
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "12",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "12.5",
+       "reps": "12",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pushdown",
+     "lo": 10,
+     "hi": 15,
+     "ss": "a",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "10",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "9",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "deadbug",
+     "lo": 5,
+     "hi": 5,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 5 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "5",
+       "ph": "5",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "5",
+       "ph": "5",
+       "done": true
+      }
+     ]
+    }
+   ]
+  },
+  "2026-10-28-mock23": {
+   "id": "2026-10-28-mock23",
+   "phase": 1,
+   "key": "A",
+   "title": "Session A",
+   "sub": "Squat and press",
+   "date": "2026-10-28",
+   "week": 8,
+   "light": "amber",
+   "status": "done",
+   "startedAt": 1793208720000,
+   "finishedAt": 1793212800000,
+   "notes": "",
+   "endedEarly": null,
+   "check": {
+    "status": "same",
+    "at": 1793381520000
+   },
+   "exercises": [
+    {
+     "id": "goblet",
+     "lo": 8,
+     "hi": 10,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201310",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "25",
+       "reps": "10",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "25",
+       "reps": "9",
+       "ph": "10",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbpress",
+     "lo": 8,
+     "hi": 12,
+     "ss": "p",
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "17.5",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "17.5",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pullup",
+     "lo": 5,
+     "hi": 8,
+     "ss": "p",
+     "plannedSets": 2,
+     "target": "2 \u00d7 5\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "hyper",
+     "lo": 8,
+     "hi": 12,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "12.5",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 1,
+     "target": "1 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "25",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 1,
+     "target": "1 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pallof",
+     "lo": 8,
+     "hi": 8,
+     "ss": null,
+     "plannedSets": 1,
+     "target": "1 \u00d7 8 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "10",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "splank",
+     "lo": 20,
+     "hi": 30,
+     "ss": null,
+     "plannedSets": 1,
+     "target": "1 \u00d7 20\u201330s each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "45",
+       "ph": "30",
+       "done": true
+      }
+     ]
+    }
+   ]
+  },
+  "2026-10-30-mock24": {
+   "id": "2026-10-30-mock24",
+   "phase": 1,
+   "key": "B",
+   "title": "Session B",
+   "sub": "Bench and legs",
+   "date": "2026-10-30",
+   "week": 8,
+   "light": "green",
+   "status": "done",
+   "startedAt": 1793380440000,
+   "finishedAt": 1793384460000,
+   "notes": "",
+   "endedEarly": null,
+   "check": {
+    "status": "same",
+    "at": 1793553240000
+   },
+   "exercises": [
+    {
+     "id": "goblet",
+     "lo": 8,
+     "hi": 10,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201310",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "25",
+       "reps": "10",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "25",
+       "reps": "10",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "25",
+       "reps": "10",
+       "ph": "10",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "bench",
+     "lo": 6,
+     "hi": 8,
+     "ss": "b",
+     "plannedSets": 3,
+     "target": "3 \u00d7 6\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "65",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "65",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "65",
+       "reps": "7",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "csrow",
+     "lo": 8,
+     "hi": 12,
+     "ss": "b",
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbrdl",
+     "lo": 10,
+     "hi": 10,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 10",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "10",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "9",
+       "ph": "10",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "25",
+       "reps": "13",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "25",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "11",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "calfseat",
+     "lo": 12,
+     "hi": 15,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 12\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "14",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "14",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "13",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbcurl",
+     "lo": 8,
+     "hi": 12,
+     "ss": "a",
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "15",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "15",
+       "reps": "7",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pushdown",
+     "lo": 10,
+     "hi": 15,
+     "ss": "a",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "11",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "11",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "deadbug",
+     "lo": 5,
+     "hi": 5,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 5 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "5",
+       "ph": "5",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "4",
+       "ph": "5",
+       "done": true
+      }
+     ]
+    }
+   ]
+  },
+  "2026-11-02-mock25": {
+   "id": "2026-11-02-mock25",
+   "phase": 1,
+   "key": "A",
+   "title": "Session A",
+   "sub": "Squat and press",
+   "date": "2026-11-02",
+   "week": 9,
+   "light": "green",
+   "status": "done",
+   "startedAt": 1793640840000,
+   "finishedAt": 1793645640000,
+   "notes": "Left knee twinge on the last squat set, settled quickly.",
+   "endedEarly": null,
+   "check": {
+    "status": "same",
+    "at": 1793813640000
+   },
+   "exercises": [
+    {
+     "id": "ssb",
+     "lo": 6,
+     "hi": 8,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 6\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "50",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "50",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "50",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbpress",
+     "lo": 8,
+     "hi": 12,
+     "ss": "p",
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "17.5",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "17.5",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "17.5",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pullup",
+     "lo": 5,
+     "hi": 8,
+     "ss": "p",
+     "plannedSets": 3,
+     "target": "3 \u00d7 5\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "hyper",
+     "lo": 8,
+     "hi": 12,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "12.5",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "12.5",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "12.5",
+       "reps": "9",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "25",
+       "reps": "14",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "25",
+       "reps": "13",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "13",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "13",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pallof",
+     "lo": 8,
+     "hi": 8,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 8 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "10",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "10",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "splank",
+     "lo": 20,
+     "hi": 30,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 20\u201330s each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "45",
+       "ph": "30",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "45",
+       "ph": "30",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "carry",
+     "lo": 30,
+     "hi": 30,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 30m",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "30",
+       "reps": "30",
+       "ph": "30",
+       "done": true
+      },
+      {
+       "kg": "30",
+       "reps": "30",
+       "ph": "30",
+       "done": true
+      },
+      {
+       "kg": "30",
+       "reps": "30",
+       "ph": "30",
+       "done": true
+      }
+     ]
+    }
+   ]
+  },
+  "2026-11-04-mock26": {
+   "id": "2026-11-04-mock26",
+   "phase": 1,
+   "key": "B",
+   "title": "Session B",
+   "sub": "Bench and legs",
+   "date": "2026-11-04",
+   "week": 9,
+   "light": "green",
+   "status": "done",
+   "startedAt": 1793813340000,
+   "finishedAt": 1793816940000,
+   "notes": "Slept badly, kept it controlled.",
+   "endedEarly": null,
+   "check": null,
+   "exercises": [
+    {
+     "id": "goblet",
+     "lo": 8,
+     "hi": 10,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201310",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "27.5",
+       "reps": "8",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "27.5",
+       "reps": "8",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "27.5",
+       "reps": "7",
+       "ph": "10",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "bench",
+     "lo": 6,
+     "hi": 8,
+     "ss": "b",
+     "plannedSets": 3,
+     "target": "3 \u00d7 6\u20138",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "65",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "65",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      },
+      {
+       "kg": "65",
+       "reps": "8",
+       "ph": "8",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "csrow",
+     "lo": 8,
+     "hi": 12,
+     "ss": "b",
+     "plannedSets": 3,
+     "target": "3 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "11",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "11",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "10",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbrdl",
+     "lo": 10,
+     "hi": 10,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 10",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "10",
+       "ph": "10",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "10",
+       "ph": "10",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legext",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "25",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "25",
+       "reps": "14",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "legcurl",
+     "lo": 10,
+     "hi": 15,
+     "ss": "l",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "14",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "13",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "calfseat",
+     "lo": 12,
+     "hi": 15,
+     "ss": null,
+     "plannedSets": 3,
+     "target": "3 \u00d7 12\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "15",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "dbcurl",
+     "lo": 8,
+     "hi": 12,
+     "ss": "a",
+     "plannedSets": 2,
+     "target": "2 \u00d7 8\u201312",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "15",
+       "reps": "9",
+       "ph": "12",
+       "done": true
+      },
+      {
+       "kg": "15",
+       "reps": "8",
+       "ph": "12",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "pushdown",
+     "lo": 10,
+     "hi": 15,
+     "ss": "a",
+     "plannedSets": 2,
+     "target": "2 \u00d7 10\u201315",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "22.5",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      },
+      {
+       "kg": "22.5",
+       "reps": "12",
+       "ph": "15",
+       "done": true
+      }
+     ]
+    },
+    {
+     "id": "deadbug",
+     "lo": 5,
+     "hi": 5,
+     "ss": null,
+     "plannedSets": 2,
+     "target": "2 \u00d7 5 each side",
+     "last": "",
+     "why": "",
+     "kind": "",
+     "sets": [
+      {
+       "kg": "",
+       "reps": "5",
+       "ph": "5",
+       "done": true
+      },
+      {
+       "kg": "",
+       "reps": "4",
+       "ph": "5",
+       "done": true
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "days": {
+  "2026-09-07": {
+   "date": "2026-09-07",
+   "light": "green",
+   "walkMin": 30,
+   "routine": [
+    true,
+    true,
+    false,
+    false,
+    false
+   ]
+  },
+  "2026-09-08": {
+   "date": "2026-09-08",
+   "light": "green",
+   "walkMin": 20,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-09-09": {
+   "date": "2026-09-09",
+   "light": "green",
+   "walkMin": 20,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-09-10": {
+   "date": "2026-09-10",
+   "light": "green",
+   "walkMin": 20,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    false
+   ]
+  },
+  "2026-09-11": {
+   "date": "2026-09-11",
+   "light": "green",
+   "walkMin": 25,
+   "routine": [
+    true,
+    true,
+    false,
+    false,
+    false
+   ]
+  },
+  "2026-09-12": {
+   "date": "2026-09-12",
+   "light": "green",
+   "walkMin": 30,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-09-13": {
+   "date": "2026-09-13",
+   "light": "green",
+   "walkMin": 20,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-09-14": {
+   "date": "2026-09-14",
+   "light": "green",
+   "walkMin": 20,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-09-15": {
+   "date": "2026-09-15",
+   "light": "green",
+   "walkMin": 25,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-09-16": {
+   "date": "2026-09-16",
+   "light": "green",
+   "walkMin": 25,
+   "routine": [
+    true,
+    true,
+    true,
+    false,
+    false
+   ]
+  },
+  "2026-09-17": {
+   "date": "2026-09-17",
+   "light": "green",
+   "walkMin": 25,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    false
+   ]
+  },
+  "2026-09-18": {
+   "date": "2026-09-18",
+   "light": "green",
+   "walkMin": 20,
+   "routine": [
+    true,
+    true,
+    false,
+    false,
+    false
+   ]
+  },
+  "2026-09-19": {
+   "date": "2026-09-19",
+   "light": "green",
+   "walkMin": 30,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-09-20": {
+   "date": "2026-09-20",
+   "light": "green",
+   "walkMin": 20,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-09-21": {
+   "date": "2026-09-21",
+   "light": "green",
+   "walkMin": 30,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-09-22": {
+   "date": "2026-09-22",
+   "light": "red",
+   "walkMin": 15,
+   "routine": [
+    true,
+    true,
+    false,
+    false,
+    false
+   ]
+  },
+  "2026-09-23": {
+   "date": "2026-09-23",
+   "light": "amber",
+   "walkMin": 20,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-09-24": {
+   "date": "2026-09-24",
+   "light": "amber",
+   "walkMin": 15,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-09-26": {
+   "date": "2026-09-26",
+   "light": "green",
+   "walkMin": 50,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-09-27": {
+   "date": "2026-09-27",
+   "light": "green",
+   "walkMin": 15,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-09-28": {
+   "date": "2026-09-28",
+   "light": "green",
+   "walkMin": 35,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-09-29": {
+   "date": "2026-09-29",
+   "light": "green",
+   "walkMin": 30,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    false
+   ]
+  },
+  "2026-10-01": {
+   "date": "2026-10-01",
+   "light": "green",
+   "walkMin": 30,
+   "routine": [
+    true,
+    true,
+    true,
+    false,
+    false
+   ]
+  },
+  "2026-10-02": {
+   "date": "2026-10-02",
+   "light": "green",
+   "walkMin": 35,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    false
+   ]
+  },
+  "2026-10-03": {
+   "date": "2026-10-03",
+   "light": "green",
+   "walkMin": 40,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-10-05": {
+   "date": "2026-10-05",
+   "light": "green",
+   "walkMin": 35,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-10-06": {
+   "date": "2026-10-06",
+   "light": "green",
+   "walkMin": 35,
+   "routine": [
+    true,
+    true,
+    false,
+    false,
+    false
+   ]
+  },
+  "2026-10-07": {
+   "date": "2026-10-07",
+   "light": "green",
+   "walkMin": 35,
+   "routine": [
+    true,
+    true,
+    false,
+    false,
+    false
+   ]
+  },
+  "2026-10-08": {
+   "date": "2026-10-08",
+   "light": "green",
+   "walkMin": 35,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-10-09": {
+   "date": "2026-10-09",
+   "light": "green",
+   "walkMin": 35,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    false
+   ]
+  },
+  "2026-10-11": {
+   "date": "2026-10-11",
+   "light": "green",
+   "walkMin": 0,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-10-12": {
+   "date": "2026-10-12",
+   "light": "green",
+   "walkMin": 45,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-10-13": {
+   "date": "2026-10-13",
+   "light": "red",
+   "walkMin": 0,
+   "routine": [
+    true,
+    true,
+    false,
+    false,
+    false
+   ]
+  },
+  "2026-10-14": {
+   "date": "2026-10-14",
+   "light": "amber",
+   "walkMin": 25,
+   "routine": [
+    true,
+    true,
+    false,
+    false,
+    false
+   ]
+  },
+  "2026-10-15": {
+   "date": "2026-10-15",
+   "light": "amber",
+   "walkMin": 25,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-10-16": {
+   "date": "2026-10-16",
+   "light": "amber",
+   "walkMin": 25,
+   "routine": [
+    true,
+    true,
+    true,
+    false,
+    false
+   ]
+  },
+  "2026-10-17": {
+   "date": "2026-10-17",
+   "light": "green",
+   "walkMin": 60,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-10-18": {
+   "date": "2026-10-18",
+   "light": "green",
+   "walkMin": 15,
+   "routine": [
+    true,
+    true,
+    true,
+    false,
+    false
+   ]
+  },
+  "2026-10-19": {
+   "date": "2026-10-19",
+   "light": "green",
+   "walkMin": 45,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-10-20": {
+   "date": "2026-10-20",
+   "light": "green",
+   "walkMin": 50,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-10-21": {
+   "date": "2026-10-21",
+   "light": "green",
+   "walkMin": 45,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-10-22": {
+   "date": "2026-10-22",
+   "light": "green",
+   "walkMin": 45,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-10-23": {
+   "date": "2026-10-23",
+   "light": "green",
+   "walkMin": 50,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-10-24": {
+   "date": "2026-10-24",
+   "light": "green",
+   "walkMin": 60,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-10-25": {
+   "date": "2026-10-25",
+   "light": "green",
+   "walkMin": 0,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-10-26": {
+   "date": "2026-10-26",
+   "light": "green",
+   "walkMin": 60,
+   "routine": [
+    true,
+    true,
+    true,
+    false,
+    false
+   ]
+  },
+  "2026-10-28": {
+   "date": "2026-10-28",
+   "light": "amber",
+   "walkMin": 30,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-10-29": {
+   "date": "2026-10-29",
+   "light": "green",
+   "walkMin": 50,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-10-30": {
+   "date": "2026-10-30",
+   "light": "green",
+   "walkMin": 50,
+   "routine": [
+    true,
+    true,
+    true,
+    false,
+    false
+   ]
+  },
+  "2026-10-31": {
+   "date": "2026-10-31",
+   "light": "green",
+   "walkMin": 60,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-11-01": {
+   "date": "2026-11-01",
+   "light": "green",
+   "walkMin": 15,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-11-02": {
+   "date": "2026-11-02",
+   "light": "green",
+   "walkMin": 55,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    false
+   ]
+  },
+  "2026-11-03": {
+   "date": "2026-11-03",
+   "light": "green",
+   "walkMin": 50,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    true
+   ]
+  },
+  "2026-11-04": {
+   "date": "2026-11-04",
+   "light": "green",
+   "walkMin": 55,
+   "routine": [
+    true,
+    true,
+    true,
+    true,
+    false
+   ]
+  }
+ },
+ "weights": {
+  "2026-09-07": {
+   "date": "2026-09-07",
+   "kg": 73.8,
+   "fasted": true
+  },
+  "2026-09-14": {
+   "date": "2026-09-14",
+   "kg": 74.2,
+   "fasted": true
+  },
+  "2026-09-21": {
+   "date": "2026-09-21",
+   "kg": 74.6,
+   "fasted": true
+  },
+  "2026-09-28": {
+   "date": "2026-09-28",
+   "kg": 74.8,
+   "fasted": false
+  },
+  "2026-10-05": {
+   "date": "2026-10-05",
+   "kg": 74.6,
+   "fasted": true
+  },
+  "2026-10-12": {
+   "date": "2026-10-12",
+   "kg": 74.7,
+   "fasted": false
+  },
+  "2026-10-19": {
+   "date": "2026-10-19",
+   "kg": 75.3,
+   "fasted": true
+  },
+  "2026-10-26": {
+   "date": "2026-10-26",
+   "kg": 75.3,
+   "fasted": true
+  },
+  "2026-11-02": {
+   "date": "2026-11-02",
+   "kg": 75.3,
+   "fasted": true
+  }
+ },
+ "settings": {
+  "phase": 1,
+  "startDate": "2026-09-07"
+ }
+}

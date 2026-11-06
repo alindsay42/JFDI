@@ -1,0 +1,547 @@
+{
+ "format": "jfdi-log",
+ "formatVersion": 1,
+ "profile": "wife",
+ "description": "Illustrative example of a first week on Block 1. Not real training.",
+ "sessions": [
+  {
+   "id": "2026-11-09-a1",
+   "date": "2026-11-09",
+   "startedAt": "2026-11-09T18:05:00Z",
+   "finishedAt": "2026-11-09T19:10:00Z",
+   "status": "done",
+   "programme": {
+    "id": "strength-block-1",
+    "updatedAt": "2026-11-06T23:30:00Z",
+    "phase": "return-to-bests",
+    "block": "block-1",
+    "week": 1
+   },
+   "session": {
+    "id": "session-a",
+    "name": "Session A",
+    "subtitle": "Squat, bench and rows"
+   },
+   "readiness": "green",
+   "deload": false,
+   "prescribed": {
+    "id": "session-a",
+    "name": "Session A",
+    "subtitle": "Squat, bench and rows",
+    "estimatedMinutes": 65,
+    "tiers": {
+     "primary": [
+      {
+       "type": "straight",
+       "restSec": 180,
+       "slots": [
+        {
+         "exercise": "back-squat",
+         "sets": 5,
+         "reps": {
+          "min": 5,
+          "max": 5
+         },
+         "progression": "linear-2-5",
+         "start": {
+          "kg": 30
+         }
+        }
+       ]
+      }
+     ],
+     "secondary": [
+      {
+       "type": "superset",
+       "restSec": 120,
+       "slots": [
+        {
+         "exercise": "bench-press",
+         "sets": 5,
+         "reps": {
+          "min": 5,
+          "max": 5
+         },
+         "progression": "linear-2-5",
+         "start": {
+          "kg": 25
+         }
+        },
+        {
+         "exercise": "barbell-row",
+         "sets": 3,
+         "reps": {
+          "min": 6,
+          "max": 8
+         },
+         "progression": "double-2-5",
+         "start": {
+          "kg": 15
+         }
+        }
+       ]
+      },
+      {
+       "type": "straight",
+       "restSec": 120,
+       "slots": [
+        {
+         "exercise": "romanian-deadlift",
+         "sets": 3,
+         "reps": {
+          "min": 6,
+          "max": 8
+         },
+         "progression": "double-2-5",
+         "start": {
+          "kg": 30
+         }
+        }
+       ]
+      }
+     ],
+     "tertiary": [
+      {
+       "type": "giant",
+       "rounds": 3,
+       "transitionSec": 0,
+       "restSec": 90,
+       "slots": [
+        {
+         "exercise": "db-lateral-raise",
+         "reps": {
+          "min": 12,
+          "max": 15
+         },
+         "progression": "accessory",
+         "start": {
+          "note": "Light"
+         }
+        },
+        {
+         "exercise": "plank",
+         "seconds": {
+          "min": 30,
+          "max": 45
+         },
+         "progression": "accessory"
+        },
+        {
+         "exercise": "battle-ropes",
+         "seconds": {
+          "min": 20,
+          "max": 30
+         },
+         "progression": "accessory"
+        }
+       ]
+      }
+     ]
+    }
+   },
+   "exercises": [
+    {
+     "exercise": "front-squat",
+     "name": "Front squat",
+     "slot": "primary.0.0",
+     "sets": [
+      {
+       "done": true,
+       "kg": 30,
+       "reps": 5
+      },
+      {
+       "done": true,
+       "kg": 30,
+       "reps": 5
+      },
+      {
+       "done": true,
+       "kg": 30,
+       "reps": 5
+      },
+      {
+       "done": true,
+       "kg": 30,
+       "reps": 5
+      },
+      {
+       "done": true,
+       "kg": 30,
+       "reps": 5,
+       "rpe": 7
+      }
+     ]
+    },
+    {
+     "exercise": "bench-press",
+     "name": "Bench press",
+     "slot": "secondary.0.0",
+     "sets": [
+      {
+       "done": true,
+       "kg": 25,
+       "reps": 5
+      },
+      {
+       "done": true,
+       "kg": 25,
+       "reps": 5
+      },
+      {
+       "done": true,
+       "kg": 25,
+       "reps": 5
+      },
+      {
+       "done": true,
+       "kg": 25,
+       "reps": 5
+      },
+      {
+       "done": true,
+       "kg": 25,
+       "reps": 5,
+       "rpe": 7.5
+      }
+     ]
+    },
+    {
+     "exercise": "barbell-row",
+     "name": "Barbell row",
+     "slot": "secondary.0.1",
+     "sets": [
+      {
+       "done": true,
+       "kg": 15,
+       "reps": 8
+      },
+      {
+       "done": true,
+       "kg": 15,
+       "reps": 7
+      },
+      {
+       "done": true,
+       "kg": 15,
+       "reps": 7
+      }
+     ]
+    },
+    {
+     "exercise": "romanian-deadlift",
+     "name": "Romanian deadlift",
+     "slot": "secondary.1.0",
+     "sets": [
+      {
+       "done": true,
+       "kg": 30,
+       "reps": 8
+      },
+      {
+       "done": true,
+       "kg": 30,
+       "reps": 7
+      },
+      {
+       "done": true,
+       "kg": 30,
+       "reps": 7
+      }
+     ]
+    },
+    {
+     "exercise": "db-lateral-raise",
+     "name": "DB lateral raise",
+     "slot": "tertiary.0.0",
+     "loadPer": "each",
+     "sets": [
+      {
+       "done": true,
+       "kg": 5,
+       "reps": 12
+      },
+      {
+       "done": true,
+       "kg": 5,
+       "reps": 12
+      },
+      {
+       "done": true,
+       "kg": 5,
+       "reps": 12
+      }
+     ]
+    },
+    {
+     "exercise": "plank",
+     "name": "Plank",
+     "slot": "tertiary.0.1",
+     "sets": [
+      {
+       "done": true,
+       "seconds": 30
+      },
+      {
+       "done": true,
+       "seconds": 30
+      },
+      {
+       "done": true,
+       "seconds": 30
+      }
+     ]
+    },
+    {
+     "exercise": "battle-ropes",
+     "name": "Battle ropes, double waves",
+     "slot": "tertiary.0.2",
+     "sets": [
+      {
+       "done": true,
+       "seconds": 20
+      },
+      {
+       "done": true,
+       "seconds": 20
+      },
+      {
+       "done": true,
+       "seconds": 20
+      }
+     ]
+    }
+   ],
+   "notes": "Felt good. Bench moved well.",
+   "endedEarly": null,
+   "check48h": null
+  },
+  {
+   "id": "2026-11-12-b1",
+   "date": "2026-11-12",
+   "startedAt": "2026-11-12T18:20:00Z",
+   "finishedAt": "2026-11-12T19:00:00Z",
+   "status": "done",
+   "programme": {
+    "id": "strength-block-1",
+    "updatedAt": "2026-11-06T23:30:00Z",
+    "phase": "return-to-bests",
+    "block": "block-1",
+    "week": 1
+   },
+   "session": {
+    "id": "session-b",
+    "name": "Session B",
+    "subtitle": "Deadlift and overhead press"
+   },
+   "readiness": "amber",
+   "deload": false,
+   "prescribed": {
+    "id": "session-b",
+    "name": "Session B",
+    "subtitle": "Deadlift and overhead press",
+    "estimatedMinutes": 65,
+    "tiers": {
+     "primary": [
+      {
+       "type": "straight",
+       "restSec": 180,
+       "slots": [
+        {
+         "exercise": "deadlift",
+         "sets": 3,
+         "reps": {
+          "min": 5,
+          "max": 5
+         },
+         "progression": "linear-2-5",
+         "start": {
+          "kg": 55
+         }
+        }
+       ]
+      }
+     ],
+     "secondary": [
+      {
+       "type": "superset",
+       "restSec": 120,
+       "slots": [
+        {
+         "exercise": "overhead-press-ez",
+         "sets": 5,
+         "reps": {
+          "min": 5,
+          "max": 5
+         },
+         "progression": "linear-2-5",
+         "incrementKg": 1,
+         "start": {
+          "kg": 15.5
+         },
+         "notes": "1kg jumps using all four collars (0.28kg each). Two collars add about 0.5kg."
+        },
+        {
+         "exercise": "band-pull-up",
+         "sets": 3,
+         "reps": {
+          "min": 6,
+          "max": 10
+         },
+         "progression": "accessory",
+         "alternatives": [
+          "chest-supported-db-row"
+         ],
+         "start": {
+          "note": "Choose a band that leaves 2 reps in reserve"
+         }
+        }
+       ]
+      },
+      {
+       "type": "straight",
+       "restSec": 90,
+       "slots": [
+        {
+         "exercise": "goblet-squat",
+         "sets": 2,
+         "reps": {
+          "min": 10,
+          "max": 12
+         },
+         "progression": "double-2-5",
+         "start": {
+          "kg": 12.5
+         }
+        }
+       ]
+      }
+     ]
+    }
+   },
+   "exercises": [
+    {
+     "exercise": "deadlift",
+     "name": "Deadlift",
+     "slot": "primary.0.0",
+     "sets": [
+      {
+       "done": true,
+       "kg": 55,
+       "reps": 5
+      },
+      {
+       "done": true,
+       "kg": 55,
+       "reps": 5
+      },
+      {
+       "done": true,
+       "kg": 55,
+       "reps": 5,
+       "rpe": 7
+      }
+     ]
+    },
+    {
+     "exercise": "overhead-press-ez",
+     "name": "Overhead press (EZ bar)",
+     "slot": "secondary.0.0",
+     "sets": [
+      {
+       "done": true,
+       "kg": 15.5,
+       "reps": 5
+      },
+      {
+       "done": true,
+       "kg": 15.5,
+       "reps": 5
+      },
+      {
+       "done": true,
+       "kg": 15.5,
+       "reps": 5
+      },
+      {
+       "done": true,
+       "kg": 15.5,
+       "reps": 5
+      },
+      {
+       "done": true,
+       "kg": 15.5,
+       "reps": 5,
+       "rpe": 8
+      }
+     ]
+    },
+    {
+     "exercise": "chest-supported-db-row",
+     "name": "Chest-supported DB row",
+     "slot": "secondary.0.1",
+     "sets": [
+      {
+       "done": true,
+       "reps": 10,
+       "kg": 12.5
+      },
+      {
+       "done": true,
+       "reps": 10,
+       "kg": 12.5
+      },
+      {
+       "done": true,
+       "reps": 10,
+       "kg": 12.5
+      }
+     ],
+     "swappedFrom": "band-pull-up",
+     "loadPer": "each"
+    },
+    {
+     "exercise": "goblet-squat",
+     "name": "Goblet squat",
+     "slot": "secondary.1.0",
+     "sets": [
+      {
+       "done": true,
+       "kg": 12.5,
+       "reps": 10
+      },
+      {
+       "done": true,
+       "kg": 12.5,
+       "reps": 10
+      }
+     ]
+    }
+   ],
+   "notes": "Tired after a class. Swapped pull-ups for rows, the band was in the car.",
+   "endedEarly": null,
+   "check48h": null
+  }
+ ],
+ "days": [
+  {
+   "date": "2026-11-09",
+   "readiness": "green"
+  },
+  {
+   "date": "2026-11-10",
+   "activities": [
+    {
+     "exercise": "walk",
+     "minutes": 30
+    }
+   ],
+   "notes": "Spin class"
+  },
+  {
+   "date": "2026-11-12",
+   "readiness": "amber"
+  }
+ ],
+ "bodyweight": []
+}

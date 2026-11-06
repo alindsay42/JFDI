@@ -2,7 +2,7 @@
 
 Generated from `data/equipment.json` and `data/library.json` by `npm run catalogue`. Don't edit this file by hand.
 
-39 pieces of equipment, 26 exercise families, 146 exercises.
+39 pieces of equipment, 26 exercise families, 147 exercises.
 
 ## Equipment
 
@@ -226,6 +226,7 @@ Varies by: Grip (overhand, underhand), assistance (band) or added load (belt), c
 | Pull-up (`pull-up`) | reps | Wall-mounted pull-up bar |  |
 | Chin-up (`chin-up`) | reps | Wall-mounted pull-up bar |  |
 | Weighted pull-up (`weighted-pull-up`) | kg × reps | Wall-mounted pull-up bar, Dip and pull-up loading belt |  |
+| Neutral-grip pull-up (`neutral-grip-pull-up`) | reps | Wall-mounted pull-up bar |  |
 | Band-assisted pull-up (`band-pull-up`) | reps | Wall-mounted pull-up bar, Resistance bands (various) |  |
 | Pull-up negative (`negative-pull-up`) | reps | Wall-mounted pull-up bar |  |
 | Seated cable pulldown (`cable-pulldown`) | kg × reps | Cable and pulley set (hung from the cage or pull-up bar), Freak Athletes ABX bench (flat, incline, decline) |  |
