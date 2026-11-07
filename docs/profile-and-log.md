@@ -42,7 +42,7 @@ Everything about one person lives here, never in the programme, so two people ca
 | `startDate` | Week 1 starts here |
 | `startingLoads` | Exercise id to `{ kg, reps, sets }`. Used for the first session of each exercise, then the log takes over. These win over a programme slot's own `start` |
 
-Diane's profile is purple and starts Block 1 on Tuesday 10 November. Her starting loads are the lowest of her recent numbers: squat 30kg, bench 25kg, overhead press 15.5kg, deadlift 55kg, Romanian deadlift 30kg and row 15kg.
+Diane's profile is purple and starts Block 1 on Friday 1 January 2027. Her starting loads are the lowest of her recent numbers: squat 30kg, bench 25kg, overhead press 15.5kg, deadlift 55kg, Romanian deadlift 30kg and row 15kg.
 
 ### Profile checks
 
@@ -144,5 +144,5 @@ The full table is at the top of the script. An exercise with no mapping is repor
 Settled on 6 Nov:
 
 1. **Diane's profile:** name "Diane", colour purple.
-2. **Start date:** Tuesday 10 November 2026.
+2. **Start date:** Friday 1 January 2027, so J.F.D.I can be built first. If she wants to start sooner, a copy of Rebuild Log can run Block 1 in the meantime.
 3. **Your history:** all of Rebuild Log comes across when you move to J.F.D.I, so the lift charts show the whole recovery.

@@ -5,10 +5,10 @@
  "description": "Illustrative example of a first week on Block 1. Not real training.",
  "sessions": [
   {
-   "id": "2026-11-10-a1",
-   "date": "2026-11-10",
-   "startedAt": "2026-11-10T18:05:00Z",
-   "finishedAt": "2026-11-10T19:10:00Z",
+   "id": "2027-01-01-a1",
+   "date": "2027-01-01",
+   "startedAt": "2027-01-01T18:05:00Z",
+   "finishedAt": "2027-01-01T19:10:00Z",
    "status": "done",
    "programme": {
     "id": "strength-block-1",
@@ -317,10 +317,10 @@
    "check48h": null
   },
   {
-   "id": "2026-11-13-b1",
-   "date": "2026-11-13",
-   "startedAt": "2026-11-13T18:20:00Z",
-   "finishedAt": "2026-11-13T19:00:00Z",
+   "id": "2027-01-04-b1",
+   "date": "2027-01-04",
+   "startedAt": "2027-01-04T18:20:00Z",
+   "finishedAt": "2027-01-04T19:00:00Z",
    "status": "done",
    "programme": {
     "id": "strength-block-1",
@@ -525,11 +525,11 @@
  ],
  "days": [
   {
-   "date": "2026-11-10",
+   "date": "2027-01-01",
    "readiness": "green"
   },
   {
-   "date": "2026-11-11",
+   "date": "2027-01-02",
    "activities": [
     {
      "exercise": "walk",
@@ -539,7 +539,7 @@
    "notes": "Spin class"
   },
   {
-   "date": "2026-11-13",
+   "date": "2027-01-04",
    "readiness": "amber"
   }
  ],

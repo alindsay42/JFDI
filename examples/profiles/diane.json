@@ -5,7 +5,7 @@
   "name": "Diane",
   "colour": "#7c3aed",
   "createdAt": "2026-11-06T23:40:00Z",
-  "updatedAt": "2026-11-06T23:55:00Z",
+  "updatedAt": "2026-11-07T00:05:00Z",
   "display": {
     "weightUnits": "kg",
     "theme": "device"
@@ -17,7 +17,7 @@
     "active": {
       "programme": "strength-block-1",
       "programmeUpdatedAt": "2026-11-06T23:30:00Z",
-      "startDate": "2026-11-10",
+      "startDate": "2027-01-01",
       "startingLoads": {
         "back-squat": {
           "kg": 30,
