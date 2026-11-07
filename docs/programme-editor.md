@@ -88,11 +88,12 @@ The screen has two parts, one above the other.
 - **Grouping:** tap **Pair exercises**, tap the exercises to group, then **Save**:
   - 2 exercises make a **superset**
   - 3 or more make a **giant set**
+  - **Changing a group** works the same way: tap **Pair exercises** on the group, tap an exercise to add it or tap it again to take it out, then **Save**. A group left with one exercise goes back to standalone.
 
 ## Questions still open (from 7 November, before the week planner)
 
 1. ~~Sessions~~: replaced by the week planner.
-2. **Undoing a group:** tap the group, then **Split up**?
+2. ~~Undoing a group~~: settled, see Grouping above.
 3. **Rounds:** a giant set in Block 1 runs in rounds rather than sets per exercise (for example, 3 rounds of lateral raise, plank, battle ropes). Does a giant set get a single "rounds" box instead of sets on each row?
 4. **Finisher:** Block 1 also has a timed **finisher** group. Is it a type you pick when saving a group of 3 or more, or does it go?
 5. **Timed and distance exercises:** a plank takes seconds and a carry takes metres, so those rows show seconds or metres in place of reps.
