@@ -1,5 +1,7 @@
+import { useLiveQuery } from "dexie-react-hooks";
 import { useState, type FormEvent } from "react";
 import type { JFDIProfile } from "../formats/generated/profile.ts";
+import { backupDue } from "../store/backup.ts";
 import { db } from "../store/db.ts";
 import { addProfile, PROFILE_COLOURS, setCurrentProfileId } from "../store/profiles.ts";
 import { go } from "./route.ts";
@@ -55,6 +57,12 @@ export function WhoIsTraining({ profiles, currentId }: Props) {
 
       {adding && <AddPerson onCancel={profiles.length ? () => setAdding(false) : undefined} />}
 
+      <BackupReminder />
+
+      <p className="who-links">
+        <a href="#/data">{profiles.length ? "Backup, restore and import" : "Restore a backup instead"}</a>
+      </p>
+
       <Version />
     </main>
   );
@@ -101,5 +109,19 @@ function AddPerson({ onCancel }: { onCancel: (() => void) | undefined }) {
         <button type="submit" className="btn btn-you" disabled={!name.trim() || busy}>Add</button>
       </div>
     </form>
+  );
+}
+
+function BackupReminder() {
+  const due = useLiveQuery(async () => {
+    const [change, backup] = await db.settings.bulkGet(["lastChangeAt", "lastBackupAt"]);
+    return backupDue((backup?.value as string) ?? null, (change?.value as string) ?? null);
+  });
+  if (!due) return null;
+  return (
+    <div className="reminder" role="status">
+      <span>It's been a while since the last backup.</span>
+      <a className="btn" href="#/data">Back up now</a>
+    </div>
   );
 }

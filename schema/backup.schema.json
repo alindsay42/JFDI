@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alindsay42.github.io/jfdi/schema/backup.schema.json",
+  "title": "J.F.D.I backup",
+  "description": "Everything the app holds for the household, in one file: every profile, every programme in use, and each person's training log. The equipment list and exercise library come with the app, so they aren't included. See docs/backup.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "formatVersion", "exportedAt", "app", "profiles", "programmes", "logs"],
+  "properties": {
+    "format": { "const": "jfdi-backup" },
+    "formatVersion": { "const": 1 },
+    "exportedAt": { "type": "string", "format": "date-time" },
+    "app": {
+      "description": "The version of J.F.D.I that made the backup",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version"],
+      "properties": {
+        "version": { "type": "string" },
+        "commit": { "type": "string" }
+      }
+    },
+    "profiles": { "type": "array", "items": { "$ref": "profile.schema.json" } },
+    "programmes": { "type": "array", "items": { "$ref": "programme.schema.json" } },
+    "logs": {
+      "description": "One training log per profile",
+      "type": "array",
+      "items": { "$ref": "log.schema.json" }
+    }
+  }
+}

@@ -1,11 +1,12 @@
-// Hash routing (#/today, #/who), so the app works from any address, including pull request test versions.
+// Hash routing (#/today, #/who, ...), so the app works from any address, including pull request test versions.
 import { useSyncExternalStore } from "react";
 
-export type Route = "today" | "who";
+export const ROUTES = ["today", "who", "person", "data"] as const;
+export type Route = (typeof ROUTES)[number];
 
 function read(): Route {
   const path = location.hash.replace(/^#\/?/, "");
-  return path === "who" ? "who" : "today";
+  return (ROUTES as readonly string[]).includes(path) ? (path as Route) : "today";
 }
 
 function subscribe(cb: () => void) {

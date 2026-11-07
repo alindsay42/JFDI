@@ -1,5 +1,5 @@
 import type { JFDIProfile } from "../formats/generated/profile.ts";
-import type { JfdiDatabase } from "./db.ts";
+import { markChanged, type JfdiDatabase } from "./db.ts";
 
 /** Colours offered when adding a person. Chosen to be told apart at a glance, in light and dark. */
 export const PROFILE_COLOURS = [
@@ -46,10 +46,11 @@ export function newProfile(name: string, colour: string, taken: Iterable<string>
 }
 
 export async function addProfile(db: JfdiDatabase, name: string, colour: string): Promise<JFDIProfile> {
-  return db.transaction("rw", db.profiles, async () => {
+  return db.transaction("rw", db.profiles, db.settings, async () => {
     const ids = (await db.profiles.toCollection().primaryKeys()) as string[];
     const profile = newProfile(name, colour, ids);
     await db.profiles.add(profile);
+    await markChanged(db);
     return profile;
   });
 }
@@ -63,4 +64,16 @@ export async function getCurrentProfileId(db: JfdiDatabase): Promise<string | nu
 
 export async function setCurrentProfileId(db: JfdiDatabase, id: string | null): Promise<void> {
   await db.settings.put({ key: CURRENT, value: id });
+}
+
+/** Removes a person and everything they've logged. */
+export async function deleteProfile(db: JfdiDatabase, id: string): Promise<void> {
+  await db.transaction("rw", [db.profiles, db.sessions, db.days, db.weighIns, db.settings], async () => {
+    await db.profiles.delete(id);
+    await db.sessions.where("profile").equals(id).delete();
+    await db.days.where("profile").equals(id).delete();
+    await db.weighIns.where("profile").equals(id).delete();
+    if ((await getCurrentProfileId(db)) === id) await setCurrentProfileId(db, null);
+    await markChanged(db);
+  });
 }
