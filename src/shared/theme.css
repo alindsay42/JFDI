@@ -1,0 +1,221 @@
+/* J.F.D.I theme. Built for a tablet propped up in a garage: big targets, high contrast, readable at arm's length.
+   No web fonts, so it looks the same offline. */
+:root {
+  --bg: #f4f4f2;
+  --surface: #ffffff;
+  --text: #16171a;
+  --muted: #5d6068;
+  --line: #d9dad6;
+  --focus: #0b63ce;
+  --you: #475569;
+  --on-you: #ffffff;
+  --radius: 14px;
+  --gap: clamp(12px, 2.4vw, 24px);
+  --tap: 56px;
+  color-scheme: light dark;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 18px;
+  line-height: 1.4;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111214;
+    --surface: #1b1d21;
+    --text: #f1f1ee;
+    --muted: #a3a6ad;
+    --line: #2e3137;
+    --focus: #6aa8ff;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111214;
+  --surface: #1b1d21;
+  --text: #f1f1ee;
+  --muted: #a3a6ad;
+  --line: #2e3137;
+  --focus: #6aa8ff;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--text); }
+body { min-height: 100dvh; -webkit-tap-highlight-color: transparent; }
+h1, h2, p { margin: 0; }
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+.loading { min-height: 100dvh; }
+
+.brand { font-weight: 900; letter-spacing: 0.06em; font-size: clamp(2rem, 6vw, 3rem); }
+.brand-small { font-size: 1.1rem; opacity: 0.85; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--gap);
+}
+.card h2 { font-size: 1.3rem; margin-bottom: 0.4em; }
+.hint, .empty p { color: var(--muted); }
+
+.btn {
+  min-height: var(--tap);
+  padding: 0 1.4em;
+  border-radius: 999px;
+  border: 0;
+  background: var(--text);
+  color: var(--bg);
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn:disabled { opacity: 0.4; cursor: default; }
+.btn-you { background: var(--you); color: var(--on-you); }
+.btn-quiet { background: transparent; color: var(--text); border: 2px solid var(--line); }
+.actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: var(--gap); }
+
+/* Who's training */
+.who {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: calc(var(--gap) * 2) 16px var(--gap);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--gap) * 1.5);
+}
+.who-question { font-size: 1.4rem; color: var(--muted); }
+.people {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--gap);
+}
+.person {
+  width: 100%;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-top: 10px solid var(--you);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+.person[aria-current="true"] { border-color: var(--you); }
+.person-initial {
+  display: inline-grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--you);
+  color: var(--on-you);
+  font-weight: 800;
+  font-size: 1.5rem;
+}
+.person-name { font-size: 1.3rem; font-weight: 700; }
+.person-add { border-style: dashed; border-top: 2px dashed var(--line); }
+.person-add .person-initial { background: transparent; color: var(--muted); border: 2px dashed var(--line); }
+
+.add-person { max-width: 560px; }
+.field { display: flex; flex-direction: column; gap: 6px; margin: 0 0 var(--gap); border: 0; padding: 0; }
+.field > span, .field legend { font-weight: 700; padding: 0; }
+.field input[type="text"], .field input:not([type]) {
+  min-height: var(--tap);
+  padding: 0 14px;
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+}
+.swatches { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 8px; }
+.swatch {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap);
+  border-radius: 10px;
+  background: var(--swatch);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.swatch input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.swatch:has(input:checked) { outline: 4px solid var(--text); outline-offset: 3px; }
+.swatch:has(input:focus-visible) { outline: 4px solid var(--focus); outline-offset: 3px; }
+
+/* Train screens: the person's colour runs along the top of every one */
+.screen { min-height: 100dvh; display: flex; flex-direction: column; }
+.you-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  padding-top: max(10px, env(safe-area-inset-top));
+  background: var(--you);
+  color: var(--on-you);
+}
+.you-name {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: var(--tap);
+  padding: 0 16px 0 4px;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.15);
+  color: inherit;
+  font-size: 1.3rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+.you-name .person-initial { width: 44px; height: 44px; font-size: 1.2rem; background: var(--on-you); color: var(--you); }
+.you-switch { font-size: 0.85rem; font-weight: 600; opacity: 0.85; margin-left: 4px; }
+
+.today {
+  flex: 1;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--gap) 16px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+.today-date { font-size: clamp(1.6rem, 4vw, 2.2rem); }
+
+.test-version {
+  padding: 8px 16px;
+  background: repeating-linear-gradient(-45deg, #facc15 0 14px, #fde047 14px 28px);
+  color: #16171a;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.version { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 16px; }
+
+.update {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  background: var(--text);
+  color: var(--bg);
+  box-shadow: 0 6px 24px rgb(0 0 0 / 0.3);
+}
+.update span { flex: 1; min-width: 12em; font-weight: 600; }
+.update .btn { background: var(--bg); color: var(--text); }
+.update .btn-quiet { background: transparent; color: var(--bg); border-color: currentColor; }
