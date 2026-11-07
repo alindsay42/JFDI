@@ -148,7 +148,7 @@ test("changing something and changing it back leaves nothing to save", async ({ 
   await page.getByLabel("Name").fill("Set days test");
   await page.getByRole("button", { name: "Create" }).click();
   await page.getByRole("radio", { name: "Set days" }).check();
-  await page.getByRole("link", { name: /Day 1/ }).click();
+  await page.getByRole("link", { name: /^Mon/ }).click();
   await page.getByLabel("Search exercises").fill("deadlift");
   await page.getByRole("option", { name: "Deadlift", exact: true }).click();
   await page.getByRole("button", { name: "Add highlighted" }).click();
