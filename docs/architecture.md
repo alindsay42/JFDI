@@ -1,6 +1,6 @@
 # How J.F.D.I is built
 
-Status: **proposal for review**. Nothing here is built yet.
+Status: **agreed** on 7 November 2026. Step 1 is built.
 
 This proposes the technology, the shape of the code, how it's tested, and the order Train mode is built in. Train mode needs to be ready for Diane to start on Friday 1 January 2027.
 
@@ -92,4 +92,4 @@ Settled on 7 Nov:
 
 3. **Test strictness:** both, for now. Every training rule has a test table, and every line and branch of `engine/` must be covered. Screens aren't held to a coverage figure.
 4. **Protecting `main`:** every change goes through a pull request, and every check must pass before it can merge. The rule applies to everyone.
-5. **Review:** Andrew doesn't review code. He tests anything people will see, on the test version, before merging. Changes nobody sees are merged once the checks pass. So the automatic checks carry the weight, and the rule tables are also written out as a readable page (`docs/rules.md`, generated from the tests). That way the rules can be checked without reading code.
+5. **Review and merging:** Andrew doesn't review code. Claude merges a pull request once every check passes. When a change is something people will see, Claude first asks Andrew to try its test version on the tablet, and merges once he says it's fine. So the automatic checks carry the weight, and the rule tables are also written out as a readable page (`docs/rules.md`, generated from the tests), so the rules can be checked without reading code.
