@@ -57,8 +57,10 @@ test("build a new programme from scratch, pair exercises, save it and set someon
   await page.getByLabel("Back squat reps").fill("5");
   await page.getByLabel("Rounds").fill("4");
 
-  await page.getByRole("button", { name: "Save", exact: true }).first().click();
-  // Saving a workout goes back to the plan, and says so
+  // Inside a workout there's no Save, just Done back to the plan
+  await expect(page.getByRole("button", { name: "Save", exact: true })).toHaveCount(0);
+  await page.getByRole("link", { name: "Done" }).first().click();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
   await expect(page.getByRole("status")).toHaveText("Saved.");
   await expect(page.getByRole("link", { name: /Day 1/ })).toBeVisible();
 
@@ -156,6 +158,7 @@ test("changing something and changing it back leaves nothing to save", async ({ 
   await page.getByLabel("Search exercises").fill("deadlift");
   await page.getByRole("option", { name: "Deadlift", exact: true }).click();
   await page.getByRole("button", { name: "Add highlighted" }).click();
+  await page.getByRole("link", { name: "Done" }).first().click();
   await page.getByRole("button", { name: "Save", exact: true }).click();
   await expect(page.getByRole("status")).toHaveText("Saved.");
 

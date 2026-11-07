@@ -33,7 +33,8 @@ export function BuildProgramme({ profile, profiles, id, workout }: {
   const w = workout ? p.workouts.find((x) => x.id === workout) : undefined;
   return (
     <Frame profile={profile} title={<BuildTitle p={p} workout={w?.name} />}>
-      <SaveBar draft={draft} onSaved={() => { if (workout) go("programme", p.id); }} />
+      {/* Saving is for the whole programme, so it's on the plan; a workout has Done instead */}
+      {!workout && <SaveBar draft={draft} />}
       {workout ? (
         w ? <WorkoutEditor draft={draft} workout={w} /> : <p className="card">This workout isn't in the programme any more.</p>
       ) : (
@@ -54,7 +55,7 @@ function BuildTitle({ p, workout }: { p: Programme; workout: string | undefined 
   );
 }
 
-function SaveBar({ draft, onSaved }: { draft: DraftState; onSaved: () => void }) {
+function SaveBar({ draft }: { draft: DraftState }) {
   const [asking, setAsking] = useState(false);
   if (draft.justSaved) return <div className="saved-bar" role="status">Saved.</div>;
   if (!draft.dirty && !draft.problems.length) return null;
@@ -62,7 +63,7 @@ function SaveBar({ draft, onSaved }: { draft: DraftState; onSaved: () => void })
     <div className="save-bar" role="region" aria-label="Unsaved changes">
       <span>{draft.isNew ? "Not saved yet." : "Unsaved changes."}</span>
       <button type="button" className="btn btn-quiet" onClick={() => setAsking(true)}>Discard</button>
-      <button type="button" className="btn btn-you" onClick={() => void draft.save().then((ok) => { if (ok) onSaved(); })}>Save</button>
+      <button type="button" className="btn btn-you" onClick={() => void draft.save()}>Save</button>
       {draft.problems.length > 0 && (
         <div className="problems save-problems" role="alert">
           <p>It can't be saved yet:</p>
