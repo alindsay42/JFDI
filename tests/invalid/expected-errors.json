@@ -10,5 +10,17 @@
  "week-too-crowded.json": "don't fit in a week",
  "week-with-days-and-per-week.json": "/weeks/0 must match exactly one schema in oneOf",
  "bar-not-in-library.json": "uses bar type \"ez\" but the library allows standard or junior",
- "exercise-not-in-library.json": "\"zercher-squat\" isn't in the library"
+ "exercise-not-in-library.json": "\"zercher-squat\" isn't in the library",
+ "profile-starting-load-not-in-programme.json": "starting load for \"front-squat\"",
+ "profile-unknown-equipment.json": "unavailable equipment \"bar-yoke\"",
+ "profile-old-programme-version.json": "but the profile says",
+ "profile-cant-use-needed-bar.json": "needs a standard bar, which this profile can't use",
+ "profile-bad-colour.json": "/colour must match pattern",
+ "log-slot-not-in-prescription.json": "slot secondary.5.0 isn't in the prescription",
+ "log-added-with-slot.json": "an added exercise has no slot",
+ "log-seconds-on-load-exercise.json": "seconds doesn't apply to a load exercise",
+ "log-finishes-before-start.json": "finishes before it starts",
+ "log-done-set-without-reps.json": "a completed set needs reps",
+ "log-unknown-profile.json": "profile \"ghost\" not found",
+ "log-wrong-exercise-in-slot.json": "slot primary.0.0 prescribes \"back-squat\""
 }
