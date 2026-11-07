@@ -260,7 +260,7 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 .load-rows { display: grid; gap: 8px; margin-top: 8px; }
 .load-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(4.5em, auto);
+  grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 12px;
   padding: 6px 0;
@@ -277,6 +277,7 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
   border-radius: 10px;
   background: var(--bg);
 }
+.load-input input.small { width: 3.6em; text-align: center; }
 .load-input input[aria-invalid] { border-color: #dc2626; }
 
 .checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; margin-top: 8px; }
@@ -316,7 +317,7 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
   .history-row { grid-template-columns: 1fr auto; }
   .history-name { grid-column: 1 / -1; grid-row: 1; }
   .load-row { grid-template-columns: minmax(0, 1fr) auto; }
-  .load-row .muted { grid-column: 1 / -1; }
+  .load-name { grid-column: 1 / -1; }
 }
 
 .btn-danger { background: #dc2626; color: #fff; }

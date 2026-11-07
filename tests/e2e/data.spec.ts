@@ -27,29 +27,37 @@ test("put someone on Block 1 with their own starting weights", async ({ page }) 
 
   await expect(page.getByRole("combobox", { name: "Programme" })).toHaveValue("strength-block-1");
   await page.getByLabel("Start date").fill(inDays(30));
-  const bench = page.locator(".load-row", { hasText: "Bench press" }).getByRole("textbox");
-  await expect(bench).toHaveValue("25");
-  await bench.fill("27,5");
-  await page.getByRole("checkbox", { name: /safety squat bar/ }).check();
+  await expect(page.getByLabel("Bench press weight")).toHaveValue("25");
+  await page.getByLabel("Bench press weight").fill("27,5");
+  await page.getByLabel("Barbell row sets").fill("1");
+  await page.getByLabel("Barbell row reps").fill("7");
+  await expect(page.getByText("Bars Diane can't use")).toHaveCount(0);
   await page.getByRole("button", { name: "Save" }).click();
 
   await expect(page.getByText("Strength Programme, Block 1")).toBeVisible();
   await expect(page.getByRole("row", { name: /Bench press/ })).toContainText("27.5kg");
-  await expect(page.getByText("Can't use: BLK Box safety squat bar")).toBeVisible();
+  await expect(page.getByRole("row", { name: /Barbell row/ })).toContainText("15kg1 × 7");
 
   await page.getByRole("link", { name: "Today" }).click();
   await expect(page.getByText("in 30 days")).toBeVisible();
 });
 
-test("a setup the person can't do is explained, not saved", async ({ page }) => {
+test("a starting weight needs a weight, sets and reps", async ({ page }) => {
   await page.goto("./");
   await addPerson(page, "Diane", "Purple");
   await page.goto("./#/person");
   await page.getByRole("button", { name: "Set up a programme" }).click();
-  await page.getByRole("checkbox", { name: /Beater barbell/ }).check();
-  await page.getByRole("checkbox", { name: /Bastard Barbell/ }).check();
-  await page.getByRole("button", { name: "Save" }).click();
-  await expect(page.getByRole("alert")).toContainText("needs a standard bar");
+  const save = page.getByRole("button", { name: "Save" });
+  await page.getByLabel("Back squat reps").fill("");
+  await expect(save).toBeDisabled();
+  await expect(page.getByText("whole numbers for sets and reps")).toBeVisible();
+  await page.getByLabel("Back squat reps").fill("2.5");
+  await expect(save).toBeDisabled();
+  await page.getByLabel("Back squat reps").fill("5");
+  await page.getByLabel("Deadlift weight", { exact: true }).fill("0");
+  await expect(save).toBeDisabled();
+  await page.getByLabel("Deadlift weight", { exact: true }).fill("57.5");
+  await expect(save).toBeEnabled();
   await page.getByRole("button", { name: "Cancel" }).click();
   await expect(page.getByText("No programme yet.")).toBeVisible();
 });

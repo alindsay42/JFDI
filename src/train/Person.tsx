@@ -7,11 +7,8 @@ import { daysUntil, formatKg, formatLongDate, formatShortDate, plural } from "..
 import { go } from "../shared/route.ts";
 import { Screen } from "../shared/Screen.tsx";
 import { db, type SessionRecord } from "../store/db.ts";
-import { equipment } from "../store/household.ts";
 import { deleteProfile } from "../store/profiles.ts";
 import { assignProgramme, defaultStartingLoads, localDate, ProfileError } from "../store/programmes.ts";
-
-const BARS = equipment.items.filter((i) => i.kind === "bar");
 
 export function Person({ profile }: { profile: JFDIProfile }) {
   const programmes = useLiveQuery(() => db.programmes.toArray());
@@ -49,7 +46,6 @@ export function Person({ profile }: { profile: JFDIProfile }) {
 function ProgrammeSummary({ profile, programme, onChange }: { profile: JFDIProfile; programme?: JFDIProgrammeFile; onChange: () => void }) {
   const active = profile.programmes.active!;
   const names = new Map(programme?.exercises.map((e) => [e.id, e.name]));
-  const cantUse = BARS.filter((b) => profile.unavailableEquipment?.includes(b.id)).map((b) => b.name);
   const loads = Object.entries(active.startingLoads ?? {});
   const days = daysUntil(active.startDate, localDate(new Date()));
   return (
@@ -70,7 +66,6 @@ function ProgrammeSummary({ profile, programme, onChange }: { profile: JFDIProfi
           </tbody>
         </table>
       )}
-      <p className="hint">{cantUse.length ? `Can't use: ${cantUse.join(", ")}` : "Can use every bar."}</p>
       <div className="actions actions-start">
         <button type="button" className="btn btn-quiet" onClick={onChange}>Change setup</button>
       </div>
@@ -95,15 +90,20 @@ function ProgrammeForm({
   const initialLoads = (p: JFDIProgrammeFile | undefined) => {
     const loads = p ? defaultStartingLoads(p) : {};
     if (active && p && active.programme === p.id) Object.assign(loads, active.startingLoads);
-    return Object.fromEntries(Object.entries(loads).map(([id, l]) => [id, { ...l, text: String(l.kg) }]));
+    return Object.fromEntries(
+      Object.entries(loads).map(([id, l]) => [id, { note: l.note, kg: String(l.kg), sets: String(l.sets ?? ""), reps: String(l.reps ?? "") }]),
+    );
   };
   const [loads, setLoads] = useState(() => initialLoads(programme));
-  const [cantUse, setCantUse] = useState<string[]>(profile.unavailableEquipment ?? []);
   const [problems, setProblems] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
 
   const names = new Map(programme?.exercises.map((e) => [e.id, e.name]));
-  const badLoads = Object.entries(loads).filter(([, l]) => !(Number(l.text) > 0)).map(([id]) => id);
+  const wholeNumber = (t: string) => /^\d+$/.test(t) && Number(t) >= 1;
+  const bad = (l: LoadText) => ({ kg: !(Number(l.kg) > 0), sets: !wholeNumber(l.sets), reps: !wholeNumber(l.reps) });
+  const badLoads = Object.entries(loads).filter(([, l]) => Object.values(bad(l)).some(Boolean)).map(([id]) => id);
+  const edit = (id: string, field: keyof LoadText, value: string) =>
+    setLoads({ ...loads, [id]: { ...loads[id]!, [field]: field === "kg" ? value.replace(",", ".") : value.trim() } });
 
   function chooseProgramme(id: string) {
     setProgrammeId(id);
@@ -117,9 +117,18 @@ function ProgrammeForm({
     setProblems([]);
     try {
       const startingLoads = Object.fromEntries(
-        Object.entries(loads).map(([id, { text, ...l }]) => [id, { ...l, kg: Number(text) }]),
+        Object.entries(loads).map(([id, l]) => {
+          const load: StartingLoad = { kg: Number(l.kg), sets: Number(l.sets), reps: Number(l.reps) };
+          if (l.note) load.note = l.note;
+          return [id, load];
+        }),
       );
-      await assignProgramme(db, profile.id, { programme: programmeId, startDate, startingLoads, unavailableEquipment: cantUse });
+      await assignProgramme(db, profile.id, {
+        programme: programmeId,
+        startDate,
+        startingLoads,
+        unavailableEquipment: profile.unavailableEquipment ?? [],
+      });
       onDone();
     } catch (err) {
       setProblems(err instanceof ProfileError ? err.problems : [String(err)]);
@@ -145,40 +154,29 @@ function ProgrammeForm({
 
       <fieldset className="field">
         <legend>Starting weights</legend>
-        <p className="hint">Total weight, bar included. Used for each lift's first session; after that the app works it out.</p>
+        <p className="hint">Total weight, bar included, with sets and reps. Used for each lift's first session; after that the app works it out.</p>
         <div className="load-rows">
-          {Object.entries(loads).map(([id, l]) => (
-            <label key={id} className="load-row">
-              <span className="load-name">{names.get(id) ?? id}</span>
-              <span className="load-input">
-                <input
-                  inputMode="decimal"
-                  value={l.text}
-                  aria-invalid={badLoads.includes(id) || undefined}
-                  onChange={(e) => setLoads({ ...loads, [id]: { ...l, text: e.target.value.replace(",", ".") } })}
-                />
-                <span aria-hidden="true">kg</span>
-              </span>
-              <span className="muted">{setsReps(l)}</span>
-            </label>
-          ))}
+          {Object.entries(loads).map(([id, l]) => {
+            const name = names.get(id) ?? id;
+            const b = bad(l);
+            return (
+              <div key={id} className="load-row" role="group" aria-label={name}>
+                <span className="load-name">{name}</span>
+                <span className="load-input">
+                  <input inputMode="decimal" aria-label={`${name} weight`} value={l.kg} aria-invalid={b.kg || undefined} onChange={(e) => edit(id, "kg", e.target.value)} />
+                  <span aria-hidden="true">kg</span>
+                </span>
+                <span className="load-input">
+                  <input className="small" inputMode="numeric" aria-label={`${name} sets`} value={l.sets} aria-invalid={b.sets || undefined} onChange={(e) => edit(id, "sets", e.target.value)} />
+                  <span aria-hidden="true">sets ×</span>
+                  <input className="small" inputMode="numeric" aria-label={`${name} reps`} value={l.reps} aria-invalid={b.reps || undefined} onChange={(e) => edit(id, "reps", e.target.value)} />
+                  <span aria-hidden="true">reps</span>
+                </span>
+              </div>
+            );
+          })}
         </div>
-      </fieldset>
-
-      <fieldset className="field">
-        <legend>Bars {profile.name} can't use</legend>
-        <div className="checks">
-          {BARS.map((b) => (
-            <label key={b.id} className="check">
-              <input
-                type="checkbox"
-                checked={cantUse.includes(b.id)}
-                onChange={(e) => setCantUse(e.target.checked ? [...cantUse, b.id] : cantUse.filter((x) => x !== b.id))}
-              />
-              <span>{b.name} {b.kg !== undefined && <span className="muted">{formatKg(b.kg)}</span>}</span>
-            </label>
-          ))}
-        </div>
+        {badLoads.length > 0 && <p className="hint">Each lift needs a weight, and whole numbers for sets and reps.</p>}
       </fieldset>
 
       {problems.length > 0 && (
@@ -194,6 +192,13 @@ function ProgrammeForm({
       </div>
     </form>
   );
+}
+
+interface LoadText {
+  kg: string;
+  sets: string;
+  reps: string;
+  note?: string;
 }
 
 const READINESS: Record<string, string> = { green: "Green", amber: "Amber", red: "Red" };
