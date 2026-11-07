@@ -33,6 +33,9 @@ export function useDraft(id: string): DraftState {
   const latest = useRef<Programme | null>(null);
   // The last saved version: edits that end up back where it started aren't unsaved changes.
   const saved = useRef<Programme | null>(null);
+  // Draft writes run one after another, so a quick change and change-back can't land out of order.
+  const writes = useRef(Promise.resolve());
+  const write = (job: () => Promise<unknown>) => { writes.current = writes.current.then(job, job).then(() => undefined); };
 
   useEffect(() => {
     let live = true;
@@ -61,16 +64,17 @@ export function useDraft(id: string): DraftState {
     setJustSaved(false);
     if (sameProgramme(next, saved.current)) {
       setDirty(false);
-      void discardDraft(db, id);
+      write(() => discardDraft(db, id));
     } else {
       setDirty(true);
-      void putDraft(db, { programme: next, basedOn });
+      write(() => putDraft(db, { programme: next, basedOn }));
     }
   };
 
   const save = async () => {
     const current = latest.current;
     if (!current) return false;
+    await writes.current;
     try {
       const result = await saveProgramme(db, current);
       latest.current = result;
@@ -88,6 +92,7 @@ export function useDraft(id: string): DraftState {
   };
 
   const discard = async () => {
+    await writes.current;
     await discardDraft(db, id);
     const stored = await db.programmes.get(id);
     const p = stored ? asProgramme(stored) : null;

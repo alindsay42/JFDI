@@ -123,6 +123,10 @@ test("unsaved changes survive closing the app, and can be discarded", async ({ p
   await page.getByRole("button", { name: "+ Add day" }).click();
   const day3 = page.locator(".day-card", { hasText: "Day 3" });
   await expect(day3).toBeVisible();
+  // The draft is on the device: the list says so
+  await page.getByRole("link", { name: "Programmes", exact: true }).click();
+  await expect(page.locator(".programme-row", { hasText: "Block 1" })).toContainText("Unsaved changes");
+  await page.getByRole("link", { name: /Strength Programme, Block 1/ }).click();
   await page.reload();
   await expect(page.getByText("Unsaved changes.")).toBeVisible();
   await expect(day3).toBeVisible();
@@ -161,6 +165,9 @@ test("changing something and changing it back leaves nothing to save", async ({ 
   await page.getByRole("radio", { name: "1", exact: true }).check();
   await expect(page.getByText("Unsaved changes.")).toBeHidden();
   await expect(page.getByRole("button", { name: "Use this programme" })).toBeEnabled();
+  await page.getByRole("link", { name: "Programmes", exact: true }).click();
+  await expect(page.locator(".programme-row", { hasText: "Set days test" })).not.toContainText("Unsaved changes");
+  await page.getByRole("link", { name: /Set days test/ }).click();
   await page.reload();
   await expect(page.getByText("Unsaved changes.")).toBeHidden();
 });
