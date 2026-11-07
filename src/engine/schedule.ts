@@ -58,3 +58,11 @@ export function setDaysOn(plan: Extract<Plan, { mode: "setDays" }>, startDate: s
   if (week === null) return null;
   return { ...plan.weeks[week]!.days[weekdayOf(date)], week };
 }
+
+/** The Monday of the week a date falls in. */
+export function mondayOf(date: string): string {
+  const back = WEEKDAYS.indexOf(weekdayOf(date));
+  const d = new Date(`${date}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() - back);
+  return d.toISOString().slice(0, 10);
+}

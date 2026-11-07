@@ -9,6 +9,7 @@ import { go, href } from "../shared/route.ts";
 import { Screen } from "../shared/Screen.tsx";
 import { db, type SessionRecord } from "../store/db.ts";
 import { localDate } from "../store/programmes.ts";
+import { placesOf } from "../build/model.ts";
 import { activeSession, fieldOf, getSkip, skipInForce, skipWorkout, startSession } from "../store/session.ts";
 
 const todayFormat = new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long" });
@@ -72,6 +73,7 @@ function Plan({ profile, p, sessions, skipped, now }: {
   const check = p.readiness.preset !== "off" && !!p.readiness.levels;
   const [readiness, setReadiness] = useState<Readiness | null>(null);
   const [anyway, setAnyway] = useState(false);
+  const [chosen, setChosen] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const date = localDate(now);
   const logged = sessions.map(toLogged);
@@ -79,8 +81,10 @@ function Plan({ profile, p, sessions, skipped, now }: {
   const assignment = profile.programmes.active!;
   const t = planToday({
     programme: p, assignment, sessions: logged, date, readiness: check ? readiness ?? "green" : null,
-    skippedTo: skipInForce(skipped, p.id, lastDone), ignoreRest: anyway,
+    skippedTo: skipInForce(skipped, p.id, lastDone), ignoreRest: anyway, chosen,
   });
+  // Set days: any workout in the programme can be done on any day
+  const other = p.plan.mode === "setDays" ? <OtherWorkout p={p} chosen={chosen} choose={setChosen} /> : null;
 
   const start = async () => {
     if (t.kind !== "workout" || busy) return;
@@ -113,6 +117,21 @@ function Plan({ profile, p, sessions, skipped, now }: {
         <h2>{what}</h2>
         {t.day.type === "conditioning" && t.day.minutes && <p>{t.day.minutes.min === t.day.minutes.max ? t.day.minutes.min : `${t.day.minutes.min} to ${t.day.minutes.max}`} minutes.</p>}
         {t.day.notes && <p className="hint">{t.day.notes}</p>}
+        {other}
+      </section>
+    );
+  }
+  if (t.kind === "done") {
+    const w = p.workouts.find((x) => x.id === t.workout);
+    return (
+      <section className="card">
+        {heading}
+        <h2>{w?.name ?? "Today's workout"} is done</h2>
+        <p className="hint">{t.date === date ? "Done today." : `Done early, on ${formatLongDate(t.date)}.`}</p>
+        <div className="actions actions-start">
+          <button type="button" className="btn btn-quiet" onClick={() => setChosen(t.workout)}>Do it again</button>
+        </div>
+        {other}
       </section>
     );
   }
@@ -171,6 +190,7 @@ function Plan({ profile, p, sessions, skipped, now }: {
         </div>
       )}
       {check && !readiness && t.kind === "workout" && <p className="hint">Choose how you are today first.</p>}
+      {other}
     </section>
   );
 }
@@ -222,5 +242,21 @@ function Preview({ p, t }: { p: Programme; t: Extract<TodayPlan, { kind: "workou
         ))}
       </ol>
     </>
+  );
+}
+
+/** Set days: run another day's workout today, such as Tuesday's on Monday. */
+function OtherWorkout({ p, chosen, choose }: { p: Programme; chosen: string | null; choose: (id: string | null) => void }) {
+  return (
+    <label className="field other-workout">
+      <span>Do a different workout today</span>
+      <select value={chosen ?? ""} onChange={(e) => choose(e.target.value || null)}>
+        <option value="">{chosen ? "Back to today's plan" : "Choose a workout"}</option>
+        {p.workouts.map((w) => {
+          const places = placesOf(p, w.id);
+          return <option key={w.id} value={w.id}>{w.name}{places.length && places.join(", ") !== w.name ? ` (${places.join(", ")})` : ""}</option>;
+        })}
+      </select>
+    </label>
   );
 }

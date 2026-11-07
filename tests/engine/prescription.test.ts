@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { historyOf, lastPosition, today, type LoggedSession } from "../../src/engine/prescription.ts";
 import { asProgramme, type Programme } from "../../src/formats/programme.ts";
-import { setMode } from "../../src/build/model.ts";
+import { setMode, setWeekCount } from "../../src/build/model.ts";
 import { BLOCK1 } from "../helpers/block1.ts";
 
 const block1 = () => structuredClone(asProgramme(BLOCK1));
@@ -176,5 +176,37 @@ describe("history in this programme", () => {
     const later = [done("2027-02-01", "session-b", {}, { programme: { id: "strength-block-1", week: 9 } }), ...sessions];
     expect(lastPosition(block1(), later)).toEqual({ week: 0, day: 1 });
     expect(lastPosition(setMode(block1(), "setDays"), sessions)).toBeNull();
+  });
+});
+
+describe("set days: another day's workout, and workouts already done", () => {
+  const p = () => {
+    const q = setMode(block1(), "setDays");
+    return q;
+  };
+
+  it("a workout done today shows as done, and can be done again", () => {
+    const sessions = [done("2027-01-04", "session-a", {})];
+    expect(today({ programme: p(), assignment: diane, sessions, date: "2027-01-04", readiness: null })).toEqual({ kind: "done", workout: "session-a", date: "2027-01-04" });
+    const again = today({ programme: p(), assignment: diane, sessions, date: "2027-01-04", readiness: null, chosen: "session-a" });
+    expect(workoutOf(again)?.workout.id).toBe("session-a");
+  });
+
+  it("Thursday's workout done early on Tuesday shows as done on Thursday; last week's doesn't count", () => {
+    const sessions = [done("2027-01-05", "session-b", {}), done("2026-12-31", "session-b", {})];
+    expect(today({ programme: p(), assignment: diane, sessions, date: "2027-01-07", readiness: null })).toEqual({ kind: "done", workout: "session-b", date: "2027-01-05" });
+    expect(workoutOf(today({ programme: p(), assignment: diane, sessions: [sessions[1]!], date: "2027-01-07", readiness: null }))?.workout.id).toBe("session-b");
+  });
+
+  it("any workout can be chosen on a day without one, in its own week of the cycle", () => {
+    let q = setWeekCount(p(), 2);
+    const t = workoutOf(today({ programme: q, assignment: diane, sessions: [], date: "2027-01-05", readiness: null, chosen: "session-b-2" }))!;
+    expect(t.workout.id).toBe("session-b-2");
+    expect(t.position.week).toBe(1);
+    q = p();
+    expect(workoutOf(today({ programme: q, assignment: diane, sessions: [], date: "2027-01-05", readiness: null, chosen: "session-b" }))?.position.week).toBe(0);
+    q.workouts.push({ id: "spare", name: "Spare", items: q.workouts[0]!.items });
+    expect(workoutOf(today({ programme: q, assignment: diane, sessions: [], date: "2027-01-05", readiness: null, chosen: "spare" }))?.position.week).toBe(0);
+    expect(today({ programme: p(), assignment: diane, sessions: [], date: "2027-01-05", readiness: null, chosen: "nope" }).kind).toBe("day");
   });
 });

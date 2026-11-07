@@ -99,3 +99,40 @@ test("ending early records why", async ({ page }) => {
   await page.getByRole("link", { name: "History" }).click();
   await expect(page.locator(".history-row")).toContainText("Ended early");
 });
+
+test("discard a workout part-way through; it stays next up", async ({ page }) => {
+  await dianeOnBlock1(page);
+  await page.getByRole("radio", { name: /Green/ }).check();
+  await page.getByRole("button", { name: "Start workout" }).click();
+  await page.getByRole("region", { name: "Back squat" }).getByRole("button", { name: "Set 1 done" }).click();
+  await page.getByRole("button", { name: "Discard", exact: true }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Discard" }).click();
+  await page.getByRole("radio", { name: /Green/ }).check();
+  await expect(page.getByRole("heading", { name: "Session A" })).toBeVisible();
+  await page.getByRole("link", { name: "History" }).click();
+  await expect(page.locator(".history-row")).toHaveCount(0);
+});
+
+test("set days: today's workout shows as done after, and another day's can be done today", async ({ page }) => {
+  await page.clock.install({ time: new Date("2027-01-04T10:00:00") }); // a Monday
+  await dianeOnBlock1(page);
+  await page.goto("./#/programme/strength-block-1");
+  await page.getByRole("radio", { name: "Set days" }).check();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(page.getByRole("status")).toHaveText("Saved.");
+  await page.getByRole("link", { name: "Today" }).click();
+
+  await page.getByRole("radio", { name: /Green/ }).check();
+  await expect(page.getByRole("heading", { name: "Session A" })).toBeVisible();
+  await page.getByRole("button", { name: "Start workout" }).click();
+  await page.getByRole("region", { name: "Back squat" }).getByRole("button", { name: "Set 1 done" }).click();
+  await page.getByRole("button", { name: "Finish workout" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Finish" }).click();
+
+  await expect(page.getByRole("heading", { name: "Session A is done" })).toBeVisible();
+  await page.getByLabel("Do a different workout today").selectOption({ label: "Session B (Thu)" });
+  await page.getByRole("radio", { name: /Green/ }).check();
+  await expect(page.getByRole("heading", { name: "Session B" })).toBeVisible();
+  await page.getByRole("button", { name: "Start workout" }).click();
+  await expect(page.getByRole("heading", { name: "Session B" })).toBeVisible();
+});

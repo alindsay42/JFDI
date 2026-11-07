@@ -36,6 +36,19 @@ export function Session({ profile }: { profile: JFDIProfile }) {
     if (loaded && !latest.current) { latest.current = loaded.s; setS(loaded.s); }
   }, [loaded]);
 
+  // Keep the screen on during a workout, so the rest timer stays in view and the alert isn't missed
+  useEffect(() => {
+    let lock: { release: () => Promise<void> } | null = null;
+    const take = () => {
+      (navigator as unknown as { wakeLock?: { request: (t: string) => Promise<typeof lock> } }).wakeLock
+        ?.request("screen").then((l) => { lock = l; }).catch(() => { /* not allowed or not supported */ });
+    };
+    take();
+    const again = () => { if (document.visibilityState === "visible") take(); };
+    document.addEventListener("visibilitychange", again);
+    return () => { document.removeEventListener("visibilitychange", again); void lock?.release().catch(() => {}); };
+  }, []);
+
   const edit = (fn: Edit) => {
     queue.current = queue.current.then(async () => {
       if (!latest.current) return;
@@ -80,7 +93,7 @@ function layout(s: SessionRecord): Array<{ item: Item | null; entries: number[] 
 
 function Workout({ s, p, edit, startRest }: { s: SessionRecord; p: Programme | null; edit: (fn: Edit) => Promise<void>; startRest: (sec: number) => void }) {
   const groups = useMemo(() => layout(s), [s]);
-  const [ending, setEnding] = useState<"finish" | "early" | "empty" | null>(null);
+  const [ending, setEnding] = useState<"finish" | "early" | "empty" | "discard" | null>(null);
   const [adding, setAdding] = useState(false);
   const done = s.exercises.reduce((n, e) => n + e.sets.filter((x) => x.done).length, 0);
   const planned = s.exercises.filter((e) => !e.removed).reduce((n, e) => n + e.sets.length, 0);
@@ -115,6 +128,7 @@ function Workout({ s, p, edit, startRest }: { s: SessionRecord; p: Programme | n
       </section>
 
       <div className="finish-bar">
+        <button type="button" className="btn btn-danger-quiet" onClick={() => setEnding("discard")}>Discard</button>
         <button type="button" className="btn btn-quiet" onClick={() => setEnding("early")}>End early</button>
         <button type="button" className="btn btn-you btn-big" onClick={() => setEnding(done ? "finish" : "empty")}>Finish workout</button>
       </div>
@@ -122,6 +136,10 @@ function Workout({ s, p, edit, startRest }: { s: SessionRecord; p: Programme | n
       <Confirm open={ending === "finish"} title="Finish this workout?" confirmLabel="Finish" onCancel={() => setEnding(null)}
         onConfirm={() => { setEnding(null); void finish(null); }}>
         <p>{done === planned ? "Every set is done." : `${done} of ${planned} sets are ticked. The rest are kept as planned but not done.`}</p>
+      </Confirm>
+      <Confirm open={ending === "discard"} title="Discard this workout?" confirmLabel="Discard" danger onCancel={() => setEnding(null)}
+        onConfirm={() => { setEnding(null); void edit(async (x) => { await discardSession(db, x); return x; }).then(() => go("today")); }}>
+        <p>Everything logged in it so far is thrown away, and it stays next up, so you can start it again.</p>
       </Confirm>
       <Confirm open={ending === "empty"} title="Nothing is ticked" confirmLabel="Throw it away" danger onCancel={() => setEnding(null)}
         onConfirm={() => { setEnding(null); void edit(async (x) => { await discardSession(db, x); return x; }).then(() => go("today")); }}>
@@ -217,7 +235,7 @@ function SetRow({ label, name, set, field, each, update, onDone, remove }: {
 }) {
   const tick = () => {
     void update({ done: !set.done });
-    if (!set.done) onDone();
+    if (!set.done) { primeAlert(); onDone(); }
   };
   return (
     <div className={`set-row${set.done ? " is-done" : ""}`} role="group" aria-label={`${name} ${label}`}>
@@ -306,15 +324,7 @@ function RestTimer({ rest, change, stop }: { rest: { until: number; total: numbe
   useEffect(() => {
     if (left > 0 || alerted.current) return;
     alerted.current = true;
-    try { navigator.vibrate?.([300, 150, 300]); } catch { /* not supported */ }
-    try {
-      const ctx = new AudioContext();
-      const o = ctx.createOscillator();
-      o.frequency.value = 880;
-      o.connect(ctx.destination);
-      o.start();
-      o.stop(ctx.currentTime + 0.4);
-    } catch { /* no sound available */ }
+    restOver();
   }, [left]);
   const mm = Math.floor(left / 60);
   const ss = String(left % 60).padStart(2, "0");
@@ -326,4 +336,35 @@ function RestTimer({ rest, change, stop }: { rest: { until: number; total: numbe
       <button type="button" className="btn btn-small" onClick={stop}>{left === 0 ? "Close" : "Skip"}</button>
     </div>
   );
+}
+
+// The rest alert. Browsers only let a page make sound from an audio context it started during a tap,
+// so ticking a set starts it, and the alert at the end of the rest plays through it.
+let audio: AudioContext | null = null;
+
+function primeAlert() {
+  try {
+    audio ??= new AudioContext();
+    if (audio.state === "suspended") void audio.resume();
+  } catch { /* no sound available */ }
+}
+
+function restOver() {
+  try { navigator.vibrate?.([400, 200, 400, 200, 400]); } catch { /* no vibration */ }
+  if (!audio) return;
+  try {
+    const start = audio.currentTime;
+    for (let i = 0; i < 3; i++) {
+      const osc = audio.createOscillator();
+      const gain = audio.createGain();
+      osc.type = "square";
+      osc.frequency.value = 880;
+      gain.gain.setValueAtTime(0.0001, start + i * 0.35);
+      gain.gain.exponentialRampToValueAtTime(0.4, start + i * 0.35 + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + i * 0.35 + 0.25);
+      osc.connect(gain).connect(audio.destination);
+      osc.start(start + i * 0.35);
+      osc.stop(start + i * 0.35 + 0.26);
+    }
+  } catch { /* no sound available */ }
 }
