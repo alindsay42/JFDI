@@ -1,23 +1,40 @@
 // The on-device database. Records are stored in the shapes defined in schema/, so a backup is
-// just these records written out, and an import reads them back (architecture.md, "Storage").
-import Dexie, { type EntityTable } from "dexie";
+// just these records written out, and a restore reads them back (architecture.md, "Storage").
+import Dexie, { type EntityTable, type Table } from "dexie";
 import type { JFDIProfile } from "../formats/generated/profile.ts";
+import type { JFDIProgrammeFile } from "../formats/generated/programme.ts";
+import type { Day, Session, WeighIn } from "../formats/generated/log.ts";
 
 export interface Setting {
   key: string;
   value: unknown;
 }
 
+/** A log's sessions, days and weigh-ins are stored one per row, each tagged with whose it is. */
+export type SessionRecord = Session & { profile: string };
+export type DayRecord = Day & { profile: string };
+export type WeighInRecord = WeighIn & { profile: string };
+
 export class JfdiDatabase extends Dexie {
   profiles!: EntityTable<JFDIProfile, "id">;
   settings!: EntityTable<Setting, "key">;
+  programmes!: EntityTable<JFDIProgrammeFile, "id">;
+  sessions!: Table<SessionRecord, [string, string]>;
+  days!: Table<DayRecord, [string, string]>;
+  weighIns!: Table<WeighInRecord, [string, string]>;
 
   constructor(name = "jfdi") {
     super(name);
-    // Version 1. Later versions add tables (logs, programmes) and upgrade code here, never edit this line.
+    // Each version adds to the one before. Never edit a released version; add a new one with any upgrade code.
     this.version(1).stores({
       profiles: "id, name",
       settings: "key",
+    });
+    this.version(2).stores({
+      programmes: "id",
+      sessions: "[profile+id], profile, date",
+      days: "[profile+date], profile",
+      weighIns: "[profile+date], profile",
     });
   }
 }
@@ -47,4 +64,9 @@ export async function requestPersistentStorage(): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+/** Remembers when anything last changed, for the backup reminder. Call inside the write's transaction. */
+export async function markChanged(db: JfdiDatabase, now = new Date()): Promise<void> {
+  await db.settings.put({ key: "lastChangeAt", value: now.toISOString() });
 }

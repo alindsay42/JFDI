@@ -1,9 +1,11 @@
 import { useLiveQuery } from "dexie-react-hooks";
-import { db, testVersion } from "./store/db.ts";
-import { getCurrentProfileId } from "./store/profiles.ts";
+import { Data } from "./shared/Data.tsx";
 import { useRoute } from "./shared/route.ts";
 import { UpdateBanner } from "./shared/UpdateBanner.tsx";
 import { WhoIsTraining } from "./shared/WhoIsTraining.tsx";
+import { db, testVersion } from "./store/db.ts";
+import { getCurrentProfileId } from "./store/profiles.ts";
+import { Person } from "./train/Person.tsx";
 import { Today } from "./train/Today.tsx";
 
 export function App() {
@@ -15,6 +17,13 @@ export function App() {
 
   const current = profiles.find((p) => p.id === currentId);
   const pr = testVersion(location.pathname);
+
+  let screen;
+  if (route === "data") screen = <Data profile={current} profiles={profiles} />;
+  else if (route === "who" || !current) screen = <WhoIsTraining profiles={profiles} currentId={current?.id ?? null} />;
+  else if (route === "person") screen = <Person profile={current} />;
+  else screen = <Today profile={current} />;
+
   return (
     <>
       {pr !== null && (
@@ -23,11 +32,7 @@ export function App() {
         </div>
       )}
       <UpdateBanner />
-      {route === "who" || !current ? (
-        <WhoIsTraining profiles={profiles} currentId={current?.id ?? null} />
-      ) : (
-        <Today profile={current} />
-      )}
+      {screen}
     </>
   );
 }

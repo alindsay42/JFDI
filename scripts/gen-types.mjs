@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const out = join(root, "src/formats/generated");
 const check = process.argv.includes("--check");
-const names = ["programme", "equipment", "library", "profile", "log"];
+const names = ["programme", "equipment", "library", "profile", "log", "backup"];
 const banner = "// Generated from schema/*.schema.json by scripts/gen-types.mjs. Do not edit; run `npm run types`.";
 
 mkdirSync(out, { recursive: true });

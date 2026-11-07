@@ -146,3 +146,8 @@ Settled on 6 Nov:
 1. **Diane's profile:** name "Diane", colour purple.
 2. **Start date:** Friday 1 January 2027, so J.F.D.I can be built first. If she wants to start sooner, a copy of Rebuild Log can run Block 1 in the meantime.
 3. **Your history:** all of Rebuild Log comes across when you move to J.F.D.I, so the lift charts show the whole recovery.
+
+Settled on 7 Nov:
+
+4. **Starting weights** are set with their sets and reps, all three editable on the setup screen.
+5. **No equipment restrictions on the setup screen.** `unavailableEquipment` stays in the format, and an existing value is kept, but the app doesn't ask for it. Nothing should get in the way unnecessarily.
