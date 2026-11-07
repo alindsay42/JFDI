@@ -44,6 +44,8 @@ describe("today, ad hoc (Diane's Block 1)", () => {
     expect(today({ programme: block1(), assignment: diane, sessions, date: "2027-01-02", readiness: "green" })).toMatchObject({ kind: "resting", daysLeft: 2, next: { workout: "session-b" } });
     const t = today({ programme: block1(), assignment: diane, sessions, date: "2027-01-04", readiness: "green" });
     expect(workoutOf(t)?.workout.id).toBe("session-b");
+    const anyway = today({ programme: block1(), assignment: diane, sessions, date: "2027-01-02", readiness: "green", ignoreRest: true });
+    expect(workoutOf(anyway)?.workout.id).toBe("session-b");
   });
 
   it("the squat goes up after all 5 sets of 5, and the next A asks for it", () => {

@@ -1,0 +1,101 @@
+import { readFileSync } from "node:fs";
+import { expect, test, type Page } from "@playwright/test";
+
+/** A fresh tablet with Block 1 restored (as a programme made here) and Diane on it from today. */
+async function dianeOnBlock1(page: Page) {
+  const block1 = JSON.parse(readFileSync("examples/programmes/strength-block-1.json", "utf8"));
+  block1.updatedAt = "2026-11-07T17:00:00Z";
+  const backup = { format: "jfdi-backup", formatVersion: 2, exportedAt: "2026-11-07T17:00:00Z", app: { version: "test" }, profiles: [], programmes: [block1], logs: [] };
+  await page.goto("./");
+  await page.getByRole("link", { name: "Restore a backup instead" }).click();
+  await page.getByTestId("Choose a backup to restore").setInputFiles({ name: "b.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(backup)) });
+  await page.getByRole("dialog").getByRole("button", { name: "Replace everything" }).click();
+  await expect(page.getByRole("status")).toContainText("Restored");
+  await page.getByRole("link", { name: "Back" }).click();
+  await page.getByLabel("Name").fill("Diane");
+  await page.getByRole("radio", { name: "Purple" }).check();
+  await page.getByRole("button", { name: "Add", exact: true }).click();
+  await expect(page.locator(".you-bar")).toContainText("Diane");
+  await page.goto("./#/programme/strength-block-1");
+  await page.getByRole("button", { name: "Use this programme" }).click();
+  await expect(page.getByRole("heading", { name: "Diane is on this programme" })).toBeVisible();
+  await page.getByRole("link", { name: "Today" }).click();
+}
+
+test("Today shows the next workout with its targets, after the daily check", async ({ page }) => {
+  await dianeOnBlock1(page);
+  await expect(page.getByRole("heading", { name: "Session A" })).toBeVisible();
+  await expect(page.locator(".preview-row", { hasText: "Back squat" })).toContainText("30kg · 5 × 5");
+  await expect(page.getByRole("button", { name: "Start workout" })).toBeDisabled();
+  await page.getByRole("radio", { name: /Amber/ }).check();
+  await expect(page.locator(".preview-row", { hasText: "Back squat" })).toContainText("30kg · 3 × 5");
+  await expect(page.locator(".preview-row", { hasText: "Plank" })).toHaveCount(0);
+  await page.getByRole("radio", { name: /Red/ }).check();
+  await expect(page.getByRole("heading", { name: "No lifting today" })).toBeVisible();
+  await page.getByRole("radio", { name: /Green/ }).check();
+  await page.getByRole("button", { name: "Skip to next workout" }).click();
+  await expect(page.getByRole("heading", { name: "Session B" })).toBeVisible();
+});
+
+test("do a workout: tick sets, change a weight, rest timer, remove and add exercises, finish", async ({ page }) => {
+  await dianeOnBlock1(page);
+  await page.getByRole("radio", { name: /Green/ }).check();
+  await page.getByRole("button", { name: "Start workout" }).click();
+  await expect(page.getByRole("heading", { name: "Session A" })).toBeVisible();
+
+  const squat = page.getByRole("region", { name: "Back squat" });
+  await squat.getByLabel("Set 1 weight").fill("32.5");
+  await squat.getByRole("button", { name: "Set 1 done" }).click();
+  await expect(page.getByRole("timer")).toContainText("Rest 3:00");
+  await page.getByRole("timer").getByRole("button", { name: "Skip" }).click();
+  for (const n of [2, 3, 4, 5]) await squat.getByRole("button", { name: `Set ${n} done` }).click();
+  await expect(page.getByText("5 of 27 sets done")).toBeVisible();
+
+  // Leaving and coming back keeps everything
+  await page.getByRole("link", { name: "Today" }).click();
+  await expect(page.getByRole("heading", { name: "Session A is under way" })).toBeVisible();
+  await page.getByRole("link", { name: "Carry on" }).click();
+  await expect(squat.getByLabel("Set 1 weight")).toHaveValue("32.5");
+
+  // Remove the RDL, add a curl
+  await page.getByRole("region", { name: "Romanian deadlift" }).getByRole("button", { name: "Remove", exact: true }).click();
+  await page.getByRole("dialog").getByRole("radio", { name: "Short on time" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Remove" }).click();
+  await expect(page.getByRole("region", { name: "Romanian deadlift" })).toContainText("Removed: Short on time");
+  await page.getByRole("button", { name: "+ Add an exercise" }).click();
+  await page.getByLabel("Search exercises to add").fill("db curl");
+  await page.getByRole("button", { name: "DB curl", exact: true }).click();
+  await expect(page.getByRole("region", { name: "DB curl" })).toContainText("Added");
+
+  await page.getByRole("button", { name: "Finish workout" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Finish" }).click();
+
+  // Back on Today: Session B is next, after Diane's 2 rest days
+  await expect(page.getByRole("heading", { name: "Rest day" })).toBeVisible();
+  await page.getByRole("button", { name: "Train today anyway" }).click();
+  await expect(page.getByRole("heading", { name: "Session B" })).toBeVisible();
+  await page.getByRole("link", { name: "History" }).click();
+  await expect(page.locator(".history-row")).toHaveCount(1);
+});
+
+test("a workout with nothing ticked can be thrown away, and stays next up", async ({ page }) => {
+  await dianeOnBlock1(page);
+  await page.getByRole("radio", { name: /Green/ }).check();
+  await page.getByRole("button", { name: "Start workout" }).click();
+  await page.getByRole("button", { name: "Finish workout" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Throw it away" }).click();
+  await page.getByRole("radio", { name: /Green/ }).check();
+  await expect(page.getByRole("heading", { name: "Session A" })).toBeVisible();
+});
+
+test("ending early records why", async ({ page }) => {
+  await dianeOnBlock1(page);
+  await page.getByRole("radio", { name: /Green/ }).check();
+  await page.getByRole("button", { name: "Start workout" }).click();
+  await page.getByRole("region", { name: "Back squat" }).getByRole("button", { name: "Set 1 done" }).click();
+  await page.getByRole("button", { name: "End early" }).click();
+  await page.getByRole("dialog").getByRole("radio", { name: "Feeling unwell" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "End workout" }).click();
+  await page.getByRole("link", { name: "History" }).click();
+  await expect(page.locator(".history-row")).toContainText("Ended early");
+});
