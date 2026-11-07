@@ -1,0 +1,28 @@
+# Merging to main publishes the live app to GitHub Pages. Test versions in pr-preview/ are left alone.
+name: Publish
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+concurrency:
+  group: gh-pages
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist
+          branch: gh-pages
+          clean-exclude: pr-preview/
+          force: false

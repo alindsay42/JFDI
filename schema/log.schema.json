@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alindsay42.github.io/jfdi/schema/log.schema.json",
+  "title": "J.F.D.I training log",
+  "description": "Everything one person has done: sessions as performed, daily check-ins and activities, and bodyweight. See docs/profile-and-log.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "formatVersion", "profile", "sessions", "days", "bodyweight"],
+  "properties": {
+    "format": { "const": "jfdi-log" },
+    "formatVersion": { "const": 1 },
+    "profile": { "$ref": "#/$defs/id" },
+    "description": { "type": "string", "description": "Optional, for example files and imports" },
+    "sessions": { "type": "array", "items": { "$ref": "#/$defs/session" } },
+    "days": { "type": "array", "items": { "$ref": "#/$defs/day" } },
+    "bodyweight": { "type": "array", "items": { "$ref": "#/$defs/weighIn" } }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 64 },
+    "date": { "type": "string", "format": "date" },
+    "time": { "type": "string", "format": "date-time" },
+    "kg": { "type": "number", "minimum": 0, "maximum": 1000 },
+    "level": { "enum": ["green", "amber", "red"] },
+
+    "set": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["done"],
+      "properties": {
+        "kg": { "$ref": "#/$defs/kg" },
+        "reps": { "type": "integer", "minimum": 0, "maximum": 500 },
+        "seconds": { "type": "integer", "minimum": 0, "maximum": 36000 },
+        "metres": { "type": "number", "minimum": 0 },
+        "calories": { "type": "number", "minimum": 0 },
+        "rpe": { "type": "number", "minimum": 1, "maximum": 10, "multipleOf": 0.5 },
+        "chains": { "type": "integer", "minimum": 1, "description": "Chains hung on the bar, counted separately from kg" },
+        "side": { "enum": ["left", "right"], "description": "For per-side exercises logged one side at a time" },
+        "done": { "type": "boolean", "description": "Ticked as completed. Unticked sets are kept so the log shows what was planned but not done" }
+      }
+    },
+    "exerciseEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exercise", "name", "sets"],
+      "properties": {
+        "exercise": { "$ref": "#/$defs/id" },
+        "name": { "type": "string", "minLength": 1, "description": "Copied at the time, so history reads correctly even if the library renames it" },
+        "slot": { "type": ["string", "null"], "pattern": "^(primary|secondary|tertiary)\\.[0-9]+\\.[0-9]+$", "description": "Where it sits in the prescription, as tier.block.slot. null for an exercise added during the session" },
+        "loadPer": { "enum": ["total", "each"] },
+        "added": { "type": "boolean" },
+        "swappedFrom": { "$ref": "#/$defs/id" },
+        "removed": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": { "reason": { "type": ["string", "null"] } }
+        },
+        "sets": { "type": "array", "items": { "$ref": "#/$defs/set" } },
+        "notes": { "type": "string" }
+      }
+    },
+    "session": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "date", "startedAt", "status", "session", "readiness", "exercises"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "date": { "$ref": "#/$defs/date" },
+        "startedAt": { "$ref": "#/$defs/time" },
+        "finishedAt": { "oneOf": [{ "$ref": "#/$defs/time" }, { "type": "null" }] },
+        "status": { "enum": ["active", "done"] },
+        "programme": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["id", "updatedAt"],
+              "properties": {
+                "id": { "$ref": "#/$defs/id" },
+                "updatedAt": { "$ref": "#/$defs/time" },
+                "phase": { "$ref": "#/$defs/id" },
+                "block": { "$ref": "#/$defs/id" },
+                "week": { "type": "integer", "minimum": 1 }
+              }
+            }
+          ]
+        },
+        "session": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "name"],
+          "properties": { "id": { "$ref": "#/$defs/id" }, "name": { "type": "string", "minLength": 1 }, "subtitle": { "type": "string" } }
+        },
+        "readiness": { "oneOf": [{ "$ref": "#/$defs/level" }, { "type": "null" }], "description": "null when the daily check is off" },
+        "deload": { "type": "boolean" },
+        "prescribed": {
+          "description": "The session as prescribed on the day, after readiness and deload rules. A copy, so editing the programme never rewrites history",
+          "$ref": "programme.schema.json#/$defs/session"
+        },
+        "exercises": { "type": "array", "items": { "$ref": "#/$defs/exerciseEntry" } },
+        "notes": { "type": "string" },
+        "endedEarly": { "type": ["string", "null"] },
+        "check48h": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["status", "at"],
+              "properties": { "status": { "enum": ["same", "settling", "worse"] }, "at": { "$ref": "#/$defs/time" } }
+            }
+          ]
+        },
+        "importedFrom": { "type": "string", "description": "Set on sessions brought in from another app, such as rebuild-log" }
+      },
+      "if": { "properties": { "status": { "const": "done" } } },
+      "then": { "required": ["finishedAt"] }
+    },
+
+    "activity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exercise"],
+      "properties": {
+        "exercise": { "$ref": "#/$defs/id", "description": "A library exercise, such as walk or ruck-walk" },
+        "minutes": { "type": "number", "minimum": 0 },
+        "kg": { "$ref": "#/$defs/kg" },
+        "metres": { "type": "number", "minimum": 0 },
+        "notes": { "type": "string" }
+      }
+    },
+    "day": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["date"],
+      "properties": {
+        "date": { "$ref": "#/$defs/date" },
+        "readiness": { "$ref": "#/$defs/level" },
+        "activities": { "type": "array", "items": { "$ref": "#/$defs/activity" } },
+        "notes": { "type": "string" }
+      }
+    },
+    "weighIn": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["date", "kg"],
+      "properties": {
+        "date": { "$ref": "#/$defs/date" },
+        "kg": { "type": "number", "minimum": 20, "maximum": 300 },
+        "fasted": { "type": "boolean", "description": "Morning, before food and drink" }
+      }
+    }
+  }
+}

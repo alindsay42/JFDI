@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alindsay42.github.io/jfdi/schema/equipment.schema.json",
+  "title": "J.F.D.I household equipment",
+  "description": "Everything in the gym, with the details that matter for planning. See docs/equipment-and-library.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "formatVersion", "name", "updatedAt", "items"],
+  "properties": {
+    "format": { "const": "jfdi-equipment" },
+    "formatVersion": { "const": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "items": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/item" } }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 64 },
+    "kg": { "type": "number", "minimum": 0, "maximum": 1000, "description": "Measured weights can be any value, such as a 19.2kg bar or 0.28kg collars" },
+    "item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "kind"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["bar", "plates", "collars", "chains", "dumbbells", "odd-object", "rack", "attachment", "handle", "cable", "bench", "station", "conditioning", "accessory"] },
+        "barType": { "enum": ["standard", "junior", "ez", "ssb", "trap", "log", "swiss"] },
+        "kg": { "$ref": "#/$defs/kg" },
+        "kgEach": { "$ref": "#/$defs/kg" },
+        "count": { "type": "integer", "minimum": 1, "description": "How many, for chains, loadable handles and the like" },
+        "plates": {
+          "description": "Each plate size and how many single plates there are",
+          "type": "array",
+          "items": { "type": "object", "additionalProperties": false, "required": ["kg", "count"], "properties": { "kg": { "$ref": "#/$defs/kg" }, "count": { "type": "integer", "minimum": 1 } } }
+        },
+        "pairsKg": { "type": "array", "items": { "$ref": "#/$defs/kg" }, "uniqueItems": true, "description": "Fixed dumbbell pairs, by weight of one dumbbell" },
+        "unavailableKg": { "type": "array", "items": { "$ref": "#/$defs/kg" }, "uniqueItems": true, "description": "Pairs owned but not available right now, such as lent out" },
+        "preferredFor": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true, "description": "Library exercises this bar should be used for when there's a choice" },
+        "attachesTo": { "$ref": "#/$defs/id" },
+        "tbc": { "type": "boolean", "description": "Some details still to confirm" },
+        "notes": { "type": "string" }
+      },
+      "allOf": [
+        { "if": { "properties": { "kind": { "const": "bar" } } }, "then": { "required": ["barType", "kg"] } },
+        { "if": { "properties": { "kind": { "const": "attachment" } } }, "then": { "required": ["attachesTo"] } },
+        { "if": { "properties": { "kind": { "const": "plates" } } }, "then": { "required": ["plates"] } }
+      ]
+    }
+  }
+}

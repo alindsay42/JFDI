@@ -1,0 +1,44 @@
+# Every check a change must pass before it can merge (docs/architecture.md, decision 4).
+name: Checks
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  checks:
+    name: All checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Data formats, generated types and the rules page
+        run: npm run test:formats
+      - name: Code consistency (TypeScript)
+        run: npm run typecheck
+      - name: Training rules, with every line covered
+        run: npm run test:unit
+      - name: Build
+        run: npm run build
+      - name: Install the test browser
+        run: npx playwright install --with-deps chromium
+      - name: Whole app, tablet and phone, light and dark, offline
+        run: npm run test:e2e
+      - name: Keep the browser test report if anything failed
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
