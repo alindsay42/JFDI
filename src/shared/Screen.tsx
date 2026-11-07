@@ -7,6 +7,7 @@ import { Version } from "./Version.tsx";
 const TABS: Array<{ route: Route; label: string }> = [
   { route: "today", label: "Today" },
   { route: "person", label: "Setup & history" },
+  { route: "build", label: "Build" },
   { route: "data", label: "Backup" },
 ];
 

@@ -1,6 +1,8 @@
 import { useLiveQuery } from "dexie-react-hooks";
+import { BuildHome } from "./build/BuildHome.tsx";
+import { BuildProgramme } from "./build/BuildProgramme.tsx";
 import { Data } from "./shared/Data.tsx";
-import { useRoute } from "./shared/route.ts";
+import { useRoute, useRouteParams } from "./shared/route.ts";
 import { UpdateBanner } from "./shared/UpdateBanner.tsx";
 import { WhoIsTraining } from "./shared/WhoIsTraining.tsx";
 import { db, testVersion } from "./store/db.ts";
@@ -10,6 +12,7 @@ import { Today } from "./train/Today.tsx";
 
 export function App() {
   const route = useRoute();
+  const params = useRouteParams();
   const profiles = useLiveQuery(() => db.profiles.orderBy("name").toArray());
   const currentId = useLiveQuery(() => getCurrentProfileId(db));
 
@@ -20,6 +23,11 @@ export function App() {
 
   let screen;
   if (route === "data") screen = <Data profile={current} profiles={profiles} />;
+  else if (route === "build") {
+    screen = params[0]
+      ? <BuildProgramme key={params[0]} profile={current} profiles={profiles} id={params[0]} workout={params[1]} />
+      : <BuildHome profile={current} profiles={profiles} />;
+  }
   else if (route === "who" || !current) screen = <WhoIsTraining profiles={profiles} currentId={current?.id ?? null} />;
   else if (route === "person") screen = <Person profile={current} />;
   else screen = <Today profile={current} />;

@@ -1,0 +1,241 @@
+import { describe, expect, it } from "vitest";
+import {
+  addDay, addExercises, copyWeek, group, groupOf, moveDay, moveItem, moveSlot, newProgramme, parseRange, formatRange, pruneWorkouts,
+  removeDay, removeExercises, renameWorkout, setDay, setMinRestDays, setMode, setWeekCount, spreadDays, startKg, updateItem, updateSlot,
+  weekWorkouts, duplicateWorkout, slug,
+} from "../../src/build/model.ts";
+import { asFile, asProgramme, type Programme } from "../../src/formats/programme.ts";
+import { checkAgainstLibrary, validateProgramme } from "../../src/formats/validate.js";
+import { BUNDLED_PROGRAMMES, equipment, library } from "../../src/store/household.ts";
+
+const block1 = () => structuredClone(asProgramme(BUNDLED_PROGRAMMES[0]!));
+const problems = (p: Programme) => [...validateProgramme(asFile(p)), ...checkAgainstLibrary(asFile(p), library, equipment)];
+const now = new Date("2026-11-07T12:00:00Z");
+const add = (p: Programme, w: string, ids: string[]) => addExercises(p, w, ids, library, equipment);
+const shape = (p: Programme, w: string) =>
+  p.workouts.find((x) => x.id === w)!.items.map((i) => `${i.type}:${i.slots.map((s) => s.exercise).join("+")}`);
+
+describe("a new programme", () => {
+  it("starts with one week and an empty Day 1, and is valid once it has an exercise", () => {
+    let p = newProgramme("Andrew's strength", ["strength-block-1"], now);
+    expect(p.id).toBe("andrew-s-strength");
+    expect(p.plan).toEqual({ mode: "adhoc", weeks: [{ workouts: ["day-1"] }] });
+    expect(problems(p).join()).toContain("/exercises must NOT have fewer than 1 items");
+    p = add(p, "day-1", ["back-squat", "plank", "farmers-carry"]);
+    expect(problems(p)).toEqual([]);
+  });
+
+  it("adds exercises standing alone, with 3 sets and a target for how they're measured", () => {
+    const p = add(newProgramme("P", [], now), "day-1", ["back-squat", "plank", "farmers-carry", "back-squat"]);
+    const [squat, plank, carry] = p.workouts[0]!.items;
+    expect(squat).toEqual({ type: "single", tier: "secondary", slots: [{ exercise: "back-squat", sets: 3, progression: "linear-2-5", reps: { min: 8, max: 8 }, start: { kg: "bar" } }] });
+    expect(plank!.slots[0]).toMatchObject({ seconds: { min: 30, max: 30 }, progression: "accessory" });
+    expect(carry!.slots[0]).toMatchObject({ metres: { min: 20, max: 20 } });
+    expect(p.workouts[0]!.items).toHaveLength(3);
+    expect(p.equipment).toEqual([{ id: "bar-standard", name: "Standard barbell", barType: "standard", kg: 20 }]);
+    expect(startKg(p, squat!.slots[0])).toBe(20);
+  });
+
+  it("refuses exercises that aren't in the library", () => {
+    expect(() => add(newProgramme("P", [], now), "day-1", ["moon-squat"])).toThrow("isn't in the library");
+  });
+});
+
+describe("pairing exercises", () => {
+  const base = () => add(newProgramme("P", [], now), "day-1", ["back-squat", "bench-press", "barbell-row", "db-lateral-raise", "plank"]);
+
+  it("two make a superset where the first of them was, in workout order", () => {
+    const p = group(base(), "day-1", ["barbell-row", "bench-press"]);
+    expect(shape(p, "day-1")).toEqual(["single:back-squat", "superset:bench-press+barbell-row", "single:db-lateral-raise", "single:plank"]);
+    const ss = p.workouts[0]!.items[1]!;
+    expect(ss).toMatchObject({ type: "superset", rounds: 3 });
+    expect(ss.slots.every((s) => s.sets === undefined)).toBe(true);
+    expect(problems(p)).toEqual([]);
+  });
+
+  it("three or more make a giant set", () => {
+    const p = group(base(), "day-1", ["bench-press", "db-lateral-raise", "plank"]);
+    expect(shape(p, "day-1")).toEqual(["single:back-squat", "giant:bench-press+db-lateral-raise+plank", "single:barbell-row"]);
+    expect(problems(p)).toEqual([]);
+  });
+
+  it("taking one out of a giant set leaves a superset, and it stands alone again just after", () => {
+    let p = group(base(), "day-1", ["bench-press", "db-lateral-raise", "plank"]);
+    p = updateItem(p, "day-1", 1, { rounds: 4, restSec: 75 });
+    p = group(p, "day-1", ["bench-press", "plank"]);
+    expect(shape(p, "day-1")).toEqual(["single:back-squat", "superset:bench-press+plank", "single:db-lateral-raise", "single:barbell-row"]);
+    expect(p.workouts[0]!.items[1]).toMatchObject({ rounds: 4, restSec: 75 });
+    expect(p.workouts[0]!.items[2]!.slots[0].sets).toBe(4);
+    expect(problems(p)).toEqual([]);
+  });
+
+  it("choosing one exercise of a superset splits it", () => {
+    let p = group(base(), "day-1", ["bench-press", "barbell-row"]);
+    p = group(p, "day-1", ["bench-press"]);
+    expect(shape(p, "day-1")).toEqual(["single:back-squat", "single:barbell-row", "single:bench-press", "single:db-lateral-raise", "single:plank"]);
+    expect(problems(p)).toEqual([]);
+  });
+
+  it("an exercise can move from one group to another", () => {
+    let p = group(base(), "day-1", ["back-squat", "bench-press"]);
+    p = group(p, "day-1", ["barbell-row", "db-lateral-raise", "bench-press"]);
+    expect(shape(p, "day-1")).toEqual(["giant:bench-press+barbell-row+db-lateral-raise", "single:back-squat", "single:plank"]);
+  });
+
+  it("the group keeps the most important tier of what went in", () => {
+    let p = updateItem(base(), "day-1", 0, { tier: "primary" });
+    p = group(p, "day-1", ["back-squat", "plank"]);
+    expect(p.workouts[0]!.items[0]).toMatchObject({ type: "superset", tier: "primary" });
+  });
+
+  it("choosing nothing changes nothing, and groupOf finds a group's exercises", () => {
+    const p = group(base(), "day-1", ["bench-press", "barbell-row"]);
+    expect(group(p, "day-1", [])).toEqual(p);
+    expect(groupOf(p.workouts[0]!, "barbell-row")).toEqual(["bench-press", "barbell-row"]);
+    expect(groupOf(p.workouts[0]!, "nope")).toEqual([]);
+  });
+
+  it("Block 1's groups survive an edit unchanged, finisher included", () => {
+    const p = block1();
+    const fin = structuredClone(p);
+    fin.workouts[0]!.items[3] = { type: "finisher", tier: "tertiary", rounds: 8, workSec: 15, restSec: 45, slots: p.workouts[0]!.items[3]!.slots };
+    const after = group(fin, "session-a", ["db-lateral-raise", "plank"]);
+    expect(after.workouts[0]!.items[3]).toMatchObject({ type: "finisher", rounds: 8 });
+  });
+});
+
+describe("removing and moving", () => {
+  it("removing exercises shrinks groups, and drops exercises and bars nothing uses", () => {
+    let p = block1();
+    p = removeExercises(p, "session-a", ["barbell-row"]);
+    expect(shape(p, "session-a")[1]).toBe("single:bench-press");
+    expect(p.workouts[0]!.items[1]!.slots[0].sets).toBe(5);
+    expect(p.exercises.some((e) => e.id === "barbell-row")).toBe(false);
+    expect(p.targets?.some((t) => t.exercise === "barbell-row")).toBe(false);
+    p = removeExercises(p, "session-a", ["db-lateral-raise", "plank", "battle-ropes"]);
+    expect(shape(p, "session-a")).toHaveLength(3);
+    expect(problems(p)).toEqual([]);
+  });
+
+  it("moves items, and exercises within a group", () => {
+    let p = moveItem(block1(), "session-a", 0, 2);
+    expect(shape(p, "session-a").slice(0, 3)).toEqual(["superset:bench-press+barbell-row", "single:romanian-deadlift", "single:back-squat"]);
+    p = moveSlot(p, "session-a", 0, 1, 0);
+    expect(shape(p, "session-a")[0]).toBe("superset:barbell-row+bench-press");
+    expect(problems(p)).toEqual([]);
+  });
+
+  it("updates a slot's targets, and removes fields set to undefined", () => {
+    let p = updateSlot(block1(), "session-a", { item: 0, slot: 0 }, { sets: 4, reps: { min: 3, max: 5 }, start: { kg: 32.5 } });
+    expect(p.workouts[0]!.items[0]!.slots[0]).toMatchObject({ sets: 4, reps: { min: 3, max: 5 }, start: { kg: 32.5 } });
+    p = updateSlot(p, "session-a", { item: 0, slot: 0 }, { start: undefined });
+    expect("start" in p.workouts[0]!.items[0]!.slots[0]).toBe(false);
+    p = updateItem(p, "session-a", 1, { restSec: null, tier: "primary" });
+    expect(p.workouts[0]!.items[1]).not.toHaveProperty("restSec");
+    p = updateItem(p, "session-a", 0, { rounds: 9 });
+    expect(p.workouts[0]!.items[0]).not.toHaveProperty("rounds");
+  });
+
+  it("renames workouts, and complains about unknown ones", () => {
+    expect(renameWorkout(block1(), "session-a", "Squat and bench").workouts[0]!.name).toBe("Squat and bench");
+    expect(() => renameWorkout(block1(), "nope", "x")).toThrow('No workout "nope"');
+    expect(() => duplicateWorkout(block1(), "nope")).toThrow('No workout "nope"');
+  });
+});
+
+describe("the week planner", () => {
+  it("ad hoc: adds, moves and removes days, up to 7", () => {
+    let p = block1();
+    p = addDay(p, 0);
+    expect(weekWorkouts(p.plan, 0)).toEqual(["session-a", "session-b", "day-3"]);
+    p = moveDay(p, 0, 2, 0);
+    expect(weekWorkouts(p.plan, 0)).toEqual(["day-3", "session-a", "session-b"]);
+    p = removeDay(p, 0, 0);
+    expect(p.workouts.map((w) => w.id)).toEqual(["session-a", "session-b"]);
+    for (let i = 0; i < 6; i++) p = addDay(p, 0);
+    expect(weekWorkouts(p.plan, 0)).toHaveLength(7);
+    expect(addDay(p, 0)).toBe(p);
+  });
+
+  it("set days: spreads ad hoc days through the week, and back again keeps the order", () => {
+    let p = setMode(block1(), "setDays");
+    expect(p.plan.mode).toBe("setDays");
+    expect(weekWorkouts(p.plan, 0)).toEqual(["session-a", "session-b"]);
+    if (p.plan.mode === "setDays") {
+      expect(p.plan.weeks[0]!.days.mon).toEqual({ type: "workout", workout: "session-a" });
+      expect(p.plan.weeks[0]!.days.thu).toEqual({ type: "workout", workout: "session-b" });
+    }
+    expect(problems(p)).toEqual([]);
+    expect(setMode(p, "setDays")).toBe(p);
+    p = setMode(p, "adhoc");
+    expect(p.plan).toEqual({ mode: "adhoc", weeks: [{ workouts: ["session-a", "session-b"] }] });
+  });
+
+  it.each([[1, ["mon"]], [2, ["mon", "thu"]], [3, ["mon", "wed", "fri"]], [7, ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]]])(
+    "%i workouts spread over %j", (n, days) => { expect(spreadDays(n)).toEqual(days); },
+  );
+
+  it("set days: a weekday can be a new workout, an existing one, rest or a walk", () => {
+    let p = setMode(block1(), "setDays");
+    p = setDay(p, 0, "wed", { type: "workout" });
+    expect(p.workouts.at(-1)).toMatchObject({ id: "wed", name: "Wed", items: [] });
+    p = add(p, "wed", ["deadlift"]);
+    p = setDay(p, 0, "sat", { type: "conditioning", activity: "Walk" });
+    p = setDay(p, 0, "thu", { type: "rest" });
+    expect(p.workouts.map((w) => w.id)).toEqual(["session-a", "wed"]);
+    p = setDay(p, 0, "fri", { type: "workout", workout: "wed" });
+    expect(problems(p)).toEqual([]);
+    expect(() => setDay(block1(), 0, "mon", { type: "rest" })).toThrow("only exist in set days");
+    expect(() => addDay(p, 0)).toThrow("added by weekday");
+    expect(() => removeDay(p, 0, 0)).toThrow("Use setDay");
+    expect(moveDay(p, 0, 0, 1)).toBe(p);
+  });
+
+  it("a second week copies the first, with its own workouts, so heavy and light weeks can differ", () => {
+    let p = setWeekCount(block1(), 2);
+    expect(weekWorkouts(p.plan, 1)).toEqual(["session-a-2", "session-b-2"]);
+    p = removeExercises(p, "session-b-2", ["deadlift"]);
+    p = add(p, "session-b-2", ["romanian-deadlift"]);
+    expect(shape(p, "session-b")[0]).toBe("single:deadlift");
+    expect(shape(p, "session-b-2").at(-1)).toBe("single:romanian-deadlift");
+    expect(problems(p)).toEqual([]);
+    p = setWeekCount(p, 9);
+    expect(p.plan.weeks).toHaveLength(4);
+    p = setWeekCount(p, 1);
+    expect(p.workouts.map((w) => w.id)).toEqual(["session-a", "session-b"]);
+  });
+
+  it("copies a set-days week over another", () => {
+    let p = setWeekCount(setMode(block1(), "setDays"), 2);
+    p = setDay(p, 0, "sat", { type: "rest" });
+    p = copyWeek(p, 0, 1);
+    expect(weekWorkouts(p.plan, 1)).toHaveLength(2);
+    expect(problems(p)).toEqual([]);
+  });
+
+  it("rest days between ad hoc workouts", () => {
+    let p = setMinRestDays(block1(), 1);
+    expect(p.plan).toMatchObject({ minRestDays: 1 });
+    p = setMinRestDays(p, null);
+    expect(p.plan).not.toHaveProperty("minRestDays");
+    const sd = setMode(p, "setDays");
+    expect(setMinRestDays(sd, 2)).toBe(sd);
+  });
+
+  it("keeps a workout used by a readiness rule", () => {
+    const p = block1();
+    p.readiness.levels!.red.rules = [{ rule: "replaceWorkout", workout: "session-b" } as never];
+    (p.plan.weeks[0] as { workouts: string[] }).workouts = ["session-a"];
+    expect(pruneWorkouts(p).workouts.map((w) => w.id)).toEqual(["session-a", "session-b"]);
+  });
+});
+
+describe("reading what people type", () => {
+  it.each([["8", { min: 8, max: 8 }], ["8-12", { min: 8, max: 12 }], [" 6 to 8 ", { min: 6, max: 8 }], ["30.5", { min: 30.5, max: 30.5 }], ["12-8", null], ["", null], ["lots", null]])(
+    "%j", (text, range) => { expect(parseRange(text)).toEqual(range); },
+  );
+  it("shows ranges back", () => {
+    expect([formatRange({ min: 5, max: 5 }), formatRange({ min: 8, max: 12 }), formatRange()]).toEqual(["5", "8-12", ""]);
+    expect(slug("!!!", [], "x")).toBe("x");
+  });
+});
