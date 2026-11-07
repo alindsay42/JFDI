@@ -1,6 +1,6 @@
 # J.F.D.I programme file format
 
-Status: **draft for review**, version 1 of the format.
+Status: **version 2** of the format, from 7 November 2026: workouts and a week planner, as described in [programme-editor.md](programme-editor.md). Version 1 files are upgraded automatically (see Upgrading below).
 
 A programme file is the whole training plan as data. Build mode writes it and Train mode reads it. Nothing about a plan is written into the app's code. This document defines what goes in the file, and the rules the app follows when it reads one.
 
@@ -23,28 +23,28 @@ programme
 ├─ exercises        what each movement is and how it's measured
 ├─ equipment        bars the exercises use, with their weights
 ├─ progressions     named rules for when weight goes up
-├─ sessions         ordered tiers → blocks → slots
-├─ weeks            which days lift, walk or rest, and the session rotation
+├─ workouts         an ordered list of items: single exercises and groups
+├─ plan             a cycle of 1 to 4 weeks, ad hoc or on set days
 ├─ phases           blocks of weeks with gates in and out
 ├─ readiness        the daily Green / Amber / Red check and what each level does
 └─ targets          suggested goals, which a profile can adopt
 ```
 
-Every object that others point to has an `id`: lowercase letters, digits and hyphens, unique within its list (for example `back-squat`, `session-a`). References between objects always use these ids.
+Every object that others point to has an `id`: lowercase letters, digits and hyphens, unique within its list (for example `back-squat`, `session-a`, which is a workout id kept from version 1). References between objects always use these ids.
 
 ## Top level
 
 | Field | Required | Meaning |
 | --- | --- | --- |
 | `format` | yes | Always `"jfdi-programme"` |
-| `formatVersion` | yes | This document is version `1`. The app upgrades older files when it opens them |
+| `formatVersion` | yes | This document is version `2`. The app upgrades older files when it opens them |
 | `id` | yes | Stable id for the programme. Survives edits, so versions of the same plan can be matched |
 | `name` | yes | What people call it, such as "Strength Programme, Block 1" |
 | `description` | no | One or two sentences on what it's for |
 | `goal` | no | Free text, such as "Build strength and keep muscle mass" |
-| `daysPerWeek` | no | For display only. The weeks decide the real schedule |
 | `createdAt`, `updatedAt` | yes | ISO 8601 timestamps |
-| `exercises`, `equipment`, `progressions`, `sessions`, `weeks`, `phases` | yes | Lists, described below |
+| `exercises`, `equipment`, `progressions`, `workouts`, `phases` | yes | Lists, described below |
+| `plan` | yes | Described below |
 | `readiness` | yes | Described below. Use preset `off` for no daily check |
 | `targets` | no | Described below |
 
@@ -95,90 +95,104 @@ A progression is a named rule. Slots point to one by `id`, so changing the rule 
 
 Readiness can hold or reduce a progression (see Readiness). Removing an exercise during a session has no effect on its progression.
 
-## Sessions
+## Workouts
 
-A session is three **tiers** in order: `primary`, `secondary`, `tertiary`. A session can use one, two or all three. Each tier holds one or more **blocks**, and each block holds one or more **slots**.
+A workout is one ordered list of **items**. Each item is a single exercise or a group, and holds one or more **slots** (an exercise with its targets).
 
-### Blocks
+### Items
 
 | `type` | How it runs | Fields |
 | --- | --- | --- |
-| `straight` | One exercise, set after set | `restSec` between sets |
-| `superset` | Two exercises: one set of each, then rest | `restSec` after each pair |
-| `giant` | Three or more stations in order, then rest. Repeats for `rounds` | `rounds`, `transitionSec` between stations (default 0), `restSec` after each round |
+| `single` | One exercise, set after set. Its slot has `sets` | `restSec` between sets |
+| `superset` | Two exercises: one set of each, then rest, for `rounds` | `rounds`, `restSec` after each round |
+| `giant` | Three or more exercises in order, then rest, for `rounds` | `rounds`, `transitionSec` between exercises (default 0), `restSec` after each round |
 | `finisher` | Timed intervals, such as 15 s on and 45 s off for 8 rounds | `rounds`, `workSec`, `restSec` |
 
-**Uneven supersets.** When two slots in a superset have different set counts (bench 5 sets, rows 3), they run paired until the shorter one is done. The remaining sets of the longer one run as straight sets with the block's `restSec`.
+**Groups run in rounds.** Every exercise in a superset, giant set or finisher does the same number of sets: the group's `rounds`. Slots in a group never set `sets`. Each exercise keeps its own weight and reps or time. While training, any set can be skipped.
 
-**Giant set rounds.** In a giant block, `rounds` replaces each slot's `sets`. A slot in a giant block should not set `sets`.
+**Tiers.** Every item has a `tier`: `primary` (main lifts), `secondary` (supporting work) or `tertiary` (extras). Tiers don't change the order, which is the order of the list. They're what readiness rules act on, such as "on Amber days, drop the extras".
 
 ### Slots
 
 | Field | Required | Meaning |
 | --- | --- | --- |
 | `exercise` | yes | Exercise `id` |
-| `sets` | yes, except in giant blocks | Number of working sets |
+| `sets` | in `single` items only | Number of working sets |
 | `reps` | for `load` and `reps` measures | `{ "min": 6, "max": 8 }`, or `{ "min": 5, "max": 5 }` for a fixed count |
 | `seconds` | for `time` | `{ "min": 30, "max": 45 }` |
 | `metres` | for `distance` | `{ "min": 30, "max": 30 }` |
 | `progression` | yes | Progression `id` |
 | `incrementKg` | no | Overrides the progression's jump for this slot |
 | `start` | no | Suggested first load when the person has no history: `{ "kg": 30 }`, `{ "kg": "bar" }` for the empty bar, or `{ "note": "Leave 2 reps in reserve" }`. A profile's own starting loads take priority |
-| `restSec` | no | Overrides the block's or exercise's rest |
+| `restSec` | no | Overrides the item's or exercise's rest |
 | `alternatives` | no | Exercise ids offered as a like-for-like swap, such as band-assisted pull-ups or chest-supported rows |
 | `optional` | no | `{ "unlock": { "fromWeek": 5 } }`. Hidden until unlocked, then offered as an extra |
 | `notes` | no | Shown under the exercise during the session |
 
-**Where rest comes from**, most specific first: slot `restSec`, then block `restSec`, then exercise `restSec`, then 90 seconds.
+**Where rest comes from**, most specific first: slot `restSec`, then item `restSec`, then exercise `restSec`, then 90 seconds.
 
-### Session fields
+### Workout fields
 
 | Field | Meaning |
 | --- | --- |
 | `id`, `name` | `session-a`, "Session A" |
 | `subtitle` | "Squat, bench and rows" |
 | `estimatedMinutes` | For planning |
-| `inRotation` | `false` for sessions only used by readiness rules, such as a light session a programme swaps in on Red days. Default `true` |
-| `tiers` | `{ "primary": [blocks], "secondary": [blocks], "tertiary": [blocks] }` |
+| `items` | The ordered list above |
 
-## Weeks
+A workout that isn't in the plan must be used by a readiness rule (such as a light workout swapped in on Red days), or it's flagged.
 
-A week says how often to lift and what the other days are. Lifting days take the **next session in the rotation**, so a missed or moved day shifts the sessions along and none is skipped. The rotation carries on across weeks: with two lifting days and a rotation of A, B, every week is A then B. With three lifting days and two sessions, it alternates A, B, A then B, A, B.
+## Plan
 
-A week is written one of two ways:
+The plan is a **cycle of 1 to 4 weeks** that repeats: 1 week is the same every week, 2 alternate (heavy then light, say), and 3 or 4 go back to Week 1 after the last. A workout can appear in more than one place.
 
-- **`perWeek`:** a number of lifting days, on any days, with a minimum gap between them. Suits someone whose other commitments move about, such as classes. The person picks the day; the app counts the week's sessions and warns if two are too close together.
-- **`days`:** a named day for each day of the week (Monday lift, Tuesday walk and so on). Suits a fixed routine, and gives the calendar exact planned days.
+`mode` is one of two choices for the whole programme.
+
+### Ad hoc
+
+Workouts are done **in order**, on whichever days suit, as Day 1, Day 2 and so on.
+
+```json
+{ "mode": "adhoc", "minRestDays": 2, "weeks": [{ "workouts": ["session-a", "session-b"], "otherDays": { "type": "free", "notes": "Classes, or rest" } }] }
+```
 
 | Field | Meaning |
 | --- | --- |
-| `id`, `name` | |
-| `rotation` | Session ids in order |
-| `perWeek` | `{ "liftDays": 2, "minRestDays": 2 }`: lifting days a week, and full days off needed between them. Use this or `days` |
-| `days` | `mon` to `sun`, each one of the day types below. Use this or `perWeek` |
-| `otherDays` | With `perWeek` only: what the non-lifting days are, as one day type, such as `{ "type": "free", "notes": "Classes" }` |
+| `minRestDays` | Full days off between workouts. Optional |
+| `weeks[].workouts` | 1 to 7 workout ids, in order |
+| `weeks[].otherDays` | What the days without a workout are: `conditioning`, `free` or `rest` |
+
+- A missed workout stays next up. The person can choose **Skip to next workout**.
+- A week ends when its workouts are done; then the next week of the cycle starts.
+
+### Set days
+
+Each week names every day, `mon` to `sun`. **The calendar decides the week**, counted from the profile's start date.
+
+```json
+{ "mode": "setDays", "weeks": [{ "days": { "mon": { "type": "workout", "workout": "squat-day" }, "tue": { "type": "rest" }, "...": "..." } }] }
+```
+
+- A missed workout stays missed. Nothing moves, so no other workout is knocked out.
 
 Day types:
 
 | `type` | Meaning | Fields |
 | --- | --- | --- |
-| `lift` | Takes the next session in the rotation | |
+| `workout` | Set days only: this workout | `workout`, `notes` |
 | `conditioning` | A walk, ruck or interval day with a target | `activity`, `minutes` `{min, max}`, `notes` |
 | `free` | Nothing planned. Classes, sport or rest are up to the person | `notes` |
 | `rest` | Planned rest | `notes` |
 
-Training early is always allowed. With `days`, if a session is done on a non-lifting day, the next lifting day becomes a `free` day, so nobody ends up lifting on back-to-back days by accident. A session done to make up a missed day doesn't move anything. With `perWeek`, there are no planned days to move: the week simply counts what's been done.
-
 ## Phases and blocks of weeks
 
-A **phase** has a focus and one or more **blocks**. A block is a run of weeks using one week template.
+A **phase** has a focus and one or more **blocks**. A block is a run of weeks of the plan.
 
 Block fields:
 
 | Field | Meaning |
 | --- | --- |
 | `id`, `name` | |
-| `week` | Week template `id` |
 | `weeks` | Number of weeks, or `null` for "until it stalls" |
 | `deload` | `{ "everyWeeks": 6, "setsPercent": 60, "loadPercent": 60 }`, and/or `"afterStalls": 2` |
 | `endWhen` | Free text for an open-ended block, such as "Most main lifts have stalled once" |
@@ -206,12 +220,12 @@ Rules are applied in order when a session starts on that day:
 | --- | --- | --- |
 | `setsPercent` | Scales the number of sets, rounding up, minimum 1 | `tier` (optional), `percent` |
 | `setsTo` | Sets a fixed number of sets | `tier`, `sets` |
-| `dropTier` | Removes a whole tier | `tier` |
+| `dropTier` | Removes every item in a tier | `tier` |
 | `dropFlagged` | Removes exercises with a flag, such as `spineLoading` | `flag` |
 | `swapFlagged` | Swaps flagged exercises for their `alternatives`, or drops them if there are none | `flag` |
 | `addRir` | Asks for that many more reps in reserve on every set | `reps` |
-| `replaceSession` | Runs a different session instead | `session` |
-| `noLifting` | No session today | |
+| `replaceWorkout` | Runs a different workout instead | `workout` |
+| `noLifting` | No workout today | |
 
 And one rule that affects progression:
 
@@ -219,7 +233,7 @@ And one rule that affects progression:
 | --- | --- |
 | `normal` | Completed sets count as usual |
 | `hold` | The next session repeats today's weights |
-| `skip` | Today doesn't count at all; the planned session moves to next time |
+| `skip` | Today doesn't count at all; the planned workout moves to next time |
 
 ## Targets
 
@@ -236,7 +250,7 @@ Charts convert targets and logged sets to an estimated one-rep max using the dos
 | Lives in | What |
 | --- | --- |
 | The profile | Who runs the programme, start date, a starting load per exercise (a profile's own numbers win over a slot's `start`), adopted targets, bars they can't use (the SSB for your wife) |
-| The log | Every session as performed, with a copy of its prescription; daily lights; walks; bodyweight |
+| The log | Every workout as performed (a session), with a copy of its prescription; daily lights; walks; bodyweight |
 | The household | The equipment list with real bar weights, the shared exercise library |
 
 ## Not covered yet
@@ -248,10 +262,29 @@ These come in later versions of the format. Files written now will be upgraded a
 - **Uneven jumps**, such as "2.5kg every second successful session" on a light overhead press. For now the example covers this with a note on the slot.
 - **Chains** (EQ-4): logged on the set, so they belong to the log format rather than the programme.
 
+## Upgrading
+
+[`src/formats/upgrade.js`](../src/formats/upgrade.js) upgrades version 1 files when a backup is restored or the app's database is opened:
+
+| Version 1 | Version 2 |
+| --- | --- |
+| `sessions`, each with tiers of blocks | `workouts`, each with one list of items that keep their tier |
+| `straight` block | `single` item |
+| `superset` with sets on each slot | `superset` with `rounds`: the most sets of its two slots |
+| `weeks` with a rotation, `perWeek` | `plan` in `adhoc` mode, the rotation laid out over 1 to 4 weeks |
+| `weeks` with a rotation, `days` | `plan` in `setDays` mode, lifting days taking the rotation in turn |
+| `replaceSession` rule | `replaceWorkout` |
+| Log slots `tier.block.slot` | `item.slot` |
+
 ## Decisions
 
 Settled on 6 Nov:
 
-1. **Days:** both styles are supported. Block 1 uses `perWeek`: 2 lifting days a week, any days, at least 2 days apart.
+1. **Days:** Block 1 is ad hoc: Session A then Session B, any days, at least 2 days apart.
 2. **Starting loads:** a number per exercise, held in the profile. For Block 1, these are the lowest of her recent numbers.
 3. **Red days:** no mobility session. In Block 1, Red means no session today, and the planned session moves to next time.
+
+Settled on 7 Nov ([programme-editor.md](programme-editor.md)):
+
+4. **Version 2:** workouts and the week planner replace sessions, tiers-as-structure and rotations.
+5. **Groups run in rounds.** Block 1's superset is 5 rounds of bench press and barbell row, so rows go from 3 sets to 5.

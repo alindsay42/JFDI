@@ -58,7 +58,7 @@ describe("putting someone on a programme", () => {
     expect(defaultStartingLoads(block1)).toEqual({
       "back-squat": { kg: 30, reps: 5, sets: 5 },
       "bench-press": { kg: 25, reps: 5, sets: 5 },
-      "barbell-row": { kg: 15, reps: 6, sets: 3 },
+      "barbell-row": { kg: 15, reps: 6, sets: 5 },
       "romanian-deadlift": { kg: 30, reps: 6, sets: 3 },
       deadlift: { kg: 55, reps: 5, sets: 3 },
       "overhead-press-ez": { kg: 15.5, reps: 5, sets: 5 },
@@ -196,7 +196,7 @@ describe("backup and restore", () => {
 
   it("the example profile, log and Block 1 make a valid backup", () => {
     const backup = {
-      format: "jfdi-backup", formatVersion: 1, exportedAt: "2027-01-05T20:00:00Z", app,
+      format: "jfdi-backup", formatVersion: 2, exportedAt: "2027-01-05T20:00:00Z", app,
       profiles: [json("examples/profiles/diane.json")],
       programmes: [block1],
       logs: [json("examples/logs/diane-week-1.json")],
@@ -206,11 +206,11 @@ describe("backup and restore", () => {
       .toContain('more than one log for profile "diane"');
     expect(validateBackup({ ...backup, programmes: [] }, { equipment, library }).join()).toContain('active programme "strength-block-1" not found');
     const broken = structuredClone(block1);
-    broken.sessions[0]!.tiers.primary![0]!.slots![0]!.exercise = "front-squat";
+    broken.workouts[0]!.items[0]!.slots![0].exercise = "front-squat";
     expect(validateBackup({ ...backup, programmes: [broken] }, { equipment, library }).join())
-      .toContain('programme "strength-block-1": session "session-a" primary block 1 slot 1: unknown exercise "front-squat"');
-    expect(validateBackup({ ...backup, programmes: [{ ...block1, sessions: [] }] }, { equipment, library }).join())
-      .toContain("backup schema: /programmes/0/sessions");
+      .toContain('programme "strength-block-1": workout "session-a" item 1: unknown exercise "front-squat"');
+    expect(validateBackup({ ...backup, programmes: [{ ...block1, workouts: [] }] }, { equipment, library }).join())
+      .toContain("backup schema: /programmes/0/workouts");
   });
 
   it("rejects files that aren't backups, in words", () => {

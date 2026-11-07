@@ -25,8 +25,8 @@ export type Rule =
       reps: number;
     }
   | {
-      rule?: "replaceSession";
-      session: string;
+      rule?: "replaceWorkout";
+      workout: string;
     }
   | {
       rule?: "noLifting";

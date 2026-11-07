@@ -95,8 +95,7 @@ export function validateProgramme(p) {
   const equipment = index(p.equipment, "equipment");
   const exercises = index(p.exercises, "exercise");
   const progressions = index(p.progressions, "progression");
-  const sessions = index(p.sessions, "session");
-  const weeks = index(p.weeks, "week");
+  const workouts = index(p.workouts, "workout");
   index(p.phases, "phase");
   index(p.phases.flatMap(ph => ph.blocks), "training block");
 
@@ -108,57 +107,59 @@ export function validateProgramme(p) {
     if (ex.bar && ex.implement !== "barbell") errors.push(`exercise "${ex.id}": only barbell exercises take a bar`);
   }
 
-  for (const s of p.sessions) {
-    for (const [tier, blocks] of Object.entries(s.tiers)) {
-      blocks.forEach((b, bi) => {
-        b.slots.forEach((slot, si) => {
-          const where = `session "${s.id}" ${tier} block ${bi + 1} slot ${si + 1}`;
-          const ex = needExercise(slot.exercise, where);
-          if (!progressions.has(slot.progression)) errors.push(`${where}: unknown progression "${slot.progression}"`);
-          for (const alt of slot.alternatives || []) needExercise(alt, `${where} alternative`);
-          const timed = b.type === "giant" || b.type === "finisher";
-          if (timed && slot.sets !== undefined) errors.push(`${where}: slots in a ${b.type} block use the block's rounds, not sets`);
-          if (!timed && slot.sets === undefined) errors.push(`${where}: sets is required`);
-          for (const f of ["reps", "seconds", "metres", "calories"]) checkRange(slot[f], `${where} ${f}`);
-          if (!ex) return;
-          const field = MEASURE_FIELD[ex.measure];
-          if (b.type !== "finisher" && !slot[field]) errors.push(`${where}: "${ex.id}" is measured by ${ex.measure}, so the slot needs ${field}`);
-          for (const f of Object.values(MEASURE_FIELD)) if (f !== field && slot[f]) errors.push(`${where}: ${f} doesn't apply to a ${ex.measure} exercise`);
-          if (ex.bar && typeof slot.start?.kg === "number") {
-            const bar = equipment.get(ex.bar);
-            if (bar && slot.start.kg < bar.kg) errors.push(`${where}: start ${slot.start.kg}kg is lighter than the ${bar.name} (${bar.kg}kg)`);
-          }
-          if (slot.start?.kg === "bar" && !ex.bar) errors.push(`${where}: start "bar" needs a barbell exercise`);
-        });
+  for (const w of p.workouts) {
+    w.items.forEach((b, bi) => {
+      b.slots.forEach((slot, si) => {
+        const where = `workout "${w.id}" item ${bi + 1}${b.slots.length > 1 ? ` exercise ${si + 1}` : ""}`;
+        const ex = needExercise(slot.exercise, where);
+        if (!progressions.has(slot.progression)) errors.push(`${where}: unknown progression "${slot.progression}"`);
+        for (const alt of slot.alternatives || []) needExercise(alt, `${where} alternative`);
+        if (b.type !== "single" && slot.sets !== undefined) errors.push(`${where}: exercises in a ${b.type} use its rounds, not sets`);
+        if (b.type === "single" && slot.sets === undefined) errors.push(`${where}: sets is required`);
+        for (const f of ["reps", "seconds", "metres", "calories"]) checkRange(slot[f], `${where} ${f}`);
+        if (!ex) return;
+        const field = MEASURE_FIELD[ex.measure];
+        if (b.type !== "finisher" && !slot[field]) errors.push(`${where}: "${ex.id}" is measured by ${ex.measure}, so it needs ${field}`);
+        for (const f of Object.values(MEASURE_FIELD)) if (f !== field && slot[f]) errors.push(`${where}: ${f} doesn't apply to a ${ex.measure} exercise`);
+        if (ex.bar && typeof slot.start?.kg === "number") {
+          const bar = equipment.get(ex.bar);
+          if (bar && slot.start.kg < bar.kg) errors.push(`${where}: start ${slot.start.kg}kg is lighter than the ${bar.name} (${bar.kg}kg)`);
+        }
+        if (slot.start?.kg === "bar" && !ex.bar) errors.push(`${where}: start "bar" needs a barbell exercise`);
       });
-    }
+    });
   }
 
-  for (const w of p.weeks) {
-    if (w.days) {
-      const lifts = Object.values(w.days).filter(d => d.type === "lift").length;
-      if (lifts === 0) errors.push(`week "${w.id}": no lifting days`);
+  const planned = new Set();
+  const needWorkout = (id, where) => { planned.add(id); if (!workouts.has(id)) errors.push(`${where}: unknown workout "${id}"`); };
+  p.plan.weeks.forEach((week, wi) => {
+    const where = `plan week ${wi + 1}`;
+    if (p.plan.mode === "adhoc") {
+      week.workouts.forEach((id, d) => needWorkout(id, `${where} day ${d + 1}`));
+      const n = week.workouts.length;
+      const rest = p.plan.minRestDays ?? 0;
+      if (n + (n - 1) * rest > 7) errors.push(`${where}: ${n} workouts with ${rest} rest days between them don't fit in a week`);
+      if (week.otherDays) checkRange(week.otherDays.minutes, `${where} other days minutes`);
+    } else {
+      const days = Object.entries(week.days);
+      for (const [d, day] of days) {
+        if (day.type === "workout") needWorkout(day.workout, `${where} ${d}`);
+        checkRange(day.minutes, `${where} ${d} minutes`);
+      }
+      if (!days.some(([, day]) => day.type === "workout")) errors.push(`${where}: no workouts`);
     }
-    if (w.otherDays?.type === "lift") errors.push(`week "${w.id}": otherDays can't be lifting days`);
-    if (w.perWeek && w.perWeek.liftDays * ((w.perWeek.minRestDays ?? 0) + 1) > 7) errors.push(`week "${w.id}": ${w.perWeek.liftDays} lifting days with ${w.perWeek.minRestDays} days between them don't fit in a week`);
-    for (const id of w.rotation) {
-      const s = sessions.get(id);
-      if (!s) errors.push(`week "${w.id}": rotation has unknown session "${id}"`);
-      else if (s.inRotation === false) errors.push(`week "${w.id}": session "${id}" is marked as not in rotation`);
-    }
-    for (const d of [...Object.values(w.days || {}), w.otherDays].filter(Boolean)) checkRange(d.minutes, `week "${w.id}" minutes`);
-  }
+  });
 
   for (const ph of p.phases) {
-    for (const b of ph.blocks) if (!weeks.has(b.week)) errors.push(`block "${b.id}": unknown week "${b.week}"`);
     for (const g of [...(ph.gates?.entry || []), ...(ph.gates?.exit || [])]) if (g.type === "lift") needExercise(g.exercise, `phase "${ph.id}" gate`);
   }
 
   for (const [name, level] of Object.entries(p.readiness.levels || {})) {
     for (const r of level.rules) {
-      if (r.rule === "replaceSession" && !sessions.has(r.session)) errors.push(`readiness ${name}: unknown session "${r.session}"`);
+      if (r.rule === "replaceWorkout") { planned.add(r.workout); if (!workouts.has(r.workout)) errors.push(`readiness ${name}: unknown workout "${r.workout}"`); }
     }
   }
+  for (const w of p.workouts) if (!planned.has(w.id)) errors.push(`workout "${w.id}" isn't in the plan or used by a readiness rule`);
 
   for (const t of p.targets || []) needExercise(t.exercise, "target");
   if (p.createdAt > p.updatedAt) errors.push("updatedAt is earlier than createdAt");
@@ -214,7 +215,7 @@ export function validateLog(log, { profiles, programmes, library }) {
     if (s.programme) {
       const p = programmes.get(s.programme.id);
       if (!p) errors.push(`${where}: programme "${s.programme.id}" not found`);
-      else if (!p.sessions.some(x => x.id === s.session.id)) errors.push(`${where}: programme "${p.id}" has no session "${s.session.id}"`);
+      else if (!p.workouts.some(x => x.id === s.session.id)) errors.push(`${where}: programme "${p.id}" has no workout "${s.session.id}"`);
       if (!s.prescribed) errors.push(`${where}: a programme session needs its prescription copied in`);
     }
     for (const e of s.exercises) {
@@ -225,8 +226,8 @@ export function validateLog(log, { profiles, programmes, library }) {
       if (e.added && e.slot) errors.push(`${ew}: an added exercise has no slot in the prescription`);
       if (e.slot === null && !e.added) errors.push(`${ew}: slot null is only for exercises added during the session`);
       if (e.slot && s.prescribed) {
-        const [tier, b, i] = e.slot.split(".");
-        const slot = s.prescribed.tiers[tier]?.[+b]?.slots?.[+i];
+        const [b, i] = e.slot.split(".");
+        const slot = s.prescribed.items[+b]?.slots?.[+i];
         if (!slot) errors.push(`${ew}: slot ${e.slot} isn't in the prescription`);
         else if (slot.exercise !== e.exercise && slot.exercise !== e.swappedFrom) errors.push(`${ew}: slot ${e.slot} prescribes "${slot.exercise}"`);
       }

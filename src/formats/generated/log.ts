@@ -4,9 +4,13 @@ export type Id = string;
 export type Date = string;
 export type Time = string;
 export type Level = "green" | "amber" | "red";
+/**
+ * One item in a workout: a single exercise, or a group that runs in rounds
+ */
 export type Block =
   | {
-      type?: "straight";
+      type?: "single";
+      tier?: "primary" | "secondary" | "tertiary";
       restSec?: number;
       /**
        * @minItems 1
@@ -16,6 +20,8 @@ export type Block =
     }
   | {
       type?: "superset";
+      tier?: "primary" | "secondary" | "tertiary";
+      rounds: number;
       restSec?: number;
       /**
        * @minItems 2
@@ -25,6 +31,7 @@ export type Block =
     }
   | {
       type?: "giant";
+      tier?: "primary" | "secondary" | "tertiary";
       rounds: number;
       transitionSec?: number;
       restSec?: number;
@@ -35,6 +42,7 @@ export type Block =
     }
   | {
       type?: "finisher";
+      tier?: "primary" | "secondary" | "tertiary";
       rounds: number;
       workSec: number;
       restSec: number;
@@ -50,7 +58,7 @@ export type Kg = number;
  */
 export interface JFDITrainingLog {
   format: "jfdi-log";
-  formatVersion: 1;
+  formatVersion: 2;
   profile: Id;
   /**
    * Optional, for example files and imports
@@ -83,7 +91,7 @@ export interface Session {
    */
   readiness: Level | null;
   deload?: boolean;
-  prescribed?: Session1;
+  prescribed?: Workout;
   exercises: ExerciseEntry[];
   notes?: string;
   endedEarly?: string | null;
@@ -97,28 +105,17 @@ export interface Session {
   importedFrom?: string;
 }
 /**
- * The session as prescribed on the day, after readiness and deload rules. A copy, so editing the programme never rewrites history
+ * The workout as prescribed on the day, after readiness and deload rules. A copy, so editing the programme never rewrites history
  */
-export interface Session1 {
+export interface Workout {
   id: string;
   name: string;
   subtitle?: string;
   estimatedMinutes?: number;
-  inRotation?: boolean;
-  tiers: {
-    /**
-     * @minItems 1
-     */
-    primary?: [Block, ...Block[]];
-    /**
-     * @minItems 1
-     */
-    secondary?: [Block, ...Block[]];
-    /**
-     * @minItems 1
-     */
-    tertiary?: [Block, ...Block[]];
-  };
+  /**
+   * @minItems 1
+   */
+  items: [Block, ...Block[]];
 }
 export interface Slot {
   exercise: string;
@@ -153,7 +150,7 @@ export interface ExerciseEntry {
    */
   name: string;
   /**
-   * Where it sits in the prescription, as tier.block.slot. null for an exercise added during the session
+   * Where it sits in the prescription, as item.slot (both counted from 0). null for an exercise added during the session
    */
   slot?: string | null;
   loadPer?: "total" | "each";

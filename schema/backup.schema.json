@@ -8,7 +8,7 @@
   "required": ["format", "formatVersion", "exportedAt", "app", "profiles", "programmes", "logs"],
   "properties": {
     "format": { "const": "jfdi-backup" },
-    "formatVersion": { "const": 1 },
+    "formatVersion": { "const": 2 },
     "exportedAt": { "type": "string", "format": "date-time" },
     "app": {
       "description": "The version of J.F.D.I that made the backup",

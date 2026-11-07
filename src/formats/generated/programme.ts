@@ -26,9 +26,13 @@ export type Progression =
       type?: "none";
     };
 export type Percent = number;
+/**
+ * One item in a workout: a single exercise, or a group that runs in rounds
+ */
 export type Block =
   | {
-      type?: "straight";
+      type?: "single";
+      tier?: TierName;
       restSec?: Seconds;
       /**
        * @minItems 1
@@ -38,6 +42,8 @@ export type Block =
     }
   | {
       type?: "superset";
+      tier?: TierName;
+      rounds: number;
       restSec?: Seconds;
       /**
        * @minItems 2
@@ -47,6 +53,7 @@ export type Block =
     }
   | {
       type?: "giant";
+      tier?: TierName;
       rounds: number;
       transitionSec?: Seconds;
       restSec?: Seconds;
@@ -57,6 +64,7 @@ export type Block =
     }
   | {
       type?: "finisher";
+      tier?: TierName;
       rounds: number;
       workSec: Seconds;
       restSec: Seconds;
@@ -65,58 +73,57 @@ export type Block =
        */
       slots?: [Slot, ...Slot[]];
     };
-export type Week = {
-  id: Id;
-  name: Text;
-  /**
-   * @minItems 1
-   */
-  rotation: [Id, ...Id[]];
-  perWeek?: {
-    liftDays: number;
-    /**
-     * Full days off between lifting days
-     */
-    minRestDays?: number;
-  };
-  otherDays?: Day;
-  days?: {
-    mon: Day;
-    tue: Day;
-    wed: Day;
-    thu: Day;
-    fri: Day;
-    sat: Day;
-    sun: Day;
-  };
-} & Week1 & {
-    id: Id;
-    name: Text;
-    /**
-     * @minItems 1
-     */
-    rotation: [Id, ...Id[]];
-    perWeek?: {
-      liftDays: number;
+export type TierName = "primary" | "secondary" | "tertiary";
+/**
+ * A cycle of 1 to 4 weeks that repeats. Ad hoc: workouts in order, on whichever days suit. Set days: workouts on weekdays, with the calendar deciding the week
+ */
+export type Plan =
+  | {
+      mode?: "adhoc";
       /**
-       * Full days off between lifting days
+       * Full days off between workouts
        */
       minRestDays?: number;
+      /**
+       * @minItems 1
+       * @maxItems 4
+       */
+      weeks?:
+        | [AdhocWeek]
+        | [AdhocWeek, AdhocWeek]
+        | [AdhocWeek, AdhocWeek, AdhocWeek]
+        | [AdhocWeek, AdhocWeek, AdhocWeek, AdhocWeek];
+    }
+  | {
+      mode?: "setDays";
+      /**
+       * @minItems 1
+       * @maxItems 4
+       */
+      weeks?:
+        | [SetDaysWeek]
+        | [SetDaysWeek, SetDaysWeek]
+        | [SetDaysWeek, SetDaysWeek, SetDaysWeek]
+        | [SetDaysWeek, SetDaysWeek, SetDaysWeek, SetDaysWeek];
     };
-    otherDays?: Day;
-    days?: {
-      mon: Day;
-      tue: Day;
-      wed: Day;
-      thu: Day;
-      fri: Day;
-      sat: Day;
-      sun: Day;
+/**
+ * What the days without a workout are
+ */
+export type OtherDay =
+  | {
+      type?: "conditioning";
+      activity: Text;
+      minutes?: Range;
+      notes?: string;
+    }
+  | {
+      type?: "free" | "rest";
+      notes?: string;
     };
-  } & Week1;
 export type Day =
   | {
-      type?: "lift";
+      type?: "workout";
+      workout: Id;
       notes?: string;
     }
   | {
@@ -128,13 +135,6 @@ export type Day =
   | {
       type?: "free" | "rest";
       notes?: string;
-    };
-export type Week1 =
-  | {
-      [k: string]: unknown;
-    }
-  | {
-      [k: string]: unknown;
     };
 export type Gate =
   | {
@@ -172,13 +172,12 @@ export type Rule =
       reps: number;
     }
   | {
-      rule?: "replaceSession";
-      session: Id;
+      rule?: "replaceWorkout";
+      workout: Id;
     }
   | {
       rule?: "noLifting";
     };
-export type TierName = "primary" | "secondary" | "tertiary";
 
 /**
  * A training programme as data. See docs/programme-format.md. Cross-references between ids are checked by scripts/validate.mjs, not by this schema.
@@ -186,12 +185,11 @@ export type TierName = "primary" | "secondary" | "tertiary";
 export interface JFDIProgrammeFile {
   $schema?: string;
   format: "jfdi-programme";
-  formatVersion: 1;
+  formatVersion: 2;
   id: Id;
   name: Text;
   description?: string;
   goal?: string;
-  daysPerWeek?: number;
   createdAt: string;
   updatedAt: string;
   equipment: Equipment[];
@@ -206,11 +204,8 @@ export interface JFDIProgrammeFile {
   /**
    * @minItems 1
    */
-  sessions: [Session, ...Session[]];
-  /**
-   * @minItems 1
-   */
-  weeks: [Week, ...Week[]];
+  workouts: [Workout, ...Workout[]];
+  plan: Plan;
   /**
    * @minItems 1
    */
@@ -257,26 +252,15 @@ export interface Stall {
   misses: number;
   reducePercent: Percent;
 }
-export interface Session {
+export interface Workout {
   id: Id;
   name: Text;
   subtitle?: string;
   estimatedMinutes?: number;
-  inRotation?: boolean;
-  tiers: {
-    /**
-     * @minItems 1
-     */
-    primary?: [Block, ...Block[]];
-    /**
-     * @minItems 1
-     */
-    secondary?: [Block, ...Block[]];
-    /**
-     * @minItems 1
-     */
-    tertiary?: [Block, ...Block[]];
-  };
+  /**
+   * @minItems 1
+   */
+  items: [Block, ...Block[]];
 }
 export interface Slot {
   exercise: Id;
@@ -304,6 +288,34 @@ export interface Range {
   min: number;
   max: number;
 }
+export interface AdhocWeek {
+  /**
+   * Day 1, Day 2 and so on, in order
+   *
+   * @minItems 1
+   * @maxItems 7
+   */
+  workouts:
+    | [Id]
+    | [Id, Id]
+    | [Id, Id, Id]
+    | [Id, Id, Id, Id]
+    | [Id, Id, Id, Id, Id]
+    | [Id, Id, Id, Id, Id, Id]
+    | [Id, Id, Id, Id, Id, Id, Id];
+  otherDays?: OtherDay;
+}
+export interface SetDaysWeek {
+  days: {
+    mon: Day;
+    tue: Day;
+    wed: Day;
+    thu: Day;
+    fri: Day;
+    sat: Day;
+    sun: Day;
+  };
+}
 export interface Phase {
   id: Id;
   name: Text;
@@ -320,7 +332,6 @@ export interface Phase {
 export interface TrainingBlock {
   id: Id;
   name: Text;
-  week: Id;
   weeks: number | null;
   deload?: (
     | {

@@ -1,6 +1,6 @@
 # Profiles and the training log
 
-Status: **draft for review**, version 1 of both formats.
+Status: profile format version 1, log format version 2 (7 November 2026: prescriptions are workouts, slots are `item.slot`).
 
 These are the last two pieces of the data model. With programmes, equipment and the library, they cover everything J.F.D.I stores.
 
@@ -63,10 +63,10 @@ A log has three lists: `sessions`, `days` and `bodyweight`.
 | `startedAt`, `finishedAt` | Timestamps. `finishedAt` is required once `status` is `done` |
 | `status` | `active` while training (the app saves as you go), then `done`. A discarded session is deleted, not kept |
 | `programme` | `{ id, updatedAt, phase, block, week }`, or `null` for a session outside any programme |
-| `session` | `{ id, name, subtitle }` of the session template |
+| `session` | `{ id, name, subtitle }` of the workout done |
 | `readiness` | The day's level (`green`, `amber`, `red`), or `null` when the check is off |
 | `deload` | `true` in a deload week |
-| `prescribed` | **A copy of the session as prescribed that day**, after readiness and deload rules were applied. Same shape as a programme session. This is what lets a programme be edited without rewriting history (AR-4, AR-5) |
+| `prescribed` | **A copy of the workout as prescribed that day**, after readiness and deload rules were applied. Same shape as a programme workout. This is what lets a programme be edited without rewriting history (AR-4, AR-5) |
 | `exercises` | What was actually done, in order (below) |
 | `notes`, `endedEarly` | Free text; `endedEarly` holds the reason, such as "Light-headed or sick" |
 | `check48h` | `{ status, at }`, where `status` is `same`, `settling` or `worse`. `null` until answered |
@@ -77,7 +77,7 @@ A log has three lists: `sessions`, `days` and `bodyweight`.
 | Field | Meaning |
 | --- | --- |
 | `exercise`, `name` | Library id, plus the name at the time, so history still reads correctly if the library renames something |
-| `slot` | Where it sits in `prescribed`, as `tier.block.slot`, such as `secondary.0.1` for the rows in the bench superset. `null` for an exercise added during the session |
+| `slot` | Where it sits in `prescribed`, as `item.slot` counted from 0, such as `1.1` for the rows in the bench superset. `null` for an exercise added during the session |
 | `loadPer` | `each` when kg is per hand |
 | `added` | `true` if added during the session (LG-4) |
 | `removed` | `{ reason }` if removed during the session. Sets already done stay; the rest are dropped. Removal never affects progression |
