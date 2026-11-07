@@ -19,13 +19,31 @@ Build training programmes and run them in the gym. One app with two modes: Train
 | [`scripts/validate.mjs`](scripts/validate.mjs) | Checks every file against its schema and the cross-reference rules |
 | [`scripts/import-rebuild-log.mjs`](scripts/import-rebuild-log.mjs) | Converts a Rebuild Log backup into a J.F.D.I training log |
 
-## Checking programme files
+## The app
+
+The live app is at https://alindsay42.github.io/JFDI/. Every pull request gets a test version at `/JFDI/pr-preview/pr-<number>/`, linked from the pull request. A test version keeps its data apart from the live app.
+
+| Path | What |
+| --- | --- |
+| [`src/engine/`](src/engine/) | Training rules, with no screen code. Every line must be tested |
+| [`src/store/`](src/store/) | The on-device database |
+| [`src/train/`](src/train/), [`src/shared/`](src/shared/) | Screens |
+| [`src/formats/generated/`](src/formats/generated/) | Types generated from `schema/` |
+| [`tests/engine/`](tests/engine/) | Rule tables (`*.rules.ts`), which are both tests and [`docs/rules.md`](docs/rules.md) |
+| [`tests/e2e/`](tests/e2e/) | Whole-app tests in a real browser |
+| [`.github/workflows/`](.github/workflows/) | Checks on every pull request, test versions, publishing on merge |
+
+## Commands
 
 ```
 npm install
+npm run dev               # the app, locally
 npm run validate          # data/ and every file in examples/
 npm run catalogue         # regenerate docs/catalogue.md after changing data/
-npm test                  # all of the above, the Rebuild Log import, and every file in tests/invalid/ rejected for its listed reason
+npm run types             # regenerate src/formats/generated/ after changing schema/
+npm run rules             # regenerate docs/rules.md after changing a rule table
+npm test                  # formats, generated files, type check, unit tests with coverage
+npm run check             # npm test, then build and run the whole-app tests
 ```
 
 ## Conventions
