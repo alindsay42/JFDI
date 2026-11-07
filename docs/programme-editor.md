@@ -1,6 +1,6 @@
 # Building a programme
 
-Status: **draft**, agreed with Andrew on 7 November 2026. Nothing is built yet.
+Status: **built** as the first part of Build mode (version 0.4.0), as agreed with Andrew on 7 November 2026.
 
 This is the first part of Build mode, brought forward: planning the weeks, then building each workout.
 
@@ -110,3 +110,13 @@ Settled on 7 November:
 5. **Groups run in rounds.** A superset or giant set always has the same number of sets for every exercise in it, set once as **rounds**, with rest after each round. Each exercise in a group has only its weight and its reps or time. Sets belong to standalone exercises only.
 6. **Skipping during a session:** any set of any exercise can be skipped, inside a group or not, as in Rebuild Log.
 7. **Block 1's superset** becomes 5 rounds of bench press (5 reps) and barbell row (6 reps). Rows were 3 sets; with rounds they match bench at 5, and any row set can be skipped on the day.
+
+## How it's built
+
+- **Where:** the **Programme** tab (the tabs are Today, Programme, History, Backup). It shows the current person's programme, lists every programme, and has a form for a new one.
+- **Using a programme:** on a programme's plan, **Use this programme** with a start date puts the current person on it. The weights set in the builder are their starting weights. **Stop using it** takes them off.
+- **No programmes come with the app.** Diane's Block 1 is kept in `examples/programmes/` for later, and is removed from any device where nobody runs it.
+- **Drafts:** every change is saved as a draft straight away, so nothing is lost if the tablet sleeps. **Save** checks the programme and makes it the real version, says "Saved", and from a workout goes back to the plan. Anyone running it moves onto the new version. **Discard** goes back to the last saved version.
+- **New exercises** go in as standalones with 3 sets of 8 (or 30 seconds, 20 metres...), starting at the empty bar for barbell lifts. Each item also has a tier in the data, for readiness rules later; it isn't shown while the builder has no readiness settings.
+- **Copying weeks:** a new week in the cycle starts as a copy of the last, and **Copy week 1 here** copies Week 1 over any later week. Copies are separate workouts, so heavy and light weeks can differ.
+- **Reordering:** drag the ≡ handle, or focus it and use the up and down arrows.

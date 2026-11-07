@@ -36,7 +36,15 @@ export type Plan =
   | { mode: "adhoc"; minRestDays?: number; weeks: AdhocWeek[] }
   | { mode: "setDays"; weeks: SetDaysWeek[] };
 
-export type Programme = Omit<JFDIProgrammeFile, "workouts" | "plan"> & { workouts: Workout[]; plan: Plan };
+type Bar = JFDIProgrammeFile["equipment"][number];
+type Progression = JFDIProgrammeFile["progressions"][number];
+export type Programme = Omit<JFDIProgrammeFile, "workouts" | "plan" | "exercises" | "equipment" | "progressions"> & {
+  workouts: Workout[];
+  plan: Plan;
+  exercises: Exercise[];
+  equipment: Bar[];
+  progressions: Progression[];
+};
 
 /** The same file, seen through the exact types. Safe for any programme that has passed its checks. */
 export const asProgramme = (p: JFDIProgrammeFile) => p as unknown as Programme;

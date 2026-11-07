@@ -12,9 +12,9 @@ Build training programmes and run them in the gym. One app with two modes: Train
 | [`docs/architecture.md`](docs/architecture.md) | How the app is built: technology, code layout, testing, releases and build order |
 | [`docs/backup.md`](docs/backup.md) | Backup files, restoring, importing from Rebuild Log, and the backup reminder |
 | [`docs/catalogue.md`](docs/catalogue.md) | Every piece of equipment and every exercise, as tables (generated) |
-| [`data/`](data/) | The household equipment list, the exercise library, and the programmes that come with the app (`data/programmes/`) |
+| [`data/`](data/) | The household equipment list and the exercise library |
 | [`schema/`](schema/) | JSON Schemas for programmes, equipment, the library, profiles, logs and backups |
-| [`examples/`](examples/) | Profiles and logs that must always pass validation |
+| [`examples/`](examples/) | Programmes (Diane's Block 1), profiles and logs that must always pass validation. Not built into the app |
 | [`tests/invalid/`](tests/invalid/) | Broken files that must always be rejected, each for the reason listed in `expected-errors.json` |
 | [`tests/fixtures/`](tests/fixtures/) | A sample Rebuild Log backup for testing the importer |
 | [`scripts/validate.mjs`](scripts/validate.mjs) | Checks every file against its schema and the cross-reference rules |

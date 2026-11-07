@@ -24,9 +24,9 @@ export function Today({ profile, now = new Date() }: { profile: JFDIProfile; now
       ) : (
         <section className="card empty">
           <h2>No programme yet</h2>
-          <p>Choose a programme, a start date and starting weights.</p>
+          <p>Build one, or choose one, on the Programme tab.</p>
           <div className="actions actions-start">
-            <a className="btn btn-you" href="#/person">Go to setup</a>
+            <a className="btn btn-you" href="#/programme">Go to programmes</a>
           </div>
         </section>
       )}
