@@ -9,6 +9,7 @@ Build training programmes and run them in the gym. One app with two modes: Train
 | [`docs/programme-format.md`](docs/programme-format.md) | The programme file format: what a plan looks like as data |
 | [`docs/equipment-and-library.md`](docs/equipment-and-library.md) | The household equipment list and the exercise library: formats and rules |
 | [`docs/profile-and-log.md`](docs/profile-and-log.md) | Profiles (one per person) and the training log, plus importing from Rebuild Log |
+| [`docs/architecture.md`](docs/architecture.md) | How the app is built: technology, code layout, testing, releases and build order (proposal) |
 | [`docs/catalogue.md`](docs/catalogue.md) | Every piece of equipment and every exercise, as tables (generated) |
 | [`data/`](data/) | The household equipment list and the exercise library |
 | [`schema/`](schema/) | JSON Schemas for programmes, equipment, the library, profiles and logs |
