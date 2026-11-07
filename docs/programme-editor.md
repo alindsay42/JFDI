@@ -94,7 +94,7 @@ The screen has two parts, one above the other.
 
 1. ~~Sessions~~: replaced by the week planner.
 2. ~~Undoing a group~~: settled, see Grouping above.
-3. **Rounds:** a giant set in Block 1 runs in rounds rather than sets per exercise (for example, 3 rounds of lateral raise, plank, battle ropes). Does a giant set get a single "rounds" box instead of sets on each row?
+3. ~~Rounds~~: settled, see Decisions.
 4. **Finisher:** Block 1 also has a timed **finisher** group. Is it a type you pick when saving a group of 3 or more, or does it go?
 5. **Timed and distance exercises:** a plank takes seconds and a carry takes metres, so those rows show seconds or metres in place of reps.
 6. **Who it affects:** changes edit the programme itself. Diane is the only one on Block 1, so that's the same as changing it just for her.
@@ -107,3 +107,6 @@ Settled on 7 November:
 2. **Set days or Ad hoc** is one choice for the whole programme.
 3. **Missed workouts:** Ad hoc keeps the order, with an optional skip. Set days follows the calendar, and a missed workout stays missed.
 4. **Choosing exercises:** two lists with `>> > < <<`. The chosen exercises sit below as standalones, dragged into order, with weight, sets and reps on each row. **Pair exercises** groups 2 into a superset, or 3 or more into a giant set.
+5. **Groups run in rounds.** A superset or giant set always has the same number of sets for every exercise in it, set once as **rounds**, with rest after each round. Each exercise in a group has only its weight and its reps or time. Sets belong to standalone exercises only.
+6. **Skipping during a session:** any set of any exercise can be skipped, inside a group or not, as in Rebuild Log.
+7. **Block 1's superset** becomes 5 rounds of bench press (5 reps) and barbell row (6 reps). Rows were 3 sets; with rounds they match bench at 5, and any row set can be skipped on the day.
