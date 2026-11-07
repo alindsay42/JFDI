@@ -83,9 +83,14 @@ Each step is one pull request you can try before the next starts.
 
 Build mode comes after step 6. Until then, programmes are written as files (with my help) and loaded in.
 
-## Questions for you
+## Decisions
 
-1. **Framework:** React is proposed. The main alternative is Svelte, which is lighter and arguably simpler to read, but less widely used. Any preference?
-2. **The tablet:** what make and model is it, and which browser does it use? That sets the main screen size the end-to-end tests run at.
+Settled on 7 Nov:
+
+1. **Framework:** React.
+2. **The tablet:** Lenovo Tab P11, running Chrome on Android. The end-to-end tests use its screen size, about 1000 × 600 in landscape and 600 × 1000 in portrait, plus a phone size. The exact size gets checked on the tablet itself with the first test version.
+
+## Still open
+
 3. **Test strictness:** should a minimum test coverage be enforced on the engine (for example, every line of `engine/` covered), or is "every rule has a test table" enough?
 4. **Branch protection:** happy for `main` to require passing checks before anything merges? That includes changes I make.
