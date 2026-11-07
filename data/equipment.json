@@ -1,0 +1,333 @@
+{
+ "format": "jfdi-equipment",
+ "formatVersion": 1,
+ "name": "Home gym",
+ "updatedAt": "2026-11-06T10:30:00Z",
+ "items": [
+  {
+   "id": "bar-beater",
+   "name": "Beater barbell (old, non-rotating sleeves)",
+   "kind": "bar",
+   "barType": "standard",
+   "kg": 20,
+   "preferredFor": [
+    "bench-press",
+    "pause-bench-press",
+    "close-grip-bench-press",
+    "incline-bench-press",
+    "floor-press"
+   ],
+   "notes": "Used for bench, where rotating sleeves aren't wanted."
+  },
+  {
+   "id": "bar-bastard",
+   "name": "Strength Shop Bastard Barbell",
+   "kind": "bar",
+   "barType": "standard",
+   "kg": 20,
+   "preferredFor": [
+    "deadlift",
+    "sumo-deadlift",
+    "deficit-deadlift",
+    "block-pull",
+    "power-clean",
+    "hang-power-clean",
+    "power-snatch",
+    "hang-power-snatch"
+   ],
+   "notes": "More aggressive knurling. Best for deadlifts and Olympic lifts."
+  },
+  {
+   "id": "bar-junior",
+   "name": "Junior barbell",
+   "kind": "bar",
+   "barType": "junior",
+   "kg": 10
+  },
+  {
+   "id": "bar-ez",
+   "name": "EZ curl bar",
+   "kind": "bar",
+   "barType": "ez",
+   "kg": 8
+  },
+  {
+   "id": "bar-ssb",
+   "name": "BLK Box safety squat bar",
+   "kind": "bar",
+   "barType": "ssb",
+   "kg": 32
+  },
+  {
+   "id": "bar-trap",
+   "name": "Hex trap bar",
+   "kind": "bar",
+   "barType": "trap",
+   "kg": 25,
+   "tbc": true,
+   "notes": "25kg is the listed weight. Still to weigh."
+  },
+  {
+   "id": "bar-log",
+   "name": "Mirafit lifting log",
+   "kind": "bar",
+   "barType": "log",
+   "kg": 30
+  },
+  {
+   "id": "bar-swiss",
+   "name": "Swiss bar",
+   "kind": "bar",
+   "barType": "swiss",
+   "kg": 19.2,
+   "notes": "Weighed at 19.2kg."
+  },
+  {
+   "id": "plates-bumper",
+   "name": "Jordan competition bumper plates",
+   "kind": "plates",
+   "plates": [
+    {
+     "kg": 20,
+     "count": 4
+    },
+    {
+     "kg": 15,
+     "count": 2
+    },
+    {
+     "kg": 10,
+     "count": 2
+    },
+    {
+     "kg": 5,
+     "count": 2
+    }
+   ]
+  },
+  {
+   "id": "plates-iron",
+   "notes": "Not calibrated, so actual weights may be slightly off.",
+   "name": "Bodymax iron plates (carry cut-outs)",
+   "kind": "plates",
+   "plates": [
+    {
+     "kg": 20,
+     "count": 4
+    },
+    {
+     "kg": 15,
+     "count": 2
+    },
+    {
+     "kg": 10,
+     "count": 2
+    },
+    {
+     "kg": 5,
+     "count": 4
+    },
+    {
+     "kg": 2.5,
+     "count": 4
+    },
+    {
+     "kg": 1.25,
+     "count": 4
+    }
+   ]
+  },
+  {
+   "id": "plates-rubber",
+   "name": "Bodymax rubber-coated plates (carry cut-outs)",
+   "kind": "plates",
+   "plates": [
+    {
+     "kg": 5,
+     "count": 4
+    },
+    {
+     "kg": 2.5,
+     "count": 4
+    }
+   ]
+  },
+  {
+   "id": "collars",
+   "name": "Heavy metal collars",
+   "kind": "collars",
+   "kgEach": 0.28,
+   "count": 4,
+   "notes": "Also used for micro-loading: a pair adds about 0.5kg, all four about 1kg."
+  },
+  {
+   "id": "chains",
+   "name": "Mirafit chains",
+   "kind": "chains",
+   "kgEach": 10,
+   "count": 2
+  },
+  {
+   "id": "dumbbells",
+   "name": "Dumbbells (fixed pairs)",
+   "kind": "dumbbells",
+   "pairsKg": [
+    5,
+    7.5,
+    10,
+    12.5,
+    15,
+    20,
+    25,
+    30,
+    35,
+    40,
+    45,
+    50
+   ],
+   "unavailableKg": [
+    7.5,
+    10
+   ],
+   "notes": "The 7.5kg and 10kg pairs are lent out. There's no 17.5kg or 22.5kg pair, so jumps above 15kg are 5kg."
+  },
+  {
+   "id": "db-loadable",
+   "name": "Olympic loadable dumbbell handles",
+   "kind": "dumbbells",
+   "count": 2,
+   "tbc": true,
+   "notes": "Plate-loaded handles, a pair. Handle weight to confirm."
+  },
+  {
+   "id": "sandbag",
+   "name": "Sandbag",
+   "kind": "odd-object",
+   "kg": 60,
+   "notes": "Currently filled to 60kg. Refillable, so the weight can change."
+  },
+  {
+   "id": "rack",
+   "name": "Strength Shop Riot cage",
+   "kind": "rack"
+  },
+  {
+   "id": "rack-safeties",
+   "name": "Cage safety arms",
+   "kind": "attachment",
+   "attachesTo": "rack"
+  },
+  {
+   "id": "rack-monolift",
+   "name": "Monolift arms (Strength Shop)",
+   "kind": "attachment",
+   "attachesTo": "rack"
+  },
+  {
+   "id": "rack-landmine",
+   "name": "Landmine attachment",
+   "kind": "attachment",
+   "attachesTo": "rack"
+  },
+  {
+   "id": "landmine-handles",
+   "name": "Mirafit M3 parallel landmine handle",
+   "kind": "handle",
+   "notes": "Neutral grip, for rows and presses."
+  },
+  {
+   "id": "rings",
+   "name": "Gymnastic rings (hung from the cage)",
+   "kind": "station"
+  },
+  {
+   "id": "cable-pulleys",
+   "name": "Cable and pulley set (hung from the cage or pull-up bar)",
+   "kind": "cable"
+  },
+  {
+   "id": "abx-bench",
+   "name": "Freak Athletes ABX bench (flat, incline, decline)",
+   "kind": "bench"
+  },
+  {
+   "id": "abx-leg",
+   "name": "ABX leg extension and leg curl",
+   "kind": "attachment",
+   "attachesTo": "abx-bench"
+  },
+  {
+   "id": "abx-cable",
+   "name": "ABX cable attachment",
+   "kind": "attachment",
+   "attachesTo": "abx-bench"
+  },
+  {
+   "id": "abx-situp",
+   "name": "ABX sit-up attachment",
+   "kind": "attachment",
+   "attachesTo": "abx-bench"
+  },
+  {
+   "id": "abx-curl",
+   "name": "ABX strict curl attachment",
+   "kind": "attachment",
+   "attachesTo": "abx-bench"
+  },
+  {
+   "id": "hyper",
+   "name": "45-degree back hyperextension bench",
+   "kind": "station"
+  },
+  {
+   "id": "ghd",
+   "name": "Primal Strength GHD (low, floor height)",
+   "kind": "station"
+  },
+  {
+   "id": "dip-bars",
+   "name": "Dip bars (adjustable height)",
+   "kind": "station"
+  },
+  {
+   "id": "pull-up-bar",
+   "name": "Wall-mounted pull-up bar",
+   "kind": "station"
+  },
+  {
+   "id": "battle-ropes",
+   "name": "Battle ropes",
+   "kind": "conditioning"
+  },
+  {
+   "id": "boxing-bag",
+   "name": "Boxing bag",
+   "kind": "conditioning"
+  },
+  {
+   "id": "skipping-rope",
+   "name": "Skipping rope",
+   "kind": "conditioning"
+  },
+  {
+   "id": "bands",
+   "name": "Resistance bands (various)",
+   "kind": "accessory"
+  },
+  {
+   "id": "lifting-belt",
+   "name": "Strength Shop lifting belt",
+   "kind": "accessory"
+  },
+  {
+   "id": "dip-belt",
+   "name": "Dip and pull-up loading belt",
+   "kind": "accessory"
+  },
+  {
+   "id": "mats",
+   "name": "Rubber gym mats",
+   "kind": "accessory"
+  }
+ ]
+}

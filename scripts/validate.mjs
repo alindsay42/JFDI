@@ -1,7 +1,8 @@
-// Checks programme files against the schema, then checks the rules the schema can't express
-// (references between ids, which fields a slot needs for its exercise, and so on).
+// Checks the household equipment list, the exercise library and programme files against their
+// schemas, then checks the rules a schema can't express (references between ids, which fields a
+// slot needs for its exercise, whether a programme's exercises match the library, and so on).
 //
-//   npm run validate                 checks every file in examples/
+//   npm run validate                 checks data/ and every file in examples/
 //   npm run validate -- path.json    checks the given files
 //   npm test                         also checks that every file in tests/invalid/ is rejected
 import { readFileSync, readdirSync } from "node:fs";
@@ -11,10 +12,71 @@ import Ajv2020 from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const schema = JSON.parse(readFileSync(join(root, "schema/programme.schema.json"), "utf8"));
+const readJson = path => JSON.parse(readFileSync(join(root, path), "utf8"));
 const ajv = new Ajv2020({ allErrors: true, strict: true, strictRequired: false, allowUnionTypes: true });
 addFormats(ajv);
-const checkSchema = ajv.compile(schema);
+const checkSchema = ajv.compile(readJson("schema/programme.schema.json"));
+const checkEquipmentSchema = ajv.compile(readJson("schema/equipment.schema.json"));
+const checkLibrarySchema = ajv.compile(readJson("schema/library.schema.json"));
+const schemaErrors = (fn, label) => fn.errors.map(e => `${label} schema: ${e.instancePath || "/"} ${e.message}`);
+const uniqueIds = (list, what, errors) => {
+  const seen = new Set();
+  for (const item of list) { if (seen.has(item.id)) errors.push(`duplicate ${what} id "${item.id}"`); seen.add(item.id); }
+};
+
+export function validateEquipment(eq) {
+  if (!checkEquipmentSchema(eq)) return schemaErrors(checkEquipmentSchema, "equipment");
+  const errors = [];
+  uniqueIds(eq.items, "equipment", errors);
+  const ids = new Set(eq.items.map(i => i.id));
+  for (const i of eq.items) if (i.attachesTo && !ids.has(i.attachesTo)) errors.push(`equipment "${i.id}": attaches to unknown "${i.attachesTo}"`);
+  return errors;
+}
+
+export function validateLibrary(lib, eq) {
+  if (!checkLibrarySchema(lib)) return schemaErrors(checkLibrarySchema, "library");
+  const errors = [];
+  uniqueIds(lib.families, "family", errors);
+  uniqueIds(lib.exercises, "library exercise", errors);
+  const families = new Map(lib.families.map(f => [f.id, f]));
+  const equipment = new Set(eq.items.map(i => i.id));
+  const barTypes = new Set(eq.items.filter(i => i.kind === "bar").map(i => i.barType));
+  for (const ex of lib.exercises) {
+    const where = `library exercise "${ex.id}"`;
+    if (!families.has(ex.family)) errors.push(`${where}: unknown family "${ex.family}"`);
+    for (const r of ex.requires) if (!equipment.has(r)) errors.push(`${where}: needs unknown equipment "${r}"`);
+    for (const bt of ex.barTypes || []) if (!barTypes.has(bt)) errors.push(`${where}: no ${bt} bar in the equipment list`);
+    if (ex.barTypes && ex.implement !== "barbell") errors.push(`${where}: only barbell exercises take bar types`);
+  }
+  const exIds = new Map(lib.exercises.map(e => [e.id, e]));
+  for (const i of eq.items) for (const id of i.preferredFor || []) {
+    const ex = exIds.get(id);
+    if (!ex) errors.push(`equipment "${i.id}": preferred for unknown exercise "${id}"`);
+    else if (!(ex.barTypes || []).includes(i.barType)) errors.push(`equipment "${i.id}": preferred for "${id}", which doesn't use a ${i.barType} bar`);
+  }
+  for (const i of eq.items) for (const kg of i.unavailableKg || []) if (!(i.pairsKg || []).includes(kg)) errors.push(`equipment "${i.id}": ${kg}kg is unavailable but isn't in pairsKg`);
+  const used = new Set(lib.exercises.map(e => e.family));
+  for (const f of lib.families) if (!used.has(f.id)) errors.push(`family "${f.id}" has no exercises`);
+  return errors;
+}
+
+// A programme carries its own copy of each exercise. When it uses a library exercise, the copy must agree.
+export function checkAgainstLibrary(p, lib, eq) {
+  const errors = [];
+  const library = new Map(lib.exercises.map(e => [e.id, e]));
+  const bars = new Map(p.equipment.map(b => [b.id, b]));
+  const householdBarTypes = new Set(eq.items.filter(i => i.kind === "bar").map(i => i.barType));
+  for (const b of p.equipment) if (!householdBarTypes.has(b.barType)) errors.push(`bar "${b.id}": the household has no ${b.barType} bar`);
+  for (const ex of p.exercises) {
+    const libEx = library.get(ex.id);
+    if (!libEx) { errors.push(`exercise "${ex.id}" isn't in the library`); continue; }
+    for (const f of ["measure", "implement"]) if (ex[f] !== libEx[f]) errors.push(`exercise "${ex.id}": ${f} is "${ex[f]}" but the library says "${libEx[f]}"`);
+    const barType = ex.bar ? bars.get(ex.bar)?.barType : undefined;
+    const allowed = libEx.barTypes || [];
+    if (barType ? !allowed.includes(barType) : allowed.length) errors.push(`exercise "${ex.id}": uses ${barType ? `bar type "${barType}"` : "no bar"} but the library allows ${allowed.join(" or ") || "no bar"}`);
+  }
+  return errors;
+}
 
 const MEASURE_FIELD = { load: "reps", reps: "reps", time: "seconds", distance: "metres", calories: "calories" };
 
@@ -117,18 +179,35 @@ const args = process.argv.slice(2);
 const selfTest = args.includes("--self-test");
 const files = args.filter(a => !a.startsWith("--"));
 let failed = 0;
+const report = (label, errors) => {
+  if (errors.length) { failed++; console.log(`✗ ${label}`); errors.forEach(e => console.log(`    ${e}`)); }
+  else console.log(`✓ ${label}`);
+};
+
+const equipment = readJson("data/equipment.json");
+const library = readJson("data/library.json");
+const equipmentErrors = validateEquipment(equipment);
+report("data/equipment.json", equipmentErrors);
+const libraryErrors = equipmentErrors.length ? ["skipped: fix the equipment list first"] : validateLibrary(library, equipment);
+report(`data/library.json (${library.exercises?.length ?? 0} exercises)`, libraryErrors);
 
 for (const file of files.length ? files : jsonIn("examples")) {
   const errors = check(file);
-  if (errors.length) { failed++; console.log(`✗ ${file}`); errors.forEach(e => console.log(`    ${e}`)); }
-  else console.log(`✓ ${file}`);
+  if (!errors.length && !libraryErrors.length) errors.push(...checkAgainstLibrary(JSON.parse(readFileSync(file, "utf8")), library, equipment));
+  report(file, errors);
 }
 
 if (selfTest) {
-  for (const file of jsonIn("tests/invalid")) {
+  // Each broken file must be rejected, and for the reason listed in expected-errors.json
+  const expected = readJson("tests/invalid/expected-errors.json");
+  for (const file of jsonIn("tests/invalid").filter(f => !f.endsWith("expected-errors.json"))) {
+    const name = file.split("/").pop();
     const errors = check(file);
-    if (errors.length) console.log(`✓ rejected ${file}: ${errors[0]}`);
-    else { failed++; console.log(`✗ ${file} should have been rejected but passed`); }
+    if (!errors.length && !libraryErrors.length) errors.push(...checkAgainstLibrary(JSON.parse(readFileSync(file, "utf8")), library, equipment));
+    const want = expected[name];
+    if (!want) { failed++; console.log(`✗ ${name}: no expected error listed in expected-errors.json`); }
+    else if (errors.some(e => e.includes(want))) console.log(`✓ rejected ${name}: ${errors.find(e => e.includes(want))}`);
+    else { failed++; console.log(`✗ ${name}: expected an error containing "${want}", got ${errors.length ? errors.join("; ") : "no errors"}`); }
   }
 }
 

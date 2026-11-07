@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alindsay42.github.io/jfdi/schema/library.schema.json",
+  "title": "J.F.D.I exercise library",
+  "description": "Exercise families and their variations. Each variation is its own exercise with its own history. See docs/equipment-and-library.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "formatVersion", "updatedAt", "families", "exercises"],
+  "properties": {
+    "format": { "const": "jfdi-library" },
+    "formatVersion": { "const": 1 },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "families": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/family" } },
+    "exercises": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/exercise" } }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 64 },
+    "pattern": { "enum": ["squat", "hinge", "push", "pull", "lunge", "carry", "core", "isolation", "conditioning", "mobility"] },
+    "family": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "pattern", "variations"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "type": "string", "minLength": 1 },
+        "pattern": { "$ref": "#/$defs/pattern" },
+        "variations": { "type": "string", "description": "The ways exercises in this family differ, in plain words" }
+      }
+    },
+    "exercise": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "family", "measure", "implement", "pattern", "requires"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "type": "string", "minLength": 1 },
+        "family": { "$ref": "#/$defs/id" },
+        "measure": { "enum": ["load", "reps", "time", "distance", "calories"] },
+        "implement": { "enum": ["barbell", "dumbbell", "kettlebell", "cable", "machine", "band", "bodyweight", "other"] },
+        "barTypes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "enum": ["standard", "junior", "ez", "ssb", "trap", "log", "swiss"] }, "description": "Bars this exercise can be done with. The first is the default" },
+        "loadPer": { "enum": ["total", "each"] },
+        "perSide": { "type": "boolean" },
+        "pattern": { "$ref": "#/$defs/pattern" },
+        "requires": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true, "description": "Equipment ids needed, apart from the bar itself" },
+        "muscles": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "flags": { "type": "array", "items": { "enum": ["spineLoading", "rotation", "overhead", "impact"] }, "uniqueItems": true },
+        "restSec": { "type": "integer", "minimum": 0, "maximum": 3600 },
+        "notes": { "type": "string" }
+      },
+      "if": { "properties": { "implement": { "const": "barbell" } } },
+      "then": { "required": ["barTypes"] }
+    }
+  }
+}

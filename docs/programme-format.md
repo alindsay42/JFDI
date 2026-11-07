@@ -56,15 +56,17 @@ Only bars and other fixed-weight implements need listing, so the app knows the l
 | --- | --- |
 | `id` | For example `bar-standard`, `bar-junior`, `bar-ez` |
 | `name` | "Standard barbell", "Junior barbell" |
+| `barType` | `standard`, `junior`, `ez`, `ssb`, `trap`, `log` or `swiss` |
 | `kg` | Weight of the empty bar |
 
-When a file is imported, its bars are matched to the household equipment list by `id`. A bar the household doesn't have is flagged, not silently swapped.
+When a file is imported, its bars are matched to the household's bars by `barType`. A bar type the household doesn't have is flagged, not silently swapped. See [equipment-and-library.md](equipment-and-library.md).
 
 ## Exercises
 
 | Field | Required | Meaning |
 | --- | --- | --- |
-| `id`, `name` | yes | |
+| `id`, `name` | yes | The library exercise's id and name. A programme's exercises must match the library ([equipment-and-library.md](equipment-and-library.md)) |
+| `family` | no | The library family, copied for convenience |
 | `measure` | yes | How a set is recorded: `load` (kg and reps), `reps` (reps only, optional kg), `time` (seconds), `distance` (metres, optional kg), `calories` |
 | `implement` | yes | `barbell`, `dumbbell`, `kettlebell`, `cable`, `machine`, `band`, `bodyweight`, `other` |
 | `bar` | if barbell | Equipment `id`. Suggested loads never go below this bar's weight |

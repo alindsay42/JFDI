@@ -12,16 +12,19 @@
   {
    "id": "bar-standard",
    "name": "Standard barbell",
+   "barType": "standard",
    "kg": 20
   },
   {
    "id": "bar-junior",
    "name": "Junior barbell",
+   "barType": "junior",
    "kg": 10
   },
   {
    "id": "bar-ez",
    "name": "EZ curl bar",
+   "barType": "ez",
    "kg": 8
   }
  ],
@@ -406,7 +409,7 @@
         "start": {
          "kg": 15.5
         },
-        "notes": "1kg jumps with fractional plates. Without them, 2.5kg every second successful session."
+        "notes": "1kg jumps using all four collars (0.28kg each). Two collars add about 0.5kg."
        },
        {
         "exercise": "band-pull-up",
