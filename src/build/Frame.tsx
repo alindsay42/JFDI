@@ -6,7 +6,7 @@ import { PlainScreen, Screen } from "../shared/Screen.tsx";
 export function Frame({ profile, title, children }: { profile: JFDIProfile | undefined; title: ReactNode; children: ReactNode }) {
   if (!profile) return <PlainScreen title={typeof title === "string" ? title : "Build"}>{children}</PlainScreen>;
   return (
-    <Screen profile={profile} route="build">
+    <Screen profile={profile} route="programme">
       {typeof title === "string" ? <h1 className="page-title">{title}</h1> : title}
       {children}
     </Screen>

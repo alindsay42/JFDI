@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { Exercise, Item, Programme, Slot, Tier } from "../formats/programme.ts";
+import type { Exercise, Item, Programme, Slot } from "../formats/programme.ts";
 import {
   addExercises, formatRange, group, groupOf, moveItem, moveSlot, parseRange, removeExercises, renameWorkout, startKg, targetField,
   updateItem, updateSlot, workoutSlots, type SlotRef,
@@ -9,7 +9,6 @@ import type { DraftState } from "./useDraft.ts";
 import { equipment, library } from "../store/household.ts";
 import type { Workout } from "../formats/programme.ts";
 
-const TIER_NAMES: Record<Tier, string> = { primary: "Main", secondary: "Supporting", tertiary: "Extra" };
 const GROUP_NAMES: Record<Item["type"], string> = { single: "", superset: "Superset", giant: "Giant set", finisher: "Finisher" };
 const UNITS: Record<string, string> = { reps: "reps", seconds: "sec", metres: "m", calories: "cal" };
 const NO_KG = new Set(["bodyweight", "band"]);
@@ -64,7 +63,6 @@ export function WorkoutEditor({ draft, workout }: { draft: DraftState; workout: 
                   <ExerciseRow
                     p={p} workoutId={id} item={item} at={{ item: i, slot: 0 }} ex={exercises.get(item.slots[0].exercise)}
                     handle={handle} pairing={pairing} setPairing={setPairing} update={update}
-                    tier={<TierSelect value={item.tier} onChange={(tier) => update((q) => updateItem(q, id, i, { tier }))} />}
                   />
                 );
               }
@@ -77,7 +75,6 @@ export function WorkoutEditor({ draft, workout }: { draft: DraftState; workout: 
                       disabled={pairing !== null} onCommit={(v) => update((q) => updateItem(q, id, i, { rounds: v ?? 1 }))} suffix="rounds" />
                     <NumberField label="Rest after each round" value={item.restSec} min={0} max={3600} whole optional
                       disabled={pairing !== null} onCommit={(v) => update((q) => updateItem(q, id, i, { restSec: v ?? null }))} suffix="s rest" />
-                    <TierSelect value={item.tier} disabled={pairing !== null} onChange={(tier) => update((q) => updateItem(q, id, i, { tier }))} />
                     {pairing === null && (
                       <button type="button" className="btn btn-quiet btn-small" onClick={() => setPairing(new Set(groupOf(workout, item.slots[0]!.exercise)))}>
                         Change group
@@ -121,17 +118,8 @@ export function WorkoutEditor({ draft, workout }: { draft: DraftState; workout: 
   );
 }
 
-function TierSelect({ value, onChange, disabled }: { value: Tier; onChange: (t: Tier) => void; disabled?: boolean }) {
-  return (
-    <select className="tier" aria-label="Tier" value={value} disabled={disabled} onChange={(e) => onChange(e.target.value as Tier)}
-      title="Readiness rules act on tiers, such as dropping extras on Amber days">
-      {(Object.keys(TIER_NAMES) as Tier[]).map((t) => <option key={t} value={t}>{TIER_NAMES[t]}</option>)}
-    </select>
-  );
-}
-
-function ExerciseRow({ p, workoutId, item, at, ex, handle, tier, pairing, setPairing, update }: {
-  p: Programme; workoutId: string; item: Item; at: SlotRef; ex: Exercise | undefined; handle: React.ReactNode; tier?: React.ReactNode;
+function ExerciseRow({ p, workoutId, item, at, ex, handle, pairing, setPairing, update }: {
+  p: Programme; workoutId: string; item: Item; at: SlotRef; ex: Exercise | undefined; handle: React.ReactNode;
   pairing: Set<string> | null; setPairing: (s: Set<string>) => void; update: DraftState["update"];
 }) {
   const slot = item.slots[at.slot]!;
@@ -155,7 +143,6 @@ function ExerciseRow({ p, workoutId, item, at, ex, handle, tier, pairing, setPai
     <div className="ex-row" role="group" aria-label={name}>
       {handle}
       <span className="ex-name">{name}</span>
-      {tier}
       <span className="ex-fields">
         {ex && !NO_KG.has(ex.implement) && (
           <NumberField label={`${name} weight`} value={kg} min={0} max={1000} optional suffix={ex.loadPer === "each" ? "kg each" : "kg"}

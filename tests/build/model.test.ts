@@ -6,9 +6,10 @@ import {
 } from "../../src/build/model.ts";
 import { asFile, asProgramme, type Programme } from "../../src/formats/programme.ts";
 import { checkAgainstLibrary, validateProgramme } from "../../src/formats/validate.js";
-import { BUNDLED_PROGRAMMES, equipment, library } from "../../src/store/household.ts";
+import { equipment, library } from "../../src/store/household.ts";
+import { BLOCK1 } from "../helpers/block1.ts";
 
-const block1 = () => structuredClone(asProgramme(BUNDLED_PROGRAMMES[0]!));
+const block1 = () => structuredClone(asProgramme(BLOCK1));
 const problems = (p: Programme) => [...validateProgramme(asFile(p)), ...checkAgainstLibrary(asFile(p), library, equipment)];
 const now = new Date("2026-11-07T12:00:00Z");
 const add = (p: Programme, w: string, ids: string[]) => addExercises(p, w, ids, library, equipment);

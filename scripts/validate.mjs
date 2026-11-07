@@ -2,7 +2,7 @@
 // schemas, then checks the rules a schema can't express (references between ids, which fields a
 // slot needs for its exercise, whether a programme's exercises match the library, and so on).
 //
-//   npm run validate      checks data/ (including data/programmes/) and every profile and log in examples/
+//   npm run validate      checks data/ and every programme, profile and log in examples/
 //   npm test              also runs the Rebuild Log importer on a sample backup, and checks that
 //                         every file in tests/invalid/ is rejected for its listed reason
 import { readFileSync, readdirSync } from "node:fs";
@@ -35,7 +35,7 @@ report(`data/library.json (${library.exercises?.length ?? 0} exercises)`, librar
 
 // Example programmes, profiles and logs. Each check can see the others, so references between them are tested.
 const programmes = new Map(), profiles = new Map();
-for (const f of [...jsonIn("data/programmes"), ...jsonIn("examples")]) { const { data } = load(f); if (data?.id) programmes.set(data.id, data); }
+for (const f of [...jsonIn("examples/programmes"), ...jsonIn("examples")]) { const { data } = load(f); if (data?.id) programmes.set(data.id, data); }
 for (const f of jsonIn("examples/profiles")) { const { data } = load(f); if (data?.id) profiles.set(data.id, data); }
 const context = { programmes, profiles, equipment, library };
 
@@ -49,7 +49,7 @@ function check(file) {
   return errors;
 }
 
-for (const file of [...jsonIn("data/programmes"), ...jsonIn("examples"), ...jsonIn("examples/profiles"), ...jsonIn("examples/logs")]) report(short(file), check(file));
+for (const file of [...jsonIn("examples/programmes"), ...jsonIn("examples"), ...jsonIn("examples/profiles"), ...jsonIn("examples/logs")]) report(short(file), check(file));
 
 if (selfTest) {
   // The Rebuild Log importer must turn the sample backup into a valid log with nothing dropped

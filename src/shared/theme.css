@@ -460,3 +460,6 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
   border-radius: var(--radius); background: var(--surface); border: 2px solid var(--you);
 }
 .pair-bar span { flex: 1; min-width: 12em; font-weight: 700; }
+.saved-bar { padding: 10px 14px; border-radius: var(--radius); border: 2px solid #16a34a; background: rgb(22 163 74 / 0.08); font-weight: 700; }
+.use-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; margin-top: 6px; }
+.use-row input[type="date"] { min-height: var(--tap); padding: 0 12px; border: 2px solid var(--line); border-radius: 10px; background: var(--bg); }

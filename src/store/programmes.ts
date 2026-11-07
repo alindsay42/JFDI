@@ -3,14 +3,25 @@ import type { JFDIProgrammeFile } from "../formats/generated/programme.ts";
 import { asProgramme, setsOf } from "../formats/programme.ts";
 import { validateProfile } from "../formats/validate.js";
 import { markChanged, type JfdiDatabase } from "./db.ts";
-import { BUNDLED_PROGRAMMES, equipment, library } from "./household.ts";
+import { BUNDLED_PROGRAMMES, equipment, library, RETIRED_PROGRAMMES } from "./household.ts";
 
 /**
- * Adds programmes that come with the app, and updates them when the app brings a newer version.
+ * Adds programmes that come with the app, updates them when the app brings a newer version, and removes
+ * ones that no longer come with it.
  * Anyone running an updated programme moves to the new version; their past sessions keep their own copies.
  */
-export async function syncBundledProgrammes(db: JfdiDatabase, bundled = BUNDLED_PROGRAMMES): Promise<void> {
-  await db.transaction("rw", db.programmes, db.profiles, async () => {
+export async function syncBundledProgrammes(
+  db: JfdiDatabase, bundled = BUNDLED_PROGRAMMES, retired = RETIRED_PROGRAMMES,
+): Promise<void> {
+  await db.transaction("rw", db.programmes, db.profiles, db.settings, async () => {
+    // Programmes that no longer come with the app go, unless someone runs them or they were changed here.
+    for (const [id, versions] of Object.entries(retired)) {
+      const p = await db.programmes.get(id);
+      if (!p || !versions.includes(p.updatedAt)) continue;
+      if (await db.profiles.filter((pr) => pr.programmes.active?.programme === id).count()) continue;
+      await db.programmes.delete(id);
+      await db.settings.delete(`draft:${id}`);
+    }
     for (const p of bundled) {
       const current = await db.programmes.get(p.id);
       if (current && current.updatedAt >= p.updatedAt) continue;
@@ -128,4 +139,23 @@ export class ProfileError extends Error {
 export function localDate(d: Date): string {
   const pad = (n: number) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+/** Stops running the active programme. One that had started is filed under history as ended early. */
+export async function stopProgramme(db: JfdiDatabase, profileId: string, now = new Date()): Promise<JFDIProfile> {
+  return db.transaction("rw", db.profiles, db.settings, async () => {
+    const profile = await db.profiles.get(profileId);
+    if (!profile) throw new Error(`No profile "${profileId}"`);
+    const old = profile.programmes.active;
+    if (!old) return profile;
+    const today = localDate(now);
+    const history = [...profile.programmes.history];
+    if (old.startDate <= today) {
+      history.push({ programme: old.programme, programmeUpdatedAt: old.programmeUpdatedAt, startDate: old.startDate, endDate: today, ended: "early" });
+    }
+    const next: JFDIProfile = { ...profile, updatedAt: now.toISOString(), programmes: { history } };
+    await db.profiles.put(next);
+    await markChanged(db, now);
+    return next;
+  });
 }

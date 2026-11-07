@@ -5,6 +5,7 @@ import { Confirm } from "../shared/Confirm.tsx";
 import { plural } from "../shared/format.ts";
 import { go, href } from "../shared/route.ts";
 import { deleteProgramme } from "../store/build.ts";
+import { assignProgramme, localDate, ProfileError, stopProgramme } from "../store/programmes.ts";
 import { db } from "../store/db.ts";
 import { Frame } from "./Frame.tsx";
 import {
@@ -23,8 +24,8 @@ export function BuildProgramme({ profile, profiles, id, workout }: {
   if (!draft.loaded) return null;
   if (!draft.programme) {
     return (
-      <Frame profile={profile} title="Build">
-        <p className="card">This programme isn't here any more. <a href={href("build")}>Back to programmes</a></p>
+      <Frame profile={profile} title="Programmes">
+        <p className="card">This programme isn't here any more. <a href={href("programme")}>Back to programmes</a></p>
       </Frame>
     );
   }
@@ -32,11 +33,11 @@ export function BuildProgramme({ profile, profiles, id, workout }: {
   const w = workout ? p.workouts.find((x) => x.id === workout) : undefined;
   return (
     <Frame profile={profile} title={<BuildTitle p={p} workout={w?.name} />}>
-      <SaveBar draft={draft} />
+      <SaveBar draft={draft} onSaved={() => { if (workout) go("programme", p.id); }} />
       {workout ? (
         w ? <WorkoutEditor draft={draft} workout={w} /> : <p className="card">This workout isn't in the programme any more.</p>
       ) : (
-        <Planner draft={draft} runners={profiles.filter((pr) => pr.programmes.active?.programme === id)} />
+        <Planner draft={draft} profile={profile} runners={profiles.filter((pr) => pr.programmes.active?.programme === id)} />
       )}
     </Frame>
   );
@@ -45,22 +46,23 @@ export function BuildProgramme({ profile, profiles, id, workout }: {
 function BuildTitle({ p, workout }: { p: Programme; workout: string | undefined }) {
   return (
     <nav className="crumbs" aria-label="Where you are">
-      <a href={href("build")}>Build</a>
+      <a href={href("programme")}>Programmes</a>
       <span aria-hidden="true">/</span>
-      {workout ? <a href={href("build", p.id)}>{p.name}</a> : <span className="crumb-here">{p.name}</span>}
+      {workout ? <a href={href("programme", p.id)}>{p.name}</a> : <span className="crumb-here">{p.name}</span>}
       {workout && <><span aria-hidden="true">/</span><span className="crumb-here">{workout}</span></>}
     </nav>
   );
 }
 
-function SaveBar({ draft }: { draft: DraftState }) {
+function SaveBar({ draft, onSaved }: { draft: DraftState; onSaved: () => void }) {
   const [asking, setAsking] = useState(false);
+  if (draft.justSaved) return <div className="saved-bar" role="status">Saved.</div>;
   if (!draft.dirty && !draft.problems.length) return null;
   return (
     <div className="save-bar" role="region" aria-label="Unsaved changes">
       <span>{draft.isNew ? "Not saved yet." : "Unsaved changes."}</span>
       <button type="button" className="btn btn-quiet" onClick={() => setAsking(true)}>Discard</button>
-      <button type="button" className="btn btn-you" onClick={() => void draft.save()}>Save</button>
+      <button type="button" className="btn btn-you" onClick={() => void draft.save().then((ok) => { if (ok) onSaved(); })}>Save</button>
       {draft.problems.length > 0 && (
         <div className="problems save-problems" role="alert">
           <p>It can't be saved yet:</p>
@@ -76,7 +78,7 @@ function SaveBar({ draft }: { draft: DraftState }) {
         onConfirm={() => {
           setAsking(false);
           const id = draft.programme!.id;
-          void draft.discard().then(() => { if (draft.isNew) go("build"); else go("build", id); });
+          void draft.discard().then(() => { if (draft.isNew) go("programme"); else go("programme", id); });
         }}
       >
         <p>{draft.isNew ? "It has never been saved, so it will be gone." : "The programme goes back to how it was when last saved."}</p>
@@ -85,7 +87,7 @@ function SaveBar({ draft }: { draft: DraftState }) {
   );
 }
 
-function Planner({ draft, runners }: { draft: DraftState; runners: JFDIProfile[] }) {
+function Planner({ draft, profile, runners }: { draft: DraftState; profile: JFDIProfile | undefined; runners: JFDIProfile[] }) {
   const p = draft.programme!;
   const { update } = draft;
   const plan = p.plan;
@@ -143,6 +145,8 @@ function Planner({ draft, runners }: { draft: DraftState; runners: JFDIProfile[]
         </p>
       </section>
 
+      {profile && <UseProgramme draft={draft} profile={profile} />}
+
       {plan.weeks.map((_, wi) => (
         <section key={wi} className="card week" aria-labelledby={`week-${wi}`}>
           <div className="week-head">
@@ -177,7 +181,7 @@ function Planner({ draft, runners }: { draft: DraftState; runners: JFDIProfile[]
             onCancel={() => setDeleting(false)}
             onConfirm={() => {
               setDeleting(false);
-              deleteProgramme(db, p.id).then(() => go("build")).catch((e: Error) => setDeleteError(e.message));
+              deleteProgramme(db, p.id).then(() => go("programme")).catch((e: Error) => setDeleteError(e.message));
             }}
           >
             <p>This can't be undone, except by restoring a backup.</p>
@@ -185,6 +189,55 @@ function Planner({ draft, runners }: { draft: DraftState; runners: JFDIProfile[]
         </section>
       )}
     </>
+  );
+}
+
+/** Putting the current person on this programme, with a start date. The programme's weights are their starting weights. */
+function UseProgramme({ draft, profile }: { draft: DraftState; profile: JFDIProfile }) {
+  const p = draft.programme!;
+  const active = profile.programmes.active;
+  const onThis = active?.programme === p.id;
+  const [startDate, setStartDate] = useState(active && onThis ? active.startDate : localDate(new Date()));
+  const [error, setError] = useState("");
+  const [stopping, setStopping] = useState(false);
+  const unsaved = draft.dirty || draft.isNew;
+
+  const use = () => {
+    setError("");
+    assignProgramme(db, profile.id, { programme: p.id, startDate, startingLoads: {}, unavailableEquipment: profile.unavailableEquipment ?? [] })
+      .catch((e: unknown) => setError(e instanceof ProfileError ? e.problems.join(" ") : String(e)));
+  };
+
+  return (
+    <section className="card use-programme" aria-labelledby="use-heading">
+      <h2 id="use-heading">{onThis ? `${profile.name} is on this programme` : `Use this programme for ${profile.name}`}</h2>
+      {active && !onThis && <p className="hint">This replaces the programme {profile.name} is on now.</p>}
+      <div className="use-row">
+        <label className="field field-inline">
+          <span>{onThis ? "Started" : "Start"} on</span>
+          <input type="date" value={startDate} required onChange={(e) => setStartDate(e.target.value)} />
+        </label>
+        {onThis ? (
+          <>
+            {startDate !== active!.startDate && <button type="button" className="btn" onClick={use}>Change start date</button>}
+            <button type="button" className="btn btn-quiet" onClick={() => setStopping(true)}>Stop using it</button>
+          </>
+        ) : (
+          <button type="button" className="btn btn-you" disabled={unsaved || !startDate} onClick={use}>Use this programme</button>
+        )}
+      </div>
+      {unsaved && !onThis && <p className="hint">Save the programme first.</p>}
+      {error && <p className="problems" role="alert">{error}</p>}
+      <Confirm
+        open={stopping}
+        title={`Stop ${p.name} for ${profile.name}?`}
+        confirmLabel="Stop using it"
+        onCancel={() => setStopping(false)}
+        onConfirm={() => { setStopping(false); void stopProgramme(db, profile.id); }}
+      >
+        <p>The programme stays here, and sessions already logged are kept.</p>
+      </Confirm>
+    </section>
   );
 }
 
@@ -206,7 +259,7 @@ function AdhocWeek({ draft, week }: { draft: DraftState; week: number }) {
           const s = workoutSummary(p, id);
           return (
             <li key={`${id}-${d}`} className="day-card">
-              <a className="day-open" href={href("build", p.id, id)}>
+              <a className="day-open" href={href("programme", p.id, id)}>
                 <span className="day-label">Day {d + 1}</span>
                 <span className="day-name">{s.name}</span>
                 <span className="muted">{s.count}</span>
@@ -244,7 +297,7 @@ function SetDaysWeek({ draft, week }: { draft: DraftState; week: number }) {
           <li key={d} className={`weekday weekday-${day.type}`}>
             <span className="day-label">{DAY_NAMES[d]}</span>
             {day.type === "workout" ? (
-              <a className="day-open" href={href("build", p.id, day.workout)}>
+              <a className="day-open" href={href("programme", p.id, day.workout)}>
                 <span className="day-name">{workoutSummary(p, day.workout).name}</span>
                 <span className="muted">{workoutSummary(p, day.workout).count}</span>
               </a>

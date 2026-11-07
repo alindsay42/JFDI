@@ -12,6 +12,8 @@ export interface DraftState {
   /** Never saved before */
   isNew: boolean;
   problems: string[];
+  /** Saved since the last change, to show a confirmation */
+  justSaved: boolean;
   update: (change: (p: Programme) => Programme) => void;
   save: () => Promise<boolean>;
   discard: () => Promise<void>;
@@ -27,6 +29,7 @@ export function useDraft(id: string): DraftState {
   const [dirty, setDirty] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [problems, setProblems] = useState<string[]>([]);
+  const [justSaved, setJustSaved] = useState(false);
   const latest = useRef<Programme | null>(null);
 
   useEffect(() => {
@@ -53,6 +56,7 @@ export function useDraft(id: string): DraftState {
     setProgramme(next);
     setDirty(true);
     setProblems([]);
+    setJustSaved(false);
     void putDraft(db, { programme: next, basedOn });
   };
 
@@ -66,6 +70,7 @@ export function useDraft(id: string): DraftState {
       setBasedOn(saved.updatedAt);
       setDirty(false);
       setProblems([]);
+      setJustSaved(true);
       return true;
     } catch (err) {
       setProblems(err instanceof SaveError ? err.problems : [String(err)]);
@@ -83,5 +88,5 @@ export function useDraft(id: string): DraftState {
     setProblems([]);
   };
 
-  return { programme, loaded, dirty, isNew: basedOn === null, problems, update, save, discard };
+  return { programme, loaded, dirty, isNew: basedOn === null, problems, justSaved, update, save, discard };
 }

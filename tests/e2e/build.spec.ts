@@ -1,12 +1,28 @@
+import { readFileSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
 
-async function start(page: Page) {
+/** Block 1 as a programme someone made on this device, so it isn't removed as a retired built-in. */
+function block1Backup() {
+  const block1 = JSON.parse(readFileSync("examples/programmes/strength-block-1.json", "utf8"));
+  block1.updatedAt = "2026-11-07T17:00:00Z";
+  const backup = { format: "jfdi-backup", formatVersion: 2, exportedAt: "2026-11-07T17:00:00Z", app: { version: "test" }, profiles: [], programmes: [block1], logs: [] };
+  return { name: "block-1.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(backup)) };
+}
+
+async function start(page: Page, { withBlock1 = false } = {}) {
   await page.goto("./");
+  if (withBlock1) {
+    await page.getByRole("link", { name: "Restore a backup instead" }).click();
+    await page.getByTestId("Choose a backup to restore").setInputFiles(block1Backup());
+    await page.getByRole("dialog").getByRole("button", { name: "Replace everything" }).click();
+    await expect(page.getByRole("status")).toContainText("Restored");
+    await page.getByRole("link", { name: "Back" }).click();
+  }
   await page.getByLabel("Name").fill("Diane");
   await page.getByRole("radio", { name: "Purple" }).check();
   await page.getByRole("button", { name: "Add", exact: true }).click();
   await expect(page.locator(".you-bar")).toContainText("Diane");
-  await page.getByRole("link", { name: "Build" }).click();
+  await page.getByRole("link", { name: "Programme", exact: true }).click();
 }
 
 const rowNames = (page: Page) => page.locator(".workout-items .ex-name").allInnerTexts();
@@ -42,19 +58,26 @@ test("build a new programme from scratch, pair exercises, save it and set someon
   await page.getByLabel("Rounds").fill("4");
 
   await page.getByRole("button", { name: "Save", exact: true }).first().click();
-  await expect(page.getByText("Not saved yet.")).toBeHidden();
+  // Saving a workout goes back to the plan, and says so
+  await expect(page.getByRole("status")).toHaveText("Saved.");
+  await expect(page.getByRole("link", { name: /Day 1/ })).toBeVisible();
 
-  await page.getByRole("link", { name: "Setup & history" }).click();
-  await page.getByRole("button", { name: "Set up a programme" }).click();
-  await page.getByRole("combobox", { name: "Programme" }).selectOption({ label: "Andrew's strength" });
-  await expect(page.getByLabel("Back squat weight")).toHaveValue("60");
-  await expect(page.getByLabel("Back squat sets")).toHaveValue("4");
-  await page.getByRole("button", { name: "Save" }).click();
-  await expect(page.getByText("Andrew's strength")).toBeVisible();
+  await page.getByRole("button", { name: "Use this programme" }).click();
+  await expect(page.getByRole("heading", { name: "Diane is on this programme" })).toBeVisible();
+  await page.getByRole("link", { name: "Today" }).click();
+  await expect(page.getByRole("heading", { name: "Andrew's strength" })).toBeVisible();
+  await page.getByRole("link", { name: "Programme", exact: true }).click();
+  await expect(page.getByRole("region", { name: "Diane's programme" }).or(page.locator(".card", { hasText: "Diane's programme" }))).toContainText("Andrew's strength");
+});
+
+test("no programmes come with the app", async ({ page }) => {
+  await start(page);
+  await expect(page.getByText("No programmes yet.")).toBeVisible();
+  await expect(page.getByText("None yet.")).toBeVisible();
 });
 
 test("change Block 1: reorder by dragging, split a group, switch to set days with two weeks", async ({ page }) => {
-  await start(page);
+  await start(page, { withBlock1: true });
   await page.getByRole("link", { name: /Strength Programme, Block 1/ }).click();
   await page.getByRole("link", { name: /Day 1/ }).click();
   expect(await rowNames(page)).toEqual(["Back squat", "Bench press", "Barbell row", "Romanian deadlift", "DB lateral raise", "Plank", "Battle ropes, double waves"]);
@@ -94,7 +117,7 @@ test("change Block 1: reorder by dragging, split a group, switch to set days wit
 });
 
 test("unsaved changes survive closing the app, and can be discarded", async ({ page }) => {
-  await start(page);
+  await start(page, { withBlock1: true });
   await page.getByRole("link", { name: /Strength Programme, Block 1/ }).click();
   await page.getByRole("button", { name: "+ Add day" }).click();
   const day3 = page.locator(".day-card", { hasText: "Day 3" });
@@ -102,7 +125,7 @@ test("unsaved changes survive closing the app, and can be discarded", async ({ p
   await page.reload();
   await expect(page.getByText("Unsaved changes.")).toBeVisible();
   await expect(day3).toBeVisible();
-  await page.getByRole("link", { name: "Build", exact: true }).first().click();
+  await page.getByRole("link", { name: "Programmes", exact: true }).click();
   await expect(page.locator(".programme-row", { hasText: "Block 1" })).toContainText("Unsaved changes");
 
   await page.getByRole("link", { name: /Strength Programme, Block 1/ }).click();

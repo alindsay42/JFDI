@@ -2,14 +2,15 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { useState, type FormEvent } from "react";
 import type { JFDIProfile } from "../formats/generated/profile.ts";
 import { asProgramme, type Programme } from "../formats/programme.ts";
-import { plural } from "../shared/format.ts";
+import { formatLongDate, plural } from "../shared/format.ts";
+import { localDate } from "../store/programmes.ts";
 import { go, href } from "../shared/route.ts";
 import { listDrafts, putDraft } from "../store/build.ts";
 import { db } from "../store/db.ts";
 import { newProgramme, weekWorkouts } from "./model.ts";
 import { Frame } from "./Frame.tsx";
 
-/** Build mode's start: every programme, and a new one. */
+/** The Programme tab: what the current person is on, every programme, and a new one. */
 export function BuildHome({ profile, profiles }: { profile: JFDIProfile | undefined; profiles: JFDIProfile[] }) {
   const saved = useLiveQuery(() => db.programmes.toArray());
   const drafts = useLiveQuery(() => listDrafts(db));
@@ -27,20 +28,22 @@ export function BuildHome({ profile, profiles }: { profile: JFDIProfile | undefi
     if (!name.trim()) return;
     const p = newProgramme(name, all.map((x) => x.id));
     await putDraft(db, { programme: p, basedOn: null });
-    go("build", p.id);
+    go("programme", p.id);
   }
 
   return (
-    <Frame profile={profile} title="Build">
+    <Frame profile={profile} title="Programmes">
+      {profile && <CurrentProgramme profile={profile} programmes={all} />}
       <section className="card" aria-labelledby="programmes-heading">
-        <h2 id="programmes-heading">Programmes</h2>
+        <h2 id="programmes-heading">All programmes</h2>
+        {all.length === 0 && <p className="hint">No programmes yet. Start one below.</p>}
         <ul className="programme-list">
           {all.map((p) => {
             const runners = profiles.filter((pr) => pr.programmes.active?.programme === p.id).map((pr) => pr.name);
             const days = weekWorkouts(p.plan, 0).length;
             return (
               <li key={p.id}>
-                <a className="programme-row" href={href("build", p.id)}>
+                <a className="programme-row" href={href("programme", p.id)}>
                   <span className="programme-name">{p.name}</span>
                   <span className="muted">
                     {p.plan.mode === "adhoc" ? "Ad hoc" : "Set days"} · {plural(days, "workout")} a week
@@ -65,5 +68,23 @@ export function BuildHome({ profile, profiles }: { profile: JFDIProfile | undefi
         </div>
       </form>
     </Frame>
+  );
+}
+
+function CurrentProgramme({ profile, programmes }: { profile: JFDIProfile; programmes: Programme[] }) {
+  const active = profile.programmes.active;
+  const p = active && programmes.find((x) => x.id === active.programme);
+  return (
+    <section className="card" aria-labelledby="current-heading">
+      <h2 id="current-heading">{profile.name}'s programme</h2>
+      {active ? (
+        <p>
+          <a href={href("programme", active.programme)}><strong>{p?.name ?? active.programme}</strong></a>,{" "}
+          {active.startDate > localDate(new Date()) ? "starting" : "started"} {formatLongDate(active.startDate)}.
+        </p>
+      ) : (
+        <p className="hint">None yet. Open a programme below and choose <strong>Use this programme</strong>, or start a new one.</p>
+      )}
+    </section>
   );
 }
