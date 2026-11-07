@@ -31,17 +31,20 @@ export function useDraft(id: string): DraftState {
   const [problems, setProblems] = useState<string[]>([]);
   const [justSaved, setJustSaved] = useState(false);
   const latest = useRef<Programme | null>(null);
+  // The last saved version: edits that end up back where it started aren't unsaved changes.
+  const saved = useRef<Programme | null>(null);
 
   useEffect(() => {
     let live = true;
     void (async () => {
-      const [draft, saved] = await Promise.all([getDraft(db, id), db.programmes.get(id)]);
+      const [draft, stored] = await Promise.all([getDraft(db, id), db.programmes.get(id)]);
       if (!live) return;
-      const p = draft?.programme ?? (saved ? asProgramme(saved) : null);
+      saved.current = stored ? asProgramme(stored) : null;
+      const p = draft?.programme ?? saved.current;
       latest.current = p;
       setProgramme(p);
-      setBasedOn(draft ? draft.basedOn : (saved?.updatedAt ?? null));
-      setDirty(!!draft);
+      setBasedOn(draft ? draft.basedOn : (stored?.updatedAt ?? null));
+      setDirty(!!draft && !sameProgramme(draft.programme, saved.current));
       setLoaded(true);
     })();
     return () => { live = false; };
@@ -54,20 +57,26 @@ export function useDraft(id: string): DraftState {
     if (next === current) return;
     latest.current = next;
     setProgramme(next);
-    setDirty(true);
     setProblems([]);
     setJustSaved(false);
-    void putDraft(db, { programme: next, basedOn });
+    if (sameProgramme(next, saved.current)) {
+      setDirty(false);
+      void discardDraft(db, id);
+    } else {
+      setDirty(true);
+      void putDraft(db, { programme: next, basedOn });
+    }
   };
 
   const save = async () => {
     const current = latest.current;
     if (!current) return false;
     try {
-      const saved = await saveProgramme(db, current);
-      latest.current = saved;
-      setProgramme(saved);
-      setBasedOn(saved.updatedAt);
+      const result = await saveProgramme(db, current);
+      latest.current = result;
+      saved.current = result;
+      setProgramme(result);
+      setBasedOn(result.updatedAt);
       setDirty(false);
       setProblems([]);
       setJustSaved(true);
@@ -80,8 +89,9 @@ export function useDraft(id: string): DraftState {
 
   const discard = async () => {
     await discardDraft(db, id);
-    const saved = await db.programmes.get(id);
-    const p = saved ? asProgramme(saved) : null;
+    const stored = await db.programmes.get(id);
+    const p = stored ? asProgramme(stored) : null;
+    saved.current = p;
     latest.current = p;
     setProgramme(p);
     setDirty(false);
@@ -89,4 +99,19 @@ export function useDraft(id: string): DraftState {
   };
 
   return { programme, loaded, dirty, isNew: basedOn === null, problems, justSaved, update, save, discard };
+}
+
+/** The same programme, whatever order its fields were written in. */
+export function sameProgramme(a: Programme | null, b: Programme | null): boolean {
+  if (!a || !b) return false;
+  return canonical(a) === canonical(b);
+}
+
+function canonical(v: unknown): string {
+  if (Array.isArray(v)) return `[${v.map(canonical).join(",")}]`;
+  if (v && typeof v === "object") {
+    return `{${Object.keys(v).sort().filter((k) => (v as Record<string, unknown>)[k] !== undefined)
+      .map((k) => `${JSON.stringify(k)}:${canonical((v as Record<string, unknown>)[k])}`).join(",")}}`;
+  }
+  return JSON.stringify(v);
 }

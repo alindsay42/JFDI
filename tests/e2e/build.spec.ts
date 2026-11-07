@@ -141,3 +141,25 @@ test("a programme that can't be saved explains why", async ({ page }) => {
   await page.getByRole("button", { name: "Save", exact: true }).click();
   await expect(page.getByRole("alert")).toContainText("It can't be saved yet");
 });
+
+test("changing something and changing it back leaves nothing to save", async ({ page }) => {
+  await start(page);
+  await page.getByLabel("Name").fill("Set days test");
+  await page.getByRole("button", { name: "Create" }).click();
+  await page.getByRole("radio", { name: "Set days" }).check();
+  await page.getByRole("link", { name: /Day 1/ }).click();
+  await page.getByLabel("Search exercises").fill("deadlift");
+  await page.getByRole("option", { name: "Deadlift", exact: true }).click();
+  await page.getByRole("button", { name: "Add highlighted" }).click();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(page.getByRole("status")).toHaveText("Saved.");
+
+  await page.getByRole("radio", { name: "2", exact: true }).check();
+  await expect(page.getByText("Unsaved changes.")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Use this programme" })).toBeDisabled();
+  await page.getByRole("radio", { name: "1", exact: true }).check();
+  await expect(page.getByText("Unsaved changes.")).toBeHidden();
+  await expect(page.getByRole("button", { name: "Use this programme" })).toBeEnabled();
+  await page.reload();
+  await expect(page.getByText("Unsaved changes.")).toBeHidden();
+});
