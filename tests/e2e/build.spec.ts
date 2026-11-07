@@ -140,7 +140,7 @@ test("a programme that can't be saved explains why", async ({ page }) => {
   await page.getByLabel("Name").fill("Empty");
   await page.getByRole("button", { name: "Create" }).click();
   await page.getByRole("button", { name: "Save", exact: true }).click();
-  await expect(page.getByRole("alert")).toContainText("It can't be saved yet");
+  await expect(page.getByRole("alert")).toContainText("Day 1 has no exercises yet. Open it and choose some.");
 });
 
 test("changing something and changing it back leaves nothing to save", async ({ page }) => {
