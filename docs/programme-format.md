@@ -5,7 +5,7 @@ Status: **version 2** of the format, from 7 November 2026: workouts and a week p
 A programme file is the whole training plan as data. Build mode writes it and Train mode reads it. Nothing about a plan is written into the app's code. This document defines what goes in the file, and the rules the app follows when it reads one.
 
 - Machine-checkable definition: [`schema/programme.schema.json`](../schema/programme.schema.json)
-- Worked example: [`data/programmes/strength-block-1.json`](../data/programmes/strength-block-1.json), the Strength Programme, Block 1 draft
+- Worked example: [`examples/programmes/strength-block-1.json`](../examples/programmes/strength-block-1.json), the Strength Programme, Block 1 draft
 - Check every example: `npm run validate`
 
 ## Principles

@@ -11,7 +11,7 @@ import { equipment, library } from "../../src/store/household.ts";
 const json = (path: string) => JSON.parse(readFileSync(path, "utf8"));
 const v1 = json("tests/fixtures/strength-block-1-v1.json");
 const v1log = json("tests/fixtures/diane-week-1-v1.json");
-const current = json("data/programmes/strength-block-1.json");
+const current = json("examples/programmes/strength-block-1.json");
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;

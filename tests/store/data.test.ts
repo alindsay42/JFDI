@@ -8,19 +8,20 @@ import {
 } from "../../src/store/backup.ts";
 import { JfdiDatabase } from "../../src/store/db.ts";
 import { BUNDLED_PROGRAMMES, equipment, library } from "../../src/store/household.ts";
+import { BLOCK1 } from "../helpers/block1.ts";
 import { addProfile, deleteProfile, getCurrentProfileId, setCurrentProfileId } from "../../src/store/profiles.ts";
 import { assignProgramme, defaultStartingLoads, ProfileError, syncBundledProgrammes } from "../../src/store/programmes.ts";
 
 const read = (path: string) => readFileSync(path, "utf8");
 const json = (path: string) => JSON.parse(read(path));
-const block1 = BUNDLED_PROGRAMMES[0]!;
+const block1 = BLOCK1;
 const rebuildBackup = read("tests/fixtures/rebuild-log-backup-sample.json");
 const app = { version: "0.2.0", commit: "abc1234" };
 
 let db: JfdiDatabase;
 beforeEach(async () => {
   db = new JfdiDatabase(`test-${Math.random()}`);
-  await syncBundledProgrammes(db);
+  await syncBundledProgrammes(db, [block1], {});
 });
 afterEach(async () => { await db.delete(); });
 
@@ -35,6 +36,10 @@ async function setUpDiane() {
 }
 
 describe("programmes that come with the app", () => {
+  it("none come with the app now", () => {
+    expect(BUNDLED_PROGRAMMES).toEqual([]);
+  });
+
   it("are added on first run", async () => {
     expect((await db.programmes.get("strength-block-1"))?.updatedAt).toBe(block1.updatedAt);
   });
@@ -48,7 +53,7 @@ describe("programmes that come with the app", () => {
   });
 
   it("never go back to an older version", async () => {
-    await syncBundledProgrammes(db, [{ ...block1, updatedAt: "2020-01-01T00:00:00Z" }]);
+    await syncBundledProgrammes(db, [{ ...block1, updatedAt: "2020-01-01T00:00:00Z" }], {});
     expect((await db.programmes.get("strength-block-1"))?.updatedAt).toBe(block1.updatedAt);
   });
 });
