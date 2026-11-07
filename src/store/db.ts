@@ -1,6 +1,7 @@
 // The on-device database. Records are stored in the shapes defined in schema/, so a backup is
 // just these records written out, and a restore reads them back (architecture.md, "Storage").
 import Dexie, { type EntityTable, type Table } from "dexie";
+import { upgradeProgramme, upgradeSession } from "../formats/upgrade.js";
 import type { JFDIProfile } from "../formats/generated/profile.ts";
 import type { JFDIProgrammeFile } from "../formats/generated/programme.ts";
 import type { Day, Session, WeighIn } from "../formats/generated/log.ts";
@@ -35,6 +36,11 @@ export class JfdiDatabase extends Dexie {
       sessions: "[profile+id], profile, date",
       days: "[profile+date], profile",
       weighIns: "[profile+date], profile",
+    });
+    // Programme format 2 (week planner, workouts): upgrade stored programmes and logged prescriptions.
+    this.version(3).stores({}).upgrade(async (tx) => {
+      await tx.table("programmes").toCollection().modify((p, ref) => { ref.value = upgradeProgramme(p); });
+      await tx.table("sessions").toCollection().modify((s, ref) => { ref.value = upgradeSession(s); });
     });
   }
 }

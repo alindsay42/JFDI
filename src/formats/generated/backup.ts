@@ -24,8 +24,8 @@ export type Rule =
       reps: number;
     }
   | {
-      rule?: "replaceSession";
-      session: string;
+      rule?: "replaceWorkout";
+      workout: string;
     }
   | {
       rule?: "noLifting";
@@ -50,9 +50,13 @@ export type Progression =
       id?: string;
       type?: "none";
     };
+/**
+ * One item in a workout: a single exercise, or a group that runs in rounds
+ */
 export type Block =
   | {
-      type?: "straight";
+      type?: "single";
+      tier?: "primary" | "secondary" | "tertiary";
       restSec?: number;
       /**
        * @minItems 1
@@ -62,6 +66,8 @@ export type Block =
     }
   | {
       type?: "superset";
+      tier?: "primary" | "secondary" | "tertiary";
+      rounds: number;
       restSec?: number;
       /**
        * @minItems 2
@@ -71,6 +77,7 @@ export type Block =
     }
   | {
       type?: "giant";
+      tier?: "primary" | "secondary" | "tertiary";
       rounds: number;
       transitionSec?: number;
       restSec?: number;
@@ -81,6 +88,7 @@ export type Block =
     }
   | {
       type?: "finisher";
+      tier?: "primary" | "secondary" | "tertiary";
       rounds: number;
       workSec: number;
       restSec: number;
@@ -89,72 +97,56 @@ export type Block =
        */
       slots?: [Slot, ...Slot[]];
     };
-export type Week = {
-  id: string;
-  name: string;
-  /**
-   * @minItems 1
-   */
-  rotation: [string, ...string[]];
-  perWeek?: {
-    liftDays: number;
-    /**
-     * Full days off between lifting days
-     */
-    minRestDays?: number;
-  };
-  otherDays?: Day;
-  days?: {
-    mon: Day;
-    tue: Day;
-    wed: Day;
-    thu: Day;
-    fri: Day;
-    sat: Day;
-    sun: Day;
-  };
-} & (
+/**
+ * A cycle of 1 to 4 weeks that repeats. Ad hoc: workouts in order, on whichever days suit. Set days: workouts on weekdays, with the calendar deciding the week
+ */
+export type Plan =
   | {
-      [k: string]: unknown;
-    }
-  | {
-      [k: string]: unknown;
-    }
-) & {
-    id: string;
-    name: string;
-    /**
-     * @minItems 1
-     */
-    rotation: [string, ...string[]];
-    perWeek?: {
-      liftDays: number;
+      mode?: "adhoc";
       /**
-       * Full days off between lifting days
+       * Full days off between workouts
        */
       minRestDays?: number;
+      /**
+       * @minItems 1
+       * @maxItems 4
+       */
+      weeks?:
+        | [AdhocWeek]
+        | [AdhocWeek, AdhocWeek]
+        | [AdhocWeek, AdhocWeek, AdhocWeek]
+        | [AdhocWeek, AdhocWeek, AdhocWeek, AdhocWeek];
+    }
+  | {
+      mode?: "setDays";
+      /**
+       * @minItems 1
+       * @maxItems 4
+       */
+      weeks?:
+        | [SetDaysWeek]
+        | [SetDaysWeek, SetDaysWeek]
+        | [SetDaysWeek, SetDaysWeek, SetDaysWeek]
+        | [SetDaysWeek, SetDaysWeek, SetDaysWeek, SetDaysWeek];
     };
-    otherDays?: Day;
-    days?: {
-      mon: Day;
-      tue: Day;
-      wed: Day;
-      thu: Day;
-      fri: Day;
-      sat: Day;
-      sun: Day;
+/**
+ * What the days without a workout are
+ */
+export type OtherDay =
+  | {
+      type?: "conditioning";
+      activity: string;
+      minutes?: Range;
+      notes?: string;
+    }
+  | {
+      type?: "free" | "rest";
+      notes?: string;
     };
-  } & (
-    | {
-        [k: string]: unknown;
-      }
-    | {
-        [k: string]: unknown;
-      }
-  );
 export type Day =
   | {
-      type?: "lift";
+      type?: "workout";
+      workout: string;
       notes?: string;
     }
   | {
@@ -185,7 +177,7 @@ export type Gate =
  */
 export interface JFDIBackup {
   format: "jfdi-backup";
-  formatVersion: 1;
+  formatVersion: 2;
   exportedAt: string;
   /**
    * The version of J.F.D.I that made the backup
@@ -302,12 +294,11 @@ export interface Target {
 export interface JFDIProgrammeFile {
   $schema?: string;
   format: "jfdi-programme";
-  formatVersion: 1;
+  formatVersion: 2;
   id: string;
   name: string;
   description?: string;
   goal?: string;
-  daysPerWeek?: number;
   createdAt: string;
   updatedAt: string;
   equipment: Equipment[];
@@ -322,11 +313,8 @@ export interface JFDIProgrammeFile {
   /**
    * @minItems 1
    */
-  sessions: [Session, ...Session[]];
-  /**
-   * @minItems 1
-   */
-  weeks: [Week, ...Week[]];
+  workouts: [Workout, ...Workout[]];
+  plan: Plan;
   /**
    * @minItems 1
    */
@@ -373,26 +361,15 @@ export interface Stall {
   misses: number;
   reducePercent: number;
 }
-export interface Session {
+export interface Workout {
   id: string;
   name: string;
   subtitle?: string;
   estimatedMinutes?: number;
-  inRotation?: boolean;
-  tiers: {
-    /**
-     * @minItems 1
-     */
-    primary?: [Block, ...Block[]];
-    /**
-     * @minItems 1
-     */
-    secondary?: [Block, ...Block[]];
-    /**
-     * @minItems 1
-     */
-    tertiary?: [Block, ...Block[]];
-  };
+  /**
+   * @minItems 1
+   */
+  items: [Block, ...Block[]];
 }
 export interface Slot {
   exercise: string;
@@ -420,6 +397,34 @@ export interface Range {
   min: number;
   max: number;
 }
+export interface AdhocWeek {
+  /**
+   * Day 1, Day 2 and so on, in order
+   *
+   * @minItems 1
+   * @maxItems 7
+   */
+  workouts:
+    | [string]
+    | [string, string]
+    | [string, string, string]
+    | [string, string, string, string]
+    | [string, string, string, string, string]
+    | [string, string, string, string, string, string]
+    | [string, string, string, string, string, string, string];
+  otherDays?: OtherDay;
+}
+export interface SetDaysWeek {
+  days: {
+    mon: Day;
+    tue: Day;
+    wed: Day;
+    thu: Day;
+    fri: Day;
+    sat: Day;
+    sun: Day;
+  };
+}
 export interface Phase {
   id: string;
   name: string;
@@ -436,7 +441,6 @@ export interface Phase {
 export interface TrainingBlock {
   id: string;
   name: string;
-  week: string;
   weeks: number | null;
   deload?: (
     | {
@@ -476,17 +480,17 @@ export interface Target1 {
  */
 export interface JFDITrainingLog {
   format: "jfdi-log";
-  formatVersion: 1;
+  formatVersion: 2;
   profile: string;
   /**
    * Optional, for example files and imports
    */
   description?: string;
-  sessions: Session1[];
+  sessions: Session[];
   days: Day1[];
   bodyweight: WeighIn[];
 }
-export interface Session1 {
+export interface Session {
   id: string;
   date: string;
   startedAt: string;
@@ -509,7 +513,7 @@ export interface Session1 {
    */
   readiness: ("green" | "amber" | "red") | null;
   deload?: boolean;
-  prescribed?: Session2;
+  prescribed?: Workout1;
   exercises: ExerciseEntry[];
   notes?: string;
   endedEarly?: string | null;
@@ -523,28 +527,17 @@ export interface Session1 {
   importedFrom?: string;
 }
 /**
- * The session as prescribed on the day, after readiness and deload rules. A copy, so editing the programme never rewrites history
+ * The workout as prescribed on the day, after readiness and deload rules. A copy, so editing the programme never rewrites history
  */
-export interface Session2 {
+export interface Workout1 {
   id: string;
   name: string;
   subtitle?: string;
   estimatedMinutes?: number;
-  inRotation?: boolean;
-  tiers: {
-    /**
-     * @minItems 1
-     */
-    primary?: [Block, ...Block[]];
-    /**
-     * @minItems 1
-     */
-    secondary?: [Block, ...Block[]];
-    /**
-     * @minItems 1
-     */
-    tertiary?: [Block, ...Block[]];
-  };
+  /**
+   * @minItems 1
+   */
+  items: [Block, ...Block[]];
 }
 export interface ExerciseEntry {
   exercise: string;
@@ -553,7 +546,7 @@ export interface ExerciseEntry {
    */
   name: string;
   /**
-   * Where it sits in the prescription, as tier.block.slot. null for an exercise added during the session
+   * Where it sits in the prescription, as item.slot (both counted from 0). null for an exercise added during the session
    */
   slot?: string | null;
   loadPer?: "total" | "each";

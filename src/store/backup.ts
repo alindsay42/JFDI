@@ -2,6 +2,7 @@
 import type { JFDIBackup } from "../formats/generated/backup.ts";
 import type { JFDITrainingLog } from "../formats/generated/log.ts";
 import { convertRebuildLog } from "../formats/rebuild-log.js";
+import { upgradeBackup } from "../formats/upgrade.js";
 import { validateBackup, validateLog } from "../formats/validate.js";
 import { markChanged, type DayRecord, type JfdiDatabase, type SessionRecord, type WeighInRecord } from "./db.ts";
 import { equipment, library } from "./household.ts";
@@ -18,7 +19,7 @@ export async function logFor(db: JfdiDatabase, profile: string): Promise<JFDITra
   ]);
   return {
     format: "jfdi-log",
-    formatVersion: 1,
+    formatVersion: 2,
     profile,
     sessions: sessions.map(strip),
     days: days.map(strip),
@@ -32,7 +33,7 @@ export async function buildBackup(db: JfdiDatabase, app: { version: string; comm
     const profiles = await db.profiles.orderBy("name").toArray();
     return {
       format: "jfdi-backup",
-      formatVersion: 1,
+      formatVersion: 2,
       exportedAt: now.toISOString(),
       app,
       profiles,
@@ -69,9 +70,10 @@ export function parseBackup(text: string): JFDIBackup {
       throw new BackupError("This is a Rebuild Log backup. Use Import from Rebuild Log instead.");
     throw new BackupError("This file isn't a J.F.D.I backup.");
   }
-  const problems = validateBackup(data, { equipment, library });
+  const upgraded = upgradeBackup(data);
+  const problems = validateBackup(upgraded, { equipment, library });
   if (problems.length) throw new BackupError("This backup has problems, so nothing was restored.", problems);
-  return data as JFDIBackup;
+  return upgraded as JFDIBackup;
 }
 
 /** Replaces everything on this device with the backup. All or nothing. */

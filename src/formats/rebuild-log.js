@@ -118,7 +118,7 @@ export function convertRebuildLog(backup, profileId, library) {
     .map(w => ({ date: w.date, kg: num(w.kg), fasted: w.fasted !== false }));
 
   return {
-    log: { format: "jfdi-log", formatVersion: 1, profile: profileId, description: `Imported from a Rebuild Log backup exported ${backup.exportedAt || "on an unknown date"}`, sessions, days, bodyweight },
+    log: { format: "jfdi-log", formatVersion: 2, profile: profileId, description: `Imported from a Rebuild Log backup exported ${backup.exportedAt || "on an unknown date"}`, sessions, days, bodyweight },
     problems
   };
 }

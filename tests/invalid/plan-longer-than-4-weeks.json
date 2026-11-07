@@ -1,13 +1,12 @@
 {
  "format": "jfdi-programme",
- "formatVersion": 1,
+ "formatVersion": 2,
  "id": "strength-block-1",
  "name": "Strength Programme, Block 1",
  "description": "Two full-body sessions a week alongside classes. A simple linear progression back from recent numbers to previous bests.",
  "goal": "Build strength and keep muscle mass",
- "daysPerWeek": 2,
  "createdAt": "2026-11-06T09:40:00Z",
- "updatedAt": "2026-11-06T23:30:00Z",
+ "updatedAt": "2026-11-07T16:00:00Z",
  "equipment": [
   {
    "id": "bar-standard",
@@ -249,268 +248,343 @@
    "type": "none"
   }
  ],
- "sessions": [
+ "targets": [
+  {
+   "exercise": "back-squat",
+   "kg": 40,
+   "reps": 5,
+   "sets": 5,
+   "label": "Previous best"
+  },
+  {
+   "exercise": "bench-press",
+   "kg": 27.5,
+   "reps": 5,
+   "sets": 5,
+   "label": "Previous best"
+  },
+  {
+   "exercise": "overhead-press-ez",
+   "kg": 18,
+   "reps": 5,
+   "sets": 5,
+   "label": "Previous best"
+  },
+  {
+   "exercise": "deadlift",
+   "kg": 60,
+   "reps": 5,
+   "sets": 3,
+   "label": "Previous best"
+  },
+  {
+   "exercise": "romanian-deadlift",
+   "kg": 40,
+   "reps": 7,
+   "sets": 3,
+   "label": "Previous best"
+  },
+  {
+   "exercise": "barbell-row",
+   "kg": 22.5,
+   "reps": 8,
+   "sets": 3,
+   "label": "Previous best"
+  }
+ ],
+ "workouts": [
   {
    "id": "session-a",
    "name": "Session A",
    "subtitle": "Squat, bench and rows",
    "estimatedMinutes": 65,
-   "tiers": {
-    "primary": [
-     {
-      "type": "straight",
-      "restSec": 180,
-      "slots": [
-       {
-        "exercise": "back-squat",
-        "sets": 5,
-        "reps": {
-         "min": 5,
-         "max": 5
-        },
-        "progression": "linear-2-5",
-        "start": {
-         "kg": 30
-        }
-       }
-      ]
-     }
-    ],
-    "secondary": [
-     {
-      "type": "superset",
-      "restSec": 120,
-      "slots": [
-       {
-        "exercise": "bench-press",
-        "sets": 5,
-        "reps": {
-         "min": 5,
-         "max": 5
-        },
-        "progression": "linear-2-5",
-        "start": {
-         "kg": 25
-        }
+   "items": [
+    {
+     "type": "single",
+     "tier": "primary",
+     "restSec": 180,
+     "slots": [
+      {
+       "exercise": "back-squat",
+       "sets": 5,
+       "reps": {
+        "min": 5,
+        "max": 5
        },
-       {
-        "exercise": "barbell-row",
-        "sets": 3,
-        "reps": {
-         "min": 6,
-         "max": 8
-        },
-        "progression": "double-2-5",
-        "start": {
-         "kg": 15
-        }
+       "progression": "linear-2-5",
+       "start": {
+        "kg": 30
        }
-      ]
-     },
-     {
-      "type": "straight",
-      "restSec": 120,
-      "slots": [
-       {
-        "exercise": "romanian-deadlift",
-        "sets": 3,
-        "reps": {
-         "min": 6,
-         "max": 8
-        },
-        "progression": "double-2-5",
-        "start": {
-         "kg": 30
-        }
-       }
-      ]
-     }
-    ],
-    "tertiary": [
-     {
-      "type": "giant",
-      "rounds": 3,
-      "transitionSec": 0,
-      "restSec": 90,
-      "slots": [
-       {
-        "exercise": "db-lateral-raise",
-        "reps": {
-         "min": 12,
-         "max": 15
-        },
-        "progression": "accessory",
-        "start": {
-         "note": "Light"
-        }
+      }
+     ]
+    },
+    {
+     "type": "superset",
+     "tier": "secondary",
+     "rounds": 5,
+     "restSec": 120,
+     "slots": [
+      {
+       "exercise": "bench-press",
+       "reps": {
+        "min": 5,
+        "max": 5
        },
-       {
-        "exercise": "plank",
-        "seconds": {
-         "min": 30,
-         "max": 45
-        },
-        "progression": "accessory"
-       },
-       {
-        "exercise": "battle-ropes",
-        "seconds": {
-         "min": 20,
-         "max": 30
-        },
-        "progression": "accessory"
+       "progression": "linear-2-5",
+       "start": {
+        "kg": 25
        }
-      ]
-     }
-    ]
-   }
+      },
+      {
+       "exercise": "barbell-row",
+       "reps": {
+        "min": 6,
+        "max": 8
+       },
+       "progression": "double-2-5",
+       "start": {
+        "kg": 15
+       }
+      }
+     ]
+    },
+    {
+     "type": "single",
+     "tier": "secondary",
+     "restSec": 120,
+     "slots": [
+      {
+       "exercise": "romanian-deadlift",
+       "sets": 3,
+       "reps": {
+        "min": 6,
+        "max": 8
+       },
+       "progression": "double-2-5",
+       "start": {
+        "kg": 30
+       }
+      }
+     ]
+    },
+    {
+     "type": "giant",
+     "tier": "tertiary",
+     "rounds": 3,
+     "transitionSec": 0,
+     "restSec": 90,
+     "slots": [
+      {
+       "exercise": "db-lateral-raise",
+       "reps": {
+        "min": 12,
+        "max": 15
+       },
+       "progression": "accessory",
+       "start": {
+        "note": "Light"
+       }
+      },
+      {
+       "exercise": "plank",
+       "seconds": {
+        "min": 30,
+        "max": 45
+       },
+       "progression": "accessory"
+      },
+      {
+       "exercise": "battle-ropes",
+       "seconds": {
+        "min": 20,
+        "max": 30
+       },
+       "progression": "accessory"
+      }
+     ]
+    }
+   ]
   },
   {
    "id": "session-b",
    "name": "Session B",
    "subtitle": "Deadlift and overhead press",
    "estimatedMinutes": 65,
-   "tiers": {
-    "primary": [
-     {
-      "type": "straight",
-      "restSec": 180,
-      "slots": [
-       {
-        "exercise": "deadlift",
-        "sets": 3,
-        "reps": {
-         "min": 5,
-         "max": 5
-        },
-        "progression": "linear-2-5",
-        "start": {
-         "kg": 55
-        }
-       }
-      ]
-     }
-    ],
-    "secondary": [
-     {
-      "type": "superset",
-      "restSec": 120,
-      "slots": [
-       {
-        "exercise": "overhead-press-ez",
-        "sets": 5,
-        "reps": {
-         "min": 5,
-         "max": 5
-        },
-        "progression": "linear-2-5",
-        "incrementKg": 1,
-        "start": {
-         "kg": 15.5
-        },
-        "notes": "1kg jumps using all four collars (0.28kg each). Two collars add about 0.5kg."
+   "items": [
+    {
+     "type": "single",
+     "tier": "primary",
+     "restSec": 180,
+     "slots": [
+      {
+       "exercise": "deadlift",
+       "sets": 3,
+       "reps": {
+        "min": 5,
+        "max": 5
        },
-       {
-        "exercise": "band-pull-up",
-        "sets": 3,
-        "reps": {
-         "min": 6,
-         "max": 10
-        },
-        "progression": "accessory",
-        "alternatives": [
-         "chest-supported-db-row"
-        ],
-        "start": {
-         "note": "Choose a band that leaves 2 reps in reserve"
-        }
+       "progression": "linear-2-5",
+       "start": {
+        "kg": 55
        }
-      ]
-     },
-     {
-      "type": "straight",
-      "restSec": 90,
-      "slots": [
-       {
-        "exercise": "goblet-squat",
-        "sets": 2,
-        "reps": {
-         "min": 10,
-         "max": 12
-        },
-        "progression": "double-2-5",
-        "start": {
-         "kg": 12.5
-        }
-       }
-      ]
-     }
-    ],
-    "tertiary": [
-     {
-      "type": "giant",
-      "rounds": 3,
-      "transitionSec": 0,
-      "restSec": 90,
-      "slots": [
-       {
-        "exercise": "db-curl",
-        "reps": {
-         "min": 10,
-         "max": 12
-        },
-        "progression": "accessory",
-        "start": {
-         "note": "Light"
-        }
+      }
+     ]
+    },
+    {
+     "type": "superset",
+     "tier": "secondary",
+     "rounds": 5,
+     "restSec": 120,
+     "slots": [
+      {
+       "exercise": "overhead-press-ez",
+       "reps": {
+        "min": 5,
+        "max": 5
        },
-       {
-        "exercise": "cable-pushdown",
-        "reps": {
-         "min": 12,
-         "max": 15
-        },
-        "progression": "accessory",
-        "start": {
-         "note": "Light"
-        }
+       "progression": "linear-2-5",
+       "incrementKg": 1,
+       "start": {
+        "kg": 15.5
        },
-       {
-        "exercise": "farmers-carry",
-        "metres": {
-         "min": 30,
-         "max": 30
-        },
-        "progression": "accessory",
-        "start": {
-         "kg": 12.5
-        }
+       "notes": "1kg jumps using all four collars (0.28kg each). Two collars add about 0.5kg."
+      },
+      {
+       "exercise": "band-pull-up",
+       "reps": {
+        "min": 6,
+        "max": 10
+       },
+       "progression": "accessory",
+       "alternatives": [
+        "chest-supported-db-row"
+       ],
+       "start": {
+        "note": "Choose a band that leaves 2 reps in reserve"
        }
-      ]
-     }
-    ]
-   }
+      }
+     ]
+    },
+    {
+     "type": "single",
+     "tier": "secondary",
+     "restSec": 90,
+     "slots": [
+      {
+       "exercise": "goblet-squat",
+       "sets": 2,
+       "reps": {
+        "min": 10,
+        "max": 12
+       },
+       "progression": "double-2-5",
+       "start": {
+        "kg": 12.5
+       }
+      }
+     ]
+    },
+    {
+     "type": "giant",
+     "tier": "tertiary",
+     "rounds": 3,
+     "transitionSec": 0,
+     "restSec": 90,
+     "slots": [
+      {
+       "exercise": "db-curl",
+       "reps": {
+        "min": 10,
+        "max": 12
+       },
+       "progression": "accessory",
+       "start": {
+        "note": "Light"
+       }
+      },
+      {
+       "exercise": "cable-pushdown",
+       "reps": {
+        "min": 12,
+        "max": 15
+       },
+       "progression": "accessory",
+       "start": {
+        "note": "Light"
+       }
+      },
+      {
+       "exercise": "farmers-carry",
+       "metres": {
+        "min": 30,
+        "max": 30
+       },
+       "progression": "accessory",
+       "start": {
+        "kg": 12.5
+       }
+      }
+     ]
+    }
+   ]
   }
  ],
- "weeks": [
-  {
-   "id": "two-a-week",
-   "name": "Two lifting days a week",
-   "rotation": [
-    "session-a",
-    "session-b",
-    "session-c"
-   ],
-   "perWeek": {
-    "liftDays": 2,
-    "minRestDays": 2
+ "plan": {
+  "mode": "adhoc",
+  "weeks": [
+   {
+    "workouts": [
+     "session-a",
+     "session-b"
+    ],
+    "otherDays": {
+     "type": "free",
+     "notes": "Classes, or rest"
+    }
    },
-   "otherDays": {
-    "type": "free",
-    "notes": "Classes, or rest"
+   {
+    "workouts": [
+     "session-a",
+     "session-b"
+    ],
+    "otherDays": {
+     "type": "free",
+     "notes": "Classes, or rest"
+    }
+   },
+   {
+    "workouts": [
+     "session-a",
+     "session-b"
+    ],
+    "otherDays": {
+     "type": "free",
+     "notes": "Classes, or rest"
+    }
+   },
+   {
+    "workouts": [
+     "session-a",
+     "session-b"
+    ],
+    "otherDays": {
+     "type": "free",
+     "notes": "Classes, or rest"
+    }
+   },
+   {
+    "workouts": [
+     "session-a",
+     "session-b"
+    ],
+    "otherDays": {
+     "type": "free",
+     "notes": "Classes, or rest"
+    }
    }
-  }
- ],
+  ],
+  "minRestDays": 2
+ },
  "phases": [
   {
    "id": "return-to-bests",
@@ -520,7 +594,6 @@
     {
      "id": "block-1",
      "name": "Block 1",
-     "week": "two-a-week",
      "weeks": null,
      "deload": {
       "everyWeeks": 6,
@@ -610,49 +683,5 @@
     "progressionOnThisDay": "skip"
    }
   }
- },
- "targets": [
-  {
-   "exercise": "back-squat",
-   "kg": 40,
-   "reps": 5,
-   "sets": 5,
-   "label": "Previous best"
-  },
-  {
-   "exercise": "bench-press",
-   "kg": 27.5,
-   "reps": 5,
-   "sets": 5,
-   "label": "Previous best"
-  },
-  {
-   "exercise": "overhead-press-ez",
-   "kg": 18,
-   "reps": 5,
-   "sets": 5,
-   "label": "Previous best"
-  },
-  {
-   "exercise": "deadlift",
-   "kg": 60,
-   "reps": 5,
-   "sets": 3,
-   "label": "Previous best"
-  },
-  {
-   "exercise": "romanian-deadlift",
-   "kg": 40,
-   "reps": 7,
-   "sets": 3,
-   "label": "Previous best"
-  },
-  {
-   "exercise": "barbell-row",
-   "kg": 22.5,
-   "reps": 8,
-   "sets": 3,
-   "label": "Previous best"
-  }
- ]
+ }
 }

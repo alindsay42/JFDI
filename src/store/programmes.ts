@@ -1,5 +1,6 @@
 import type { JFDIProfile, StartingLoad } from "../formats/generated/profile.ts";
 import type { JFDIProgrammeFile } from "../formats/generated/programme.ts";
+import { asProgramme, setsOf } from "../formats/programme.ts";
 import { validateProfile } from "../formats/validate.js";
 import { markChanged, type JfdiDatabase } from "./db.ts";
 import { BUNDLED_PROGRAMMES, equipment, library } from "./household.ts";
@@ -30,24 +31,24 @@ export async function syncBundledProgrammes(db: JfdiDatabase, bundled = BUNDLED_
  * Starting loads suggested by the programme: the first prescribed weight for each loaded exercise,
  * with its sets and the bottom of its rep range.
  */
-export function defaultStartingLoads(p: JFDIProgrammeFile): Record<string, StartingLoad> {
+export function defaultStartingLoads(file: JFDIProgrammeFile): Record<string, StartingLoad> {
+  const p = asProgramme(file);
   const exercises = new Map(p.exercises.map((e) => [e.id, e]));
   const bars = new Map(p.equipment.map((b) => [b.id, b]));
   const loads: Record<string, StartingLoad> = {};
-  for (const s of p.sessions) {
-    for (const tier of ["primary", "secondary", "tertiary"] as const) {
-      for (const block of s.tiers[tier] ?? []) {
-        for (const slot of block.slots ?? []) {
-          const ex = exercises.get(slot.exercise);
-          if (!ex || ex.measure !== "load" || loads[ex.id]) continue;
-          const start = slot.start?.kg;
-          const kg = start === "bar" ? (ex.bar ? bars.get(ex.bar)?.kg : undefined) : start;
-          if (typeof kg !== "number") continue;
-          const load: StartingLoad = { kg };
-          if (slot.reps) load.reps = slot.reps.min;
-          if (slot.sets) load.sets = slot.sets;
-          loads[ex.id] = load;
-        }
+  for (const w of p.workouts) {
+    for (const item of w.items) {
+      for (const slot of item.slots) {
+        const ex = exercises.get(slot.exercise);
+        if (!ex || ex.measure !== "load" || loads[ex.id]) continue;
+        const start = slot.start?.kg;
+        const kg = start === "bar" ? (ex.bar ? bars.get(ex.bar)?.kg : undefined) : start;
+        if (typeof kg !== "number") continue;
+        const load: StartingLoad = { kg };
+        if (slot.reps) load.reps = slot.reps.min;
+        const sets = setsOf(item, slot);
+        if (sets) load.sets = sets;
+        loads[ex.id] = load;
       }
     }
   }

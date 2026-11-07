@@ -5,23 +5,22 @@
   "description": "A training programme as data. See docs/programme-format.md. Cross-references between ids are checked by scripts/validate.mjs, not by this schema.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["format", "formatVersion", "id", "name", "createdAt", "updatedAt", "equipment", "exercises", "progressions", "sessions", "weeks", "phases", "readiness"],
+  "required": ["format", "formatVersion", "id", "name", "createdAt", "updatedAt", "equipment", "exercises", "progressions", "workouts", "plan", "phases", "readiness"],
   "properties": {
     "$schema": { "type": "string" },
     "format": { "const": "jfdi-programme" },
-    "formatVersion": { "const": 1 },
+    "formatVersion": { "const": 2 },
     "id": { "$ref": "#/$defs/id" },
     "name": { "$ref": "#/$defs/text" },
     "description": { "type": "string" },
     "goal": { "type": "string" },
-    "daysPerWeek": { "type": "integer", "minimum": 1, "maximum": 7 },
     "createdAt": { "type": "string", "format": "date-time" },
     "updatedAt": { "type": "string", "format": "date-time" },
     "equipment": { "type": "array", "items": { "$ref": "#/$defs/equipment" } },
     "exercises": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/exercise" } },
     "progressions": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/progression" } },
-    "sessions": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/session" } },
-    "weeks": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/week" } },
+    "workouts": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/workout" } },
+    "plan": { "$ref": "#/$defs/plan" },
     "phases": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/phase" } },
     "readiness": { "$ref": "#/$defs/readiness" },
     "targets": { "type": "array", "items": { "$ref": "#/$defs/target" } }
@@ -149,22 +148,31 @@
       }
     },
     "block": {
+      "description": "One item in a workout: a single exercise, or a group that runs in rounds",
       "type": "object",
-      "required": ["type", "slots"],
+      "required": ["type", "tier", "slots"],
       "oneOf": [
         {
           "additionalProperties": false,
-          "properties": { "type": { "const": "straight" }, "restSec": { "$ref": "#/$defs/seconds" }, "slots": { "type": "array", "minItems": 1, "maxItems": 1, "items": { "$ref": "#/$defs/slot" } } }
-        },
-        {
-          "additionalProperties": false,
-          "properties": { "type": { "const": "superset" }, "restSec": { "$ref": "#/$defs/seconds" }, "slots": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "$ref": "#/$defs/slot" } } }
+          "properties": {
+            "type": { "const": "single" }, "tier": { "$ref": "#/$defs/tierName" }, "restSec": { "$ref": "#/$defs/seconds" },
+            "slots": { "type": "array", "minItems": 1, "maxItems": 1, "items": { "$ref": "#/$defs/slot" } }
+          }
         },
         {
           "additionalProperties": false,
           "required": ["rounds"],
           "properties": {
-            "type": { "const": "giant" }, "rounds": { "type": "integer", "minimum": 1, "maximum": 20 },
+            "type": { "const": "superset" }, "tier": { "$ref": "#/$defs/tierName" }, "rounds": { "type": "integer", "minimum": 1, "maximum": 20 },
+            "restSec": { "$ref": "#/$defs/seconds" },
+            "slots": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "$ref": "#/$defs/slot" } }
+          }
+        },
+        {
+          "additionalProperties": false,
+          "required": ["rounds"],
+          "properties": {
+            "type": { "const": "giant" }, "tier": { "$ref": "#/$defs/tierName" }, "rounds": { "type": "integer", "minimum": 1, "maximum": 20 },
             "transitionSec": { "$ref": "#/$defs/seconds" }, "restSec": { "$ref": "#/$defs/seconds" },
             "slots": { "type": "array", "minItems": 3, "items": { "$ref": "#/$defs/slot" } }
           }
@@ -173,33 +181,23 @@
           "additionalProperties": false,
           "required": ["rounds", "workSec", "restSec"],
           "properties": {
-            "type": { "const": "finisher" }, "rounds": { "type": "integer", "minimum": 1, "maximum": 50 },
+            "type": { "const": "finisher" }, "tier": { "$ref": "#/$defs/tierName" }, "rounds": { "type": "integer", "minimum": 1, "maximum": 50 },
             "workSec": { "$ref": "#/$defs/seconds" }, "restSec": { "$ref": "#/$defs/seconds" },
             "slots": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/slot" } }
           }
         }
       ]
     },
-    "session": {
+    "workout": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "name", "tiers"],
+      "required": ["id", "name", "items"],
       "properties": {
         "id": { "$ref": "#/$defs/id" },
         "name": { "$ref": "#/$defs/text" },
         "subtitle": { "type": "string" },
         "estimatedMinutes": { "type": "integer", "minimum": 1, "maximum": 300 },
-        "inRotation": { "type": "boolean" },
-        "tiers": {
-          "type": "object",
-          "additionalProperties": false,
-          "minProperties": 1,
-          "properties": {
-            "primary": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/block" } },
-            "secondary": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/block" } },
-            "tertiary": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/block" } }
-          }
-        }
+        "items": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/block" } }
       }
     },
 
@@ -207,7 +205,7 @@
       "type": "object",
       "required": ["type"],
       "oneOf": [
-        { "additionalProperties": false, "properties": { "type": { "const": "lift" }, "notes": { "type": "string" } } },
+        { "additionalProperties": false, "required": ["workout"], "properties": { "type": { "const": "workout" }, "workout": { "$ref": "#/$defs/id" }, "notes": { "type": "string" } } },
         {
           "additionalProperties": false,
           "required": ["activity"],
@@ -216,26 +214,32 @@
         { "additionalProperties": false, "properties": { "type": { "enum": ["free", "rest"] }, "notes": { "type": "string" } } }
       ]
     },
-    "week": {
+    "otherDay": {
+      "type": "object",
+      "required": ["type"],
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "required": ["activity"],
+          "properties": { "type": { "const": "conditioning" }, "activity": { "$ref": "#/$defs/text" }, "minutes": { "$ref": "#/$defs/range" }, "notes": { "type": "string" } }
+        },
+        { "additionalProperties": false, "properties": { "type": { "enum": ["free", "rest"] }, "notes": { "type": "string" } } }
+      ]
+    },
+    "adhocWeek": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "name", "rotation"],
-      "oneOf": [{ "required": ["perWeek"] }, { "required": ["days"] }],
-      "dependentRequired": { "otherDays": ["perWeek"] },
+      "required": ["workouts"],
       "properties": {
-        "id": { "$ref": "#/$defs/id" },
-        "name": { "$ref": "#/$defs/text" },
-        "rotation": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/id" } },
-        "perWeek": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["liftDays"],
-          "properties": {
-            "liftDays": { "type": "integer", "minimum": 1, "maximum": 7 },
-            "minRestDays": { "type": "integer", "minimum": 0, "maximum": 6, "description": "Full days off between lifting days" }
-          }
-        },
-        "otherDays": { "$ref": "#/$defs/day" },
+        "workouts": { "type": "array", "minItems": 1, "maxItems": 7, "items": { "$ref": "#/$defs/id" }, "description": "Day 1, Day 2 and so on, in order" },
+        "otherDays": { "$ref": "#/$defs/otherDay", "description": "What the days without a workout are" }
+      }
+    },
+    "setDaysWeek": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["days"],
+      "properties": {
         "days": {
           "type": "object",
           "additionalProperties": false,
@@ -246,6 +250,28 @@
           }
         }
       }
+    },
+    "plan": {
+      "description": "A cycle of 1 to 4 weeks that repeats. Ad hoc: workouts in order, on whichever days suit. Set days: workouts on weekdays, with the calendar deciding the week",
+      "type": "object",
+      "required": ["mode", "weeks"],
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "mode": { "const": "adhoc" },
+            "minRestDays": { "type": "integer", "minimum": 0, "maximum": 6, "description": "Full days off between workouts" },
+            "weeks": { "type": "array", "minItems": 1, "maxItems": 4, "items": { "$ref": "#/$defs/adhocWeek" } }
+          }
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "mode": { "const": "setDays" },
+            "weeks": { "type": "array", "minItems": 1, "maxItems": 4, "items": { "$ref": "#/$defs/setDaysWeek" } }
+          }
+        }
+      ]
     },
 
     "gate": {
@@ -266,11 +292,10 @@
     "trainingBlock": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "name", "week", "weeks"],
+      "required": ["id", "name", "weeks"],
       "properties": {
         "id": { "$ref": "#/$defs/id" },
         "name": { "$ref": "#/$defs/text" },
-        "week": { "$ref": "#/$defs/id" },
         "weeks": { "oneOf": [{ "type": "integer", "minimum": 1, "maximum": 104 }, { "type": "null" }] },
         "deload": {
           "type": "object",
@@ -316,7 +341,7 @@
         { "additionalProperties": false, "required": ["tier"], "properties": { "rule": { "const": "dropTier" }, "tier": { "$ref": "#/$defs/tierName" } } },
         { "additionalProperties": false, "required": ["flag"], "properties": { "rule": { "enum": ["dropFlagged", "swapFlagged"] }, "flag": { "$ref": "#/$defs/flag" } } },
         { "additionalProperties": false, "required": ["reps"], "properties": { "rule": { "const": "addRir" }, "reps": { "type": "integer", "minimum": 1, "maximum": 5 } } },
-        { "additionalProperties": false, "required": ["session"], "properties": { "rule": { "const": "replaceSession" }, "session": { "$ref": "#/$defs/id" } } },
+        { "additionalProperties": false, "required": ["workout"], "properties": { "rule": { "const": "replaceWorkout" }, "workout": { "$ref": "#/$defs/id" } } },
         { "additionalProperties": false, "properties": { "rule": { "const": "noLifting" } } }
       ]
     },

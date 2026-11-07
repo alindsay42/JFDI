@@ -8,7 +8,7 @@
   "required": ["format", "formatVersion", "profile", "sessions", "days", "bodyweight"],
   "properties": {
     "format": { "const": "jfdi-log" },
-    "formatVersion": { "const": 1 },
+    "formatVersion": { "const": 2 },
     "profile": { "$ref": "#/$defs/id" },
     "description": { "type": "string", "description": "Optional, for example files and imports" },
     "sessions": { "type": "array", "items": { "$ref": "#/$defs/session" } },
@@ -45,7 +45,7 @@
       "properties": {
         "exercise": { "$ref": "#/$defs/id" },
         "name": { "type": "string", "minLength": 1, "description": "Copied at the time, so history reads correctly even if the library renames it" },
-        "slot": { "type": ["string", "null"], "pattern": "^(primary|secondary|tertiary)\\.[0-9]+\\.[0-9]+$", "description": "Where it sits in the prescription, as tier.block.slot. null for an exercise added during the session" },
+        "slot": { "type": ["string", "null"], "pattern": "^[0-9]+\\.[0-9]+$", "description": "Where it sits in the prescription, as item.slot (both counted from 0). null for an exercise added during the session" },
         "loadPer": { "enum": ["total", "each"] },
         "added": { "type": "boolean" },
         "swappedFrom": { "$ref": "#/$defs/id" },
@@ -94,8 +94,8 @@
         "readiness": { "oneOf": [{ "$ref": "#/$defs/level" }, { "type": "null" }], "description": "null when the daily check is off" },
         "deload": { "type": "boolean" },
         "prescribed": {
-          "description": "The session as prescribed on the day, after readiness and deload rules. A copy, so editing the programme never rewrites history",
-          "$ref": "programme.schema.json#/$defs/session"
+          "description": "The workout as prescribed on the day, after readiness and deload rules. A copy, so editing the programme never rewrites history",
+          "$ref": "programme.schema.json#/$defs/workout"
         },
         "exercises": { "type": "array", "items": { "$ref": "#/$defs/exerciseEntry" } },
         "notes": { "type": "string" },
