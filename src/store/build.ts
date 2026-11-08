@@ -1,5 +1,6 @@
 // Saving programmes from Build mode. Edits go into a draft as they're made, so nothing is lost if the
 // tablet sleeps; Save checks the programme and makes it the version everyone running it uses.
+import { placesOf } from "../build/model.ts";
 import { asFile, type Programme } from "../formats/programme.ts";
 import { checkAgainstLibrary, validateProgramme } from "../formats/validate.js";
 import { markChanged, type JfdiDatabase } from "./db.ts";
@@ -33,6 +34,12 @@ export async function listDrafts(db: JfdiDatabase): Promise<Draft[]> {
 
 /** Everything wrong with a programme, in words. Empty when it can be saved. */
 export function programmeProblems(p: Programme): string[] {
+  // The usual problem while building, said plainly: workouts with nothing in them yet.
+  const empty = p.workouts.filter((w) => w.items.length === 0);
+  if (empty.length) {
+    const places = empty.flatMap((w) => placesOf(p, w.id));
+    return [`${places.length ? places.join(", ") : empty.map((w) => w.name).join(", ")} ${places.length === 1 || (!places.length && empty.length === 1) ? "has" : "have"} no exercises yet. Open ${places.length === 1 ? "it" : "each one"} and choose some.`];
+  }
   const file = asFile(p);
   const problems = validateProgramme(file);
   return problems.length ? problems : checkAgainstLibrary(file, library, equipment);

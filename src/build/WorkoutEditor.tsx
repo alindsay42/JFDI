@@ -5,6 +5,7 @@ import {
   updateItem, updateSlot, workoutSlots, type SlotRef,
 } from "./model.ts";
 import { PickLists } from "./PickLists.tsx";
+import { href } from "../shared/route.ts";
 import type { DraftState } from "./useDraft.ts";
 import { equipment, library } from "../store/household.ts";
 import type { Workout } from "../formats/programme.ts";
@@ -28,8 +29,16 @@ export function WorkoutEditor({ draft, workout }: { draft: DraftState; workout: 
   };
   const n = pairing?.size ?? 0;
 
+  const done = (
+    <a className="btn btn-you" href={href("programme", p.id)}>Done</a>
+  );
+
   return (
     <>
+      <div className="done-bar">
+        <span className="hint">Changes are kept as you go. Save the programme from the plan.</span>
+        {done}
+      </div>
       <section className="card" aria-labelledby="choose-heading">
         <label className="field field-narrow">
           <span>Workout name</span>
@@ -114,6 +123,7 @@ export function WorkoutEditor({ draft, workout }: { draft: DraftState; workout: 
           </div>
         ))}
       </section>
+      <div className="actions">{done}</div>
     </>
   );
 }

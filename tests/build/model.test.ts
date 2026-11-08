@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   addDay, addExercises, copyWeek, group, groupOf, moveDay, moveItem, moveSlot, newProgramme, parseRange, formatRange, pruneWorkouts,
   removeDay, removeExercises, renameWorkout, setDay, setMinRestDays, setMode, setWeekCount, spreadDays, startKg, updateItem, updateSlot,
-  weekWorkouts, duplicateWorkout, slug,
+  weekWorkouts, duplicateWorkout, slug, placesOf,
 } from "../../src/build/model.ts";
 import { asFile, asProgramme, type Programme } from "../../src/formats/programme.ts";
 import { checkAgainstLibrary, validateProgramme } from "../../src/formats/validate.js";
@@ -238,5 +238,18 @@ describe("reading what people type", () => {
   it("shows ranges back", () => {
     expect([formatRange({ min: 5, max: 5 }), formatRange({ min: 8, max: 12 }), formatRange()]).toEqual(["5", "8-12", ""]);
     expect(slug("!!!", [], "x")).toBe("x");
+  });
+});
+
+describe("default names follow the schedule", () => {
+  it("Day 1, Day 2 become weekdays in set days, and back again; names you chose stay", () => {
+    let p = addDay(addDay(newProgramme("P", [], now), 0), 0);
+    p = renameWorkout(p, p.workouts[2]!.id, "Heavy deadlift");
+    p = setMode(p, "setDays");
+    expect(p.workouts.map((w) => w.name)).toEqual(["Mon", "Wed", "Heavy deadlift"]);
+    expect(placesOf(p, p.workouts[1]!.id)).toEqual(["Wed"]);
+    p = setMode(p, "adhoc");
+    expect(p.workouts.map((w) => w.name)).toEqual(["Day 1", "Day 2", "Heavy deadlift"]);
+    expect(placesOf(setWeekCount(p, 2), "day-1")).toEqual(["Week 1 Day 1"]);
   });
 });

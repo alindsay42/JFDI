@@ -108,3 +108,15 @@ describe("stopping a programme", () => {
     await expect(stopProgramme(db, "nobody")).rejects.toThrow('No profile "nobody"');
   });
 });
+
+describe("problems, in words", () => {
+  it("names the days that have no exercises yet", async () => {
+    const { programmeProblems } = await import("../../src/store/build.ts");
+    const { setMode, addDay } = await import("../../src/build/model.ts");
+    let p = setMode(addDay(addDay(newProgramme("P", []), 0), 0), "setDays");
+    expect(programmeProblems(p)).toEqual(["Mon, Wed, Fri have no exercises yet. Open each one and choose some."]);
+    p = addExercises(p, p.workouts[0]!.id, ["deadlift"], library, equipment);
+    p = addExercises(p, p.workouts[1]!.id, ["deadlift"], library, equipment);
+    expect(programmeProblems(p)).toEqual(["Fri has no exercises yet. Open it and choose some."]);
+  });
+});

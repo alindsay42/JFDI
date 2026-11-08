@@ -8,6 +8,7 @@ import {
 } from "../formats/programme.ts";
 
 export const MAX_WEEKS = 4;
+export const DAY_NAMES: Record<Weekday, string> = { mon: "Mon", tue: "Tue", wed: "Wed", thu: "Thu", fri: "Fri", sat: "Sat", sun: "Sun" };
 export const MAX_DAYS = 7;
 export const DEFAULT_PROGRESSIONS: Programme["progressions"] = [
   { id: "linear-2-5", type: "linear", incrementKg: 2.5, holdIfRpeAtLeast: 9, stall: { misses: 2, reducePercent: 10 } },
@@ -70,8 +71,14 @@ const freeWeek = (): SetDaysWeek => ({ days: Object.fromEntries(WEEKDAYS.map((d)
 export function setMode(p: Programme, mode: Plan["mode"]): Programme {
   if (p.plan.mode === mode) return p;
   const q = clone(p);
+  // Workouts still called by their default names follow the switch: "Day 2" becomes "Wed", and back.
+  const rename = (id: string, to: string, from: RegExp) => {
+    const w = q.workouts.find((x) => x.id === id);
+    if (w && from.test(w.name)) w.name = to;
+  };
   if (mode === "adhoc") {
     q.plan = { mode: "adhoc", weeks: q.plan.weeks.map((_, w) => ({ workouts: weekWorkouts(p.plan, w) })) };
+    q.plan.weeks.forEach((w) => w.workouts.forEach((id, d) => rename(id, `Day ${d + 1}`, /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)$/)));
   } else {
     q.plan = {
       mode: "setDays",
@@ -79,7 +86,10 @@ export function setMode(p: Programme, mode: Plan["mode"]): Programme {
         const ids = weekWorkouts(p.plan, w);
         const week = freeWeek();
         const spread = spreadDays(ids.length);
-        ids.forEach((id, i) => { week.days[spread[i]!] = { type: "workout", workout: id }; });
+        ids.forEach((id, i) => {
+          week.days[spread[i]!] = { type: "workout", workout: id };
+          rename(id, DAY_NAMES[spread[i]!], /^Day \d+$/);
+        });
         return week;
       }),
     };
@@ -179,7 +189,7 @@ export function setDay(
   if (day.type === "workout") {
     let id = day.workout;
     if (!id) {
-      const name = `${weekday[0]!.toUpperCase()}${weekday.slice(1)}`;
+      const name = DAY_NAMES[weekday];
       const workout = emptyWorkout(q, q.plan.weeks.length > 1 ? `Week ${week + 1} ${name}` : name);
       workout.name = name;
       q.workouts.push(workout);
@@ -431,4 +441,20 @@ export function startKg(p: Programme, slot: Slot): number | undefined {
     return p.equipment.find((b) => b.id === ex?.bar)?.kg;
   }
   return kg;
+}
+
+/** Where a workout sits in the plan, in words: "Mon", "Week 2 Wed", "Day 1", "Week 2 Day 1". */
+export function placesOf(p: Programme, id: string): string[] {
+  const many = p.plan.weeks.length > 1;
+  const places: string[] = [];
+  p.plan.weeks.forEach((_, w) => {
+    const prefix = many ? `Week ${w + 1} ` : "";
+    if (p.plan.mode === "adhoc") {
+      p.plan.weeks[w]!.workouts.forEach((x, d) => { if (x === id) places.push(`${prefix}Day ${d + 1}`); });
+    } else {
+      const days = (p.plan.weeks[w] as SetDaysWeek).days;
+      for (const d of WEEKDAYS) { const day = days[d]; if (day.type === "workout" && day.workout === id) places.push(`${prefix}${DAY_NAMES[d]}`); }
+    }
+  });
+  return places;
 }

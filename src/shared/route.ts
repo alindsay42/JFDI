@@ -2,7 +2,7 @@
 // including pull request test versions.
 import { useSyncExternalStore } from "react";
 
-export const ROUTES = ["today", "who", "history", "data", "programme"] as const;
+export const ROUTES = ["today", "who", "history", "data", "programme", "session"] as const;
 /** Older addresses, still understood */
 const ALIASES: Record<string, Route> = { person: "history", build: "programme" };
 export type Route = (typeof ROUTES)[number];

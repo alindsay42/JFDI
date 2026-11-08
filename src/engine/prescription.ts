@@ -2,7 +2,7 @@
 import type { Day, Exercise, Item, Programme, Slot, Workout } from "../formats/programme.ts";
 import { nextTarget, roundKg, type Next, type Performance, type ProgressionRule, type SetDone } from "./progression.ts";
 import { applyDeload, applyRules, type Rule } from "./readiness.ts";
-import { daysBetween, nextAdhoc, restDaysLeft, setDaysOn, type Position } from "./schedule.ts";
+import { daysBetween, mondayOf, nextAdhoc, restDaysLeft, setDaysOn, WEEKDAYS as WEEKDAY_LIST, type Position } from "./schedule.ts";
 
 export type Readiness = "green" | "amber" | "red";
 
@@ -13,7 +13,7 @@ export interface LoggedSession {
   readiness: Readiness | null;
   programme: { id: string; week: number } | null;
   workout: string;
-  exercises: Array<{ exercise: string; removed?: boolean; sets: SetDone[] }>;
+  exercises: Array<{ exercise: string; removed?: unknown; sets: SetDone[] }>;
 }
 
 export interface Assignment {
@@ -26,6 +26,8 @@ export type Today =
   | { kind: "day"; day: Exclude<Day, { type: "workout" }>; week: number }
   | { kind: "resting"; daysLeft: number; next: Position & { workout: string } }
   | { kind: "noLifting" }
+  /** Set days: this weekday's workout is already done this week (today, or earlier on another day) */
+  | { kind: "done"; workout: string; date: string }
   | {
       kind: "workout";
       position: Position;
@@ -97,6 +99,10 @@ export function today(input: {
   readiness: Readiness | null;
   /** Ad hoc: the person chose to skip to the workout after this one */
   skippedTo?: Position | null;
+  /** Ad hoc: start the next workout even though the rest days aren't up */
+  ignoreRest?: boolean;
+  /** Set days: do this workout today instead of the day's own, or again after it's done */
+  chosen?: string | null;
 }): Today {
   const { programme: p, assignment: a, sessions, date, readiness } = input;
   if (date < a.startDate) return { kind: "notStarted", startDate: a.startDate };
@@ -108,17 +114,31 @@ export function today(input: {
     const next = nextAdhoc(p.plan, last);
     const lastDone = sessions.filter((s) => s.status === "done" && s.programme?.id === p.id).map((s) => s.date).sort().at(-1) ?? null;
     const wait = restDaysLeft(p.plan.minRestDays, lastDone, date);
-    if (wait > 0) return { kind: "resting", daysLeft: wait, next };
+    if (wait > 0 && !input.ignoreRest) return { kind: "resting", daysLeft: wait, next };
     position = { week: next.week, day: next.day };
     workoutId = next.workout;
   } else {
     const on = setDaysOn(p.plan, a.startDate, date)!;
-    if (on.type !== "workout") {
-      const { week, ...day } = on;
-      return { kind: "day", day: day as Exclude<Day, { type: "workout" }>, week };
+    const chosen = input.chosen && p.workouts.some((w) => w.id === input.chosen) ? input.chosen : null;
+    if (chosen) {
+      // The chosen workout's own week of the cycle, this week's if it's in it
+      const weeks = p.plan.weeks.map((w, i) => (WEEKDAY_LIST.some((d) => { const x = w.days[d]; return x.type === "workout" && x.workout === chosen; }) ? i : -1)).filter((i) => i >= 0);
+      position = { week: weeks.includes(on.week) ? on.week : (weeks[0] ?? on.week), day: 0 };
+      workoutId = chosen;
+    } else {
+      if (on.type !== "workout") {
+        const { week, ...day } = on;
+        return { kind: "day", day: day as Exclude<Day, { type: "workout" }>, week };
+      }
+      // Done already this week, today or earlier (when done early on another day)
+      const monday = mondayOf(date);
+      const doneOn = sessions
+        .filter((s) => s.status === "done" && s.programme?.id === p.id && s.workout === on.workout && s.date >= monday && s.date <= date)
+        .map((s) => s.date).sort().at(-1);
+      if (doneOn) return { kind: "done", workout: on.workout, date: doneOn };
+      position = { week: on.week, day: 0 };
+      workoutId = on.workout;
     }
-    position = { week: on.week, day: 0 };
-    workoutId = on.workout;
   }
 
   const base = p.workouts.find((w) => w.id === workoutId)!;

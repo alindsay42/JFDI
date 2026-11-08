@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { daysBetween, nextAdhoc, restDaysLeft, setDaysOn, setDaysWeek, weekdayOf } from "../../src/engine/schedule.ts";
+import { daysBetween, mondayOf, nextAdhoc, restDaysLeft, setDaysOn, setDaysWeek, weekdayOf } from "../../src/engine/schedule.ts";
 import type { Plan } from "../../src/formats/programme.ts";
 import { adhocRules, restRules, setDaysRules } from "./schedule.rules.ts";
 
@@ -45,5 +45,6 @@ describe(setDaysRules.title, () => {
     expect(daysBetween("2026-12-31", "2027-01-01")).toBe(1);
     expect(daysBetween("2027-03-27", "2027-03-29")).toBe(2);
     expect(weekdayOf("1969-12-31")).toBe("wed");
+    expect([mondayOf("2027-01-07"), mondayOf("2027-01-04"), mondayOf("2027-01-03")]).toEqual(["2027-01-04", "2027-01-04", "2026-12-28"]);
   });
 });
