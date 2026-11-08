@@ -9,7 +9,7 @@ import { Screen } from "../shared/Screen.tsx";
 import { db, type SessionRecord } from "../store/db.ts";
 import { library } from "../store/household.ts";
 import {
-  activeSession, addExercise, addSet, discardSession, fieldOf, finishSession, removeExercise, removeSet, restAfter, restoreExercise,
+  activeSession, addExercise, addRound, addSet, discardSession, fieldOf, finishSession, removeExercise, removeSet, restAfter, restoreExercise,
   setNotes, updateSet, type LoggedSet, type SetField,
 } from "../store/session.ts";
 
@@ -185,7 +185,7 @@ function ExerciseCard({ s, p, k, edit, startRest }: { s: SessionRecord; p: Progr
                 <SetRow label={`Set ${j + 1}`} name={e.name} set={set} field={field} each={e.loadPer === "each"}
                   update={(v) => edit((x) => updateSet(db, x, k, j, v))}
                   onDone={() => startRest(rest)}
-                  remove={!set.done && e.sets.length > 1 ? () => void edit((x) => removeSet(db, x, k, j)) : undefined} />
+                  remove={!set.done ? () => void edit((x) => removeSet(db, x, k, j)) : undefined} />
               </li>
             ))}
           </ol>
@@ -203,10 +203,22 @@ function GroupCard({ s, p, item, entries, edit, startRest }: {
   const rounds = Math.max(0, ...live.map((k) => s.exercises[k]!.sets.length));
   const kind = item.type === "superset" ? "Superset" : item.type === "giant" ? "Giant set" : "Finisher";
   const rest = item.restSec ?? 90;
+  const [removing, setRemoving] = useState(false);
   return (
     <section className="card group-card" aria-label={kind}>
-      <div className="group-card-head"><span className="tag tag-you">{kind}</span><span className="muted">{plural(rounds, "round")}, {rest}s rest after each</span></div>
-      {entries.map((k) => <ExerciseHead key={k} s={s} k={k} edit={edit} sub={s.exercises[k]!.removed ? "Removed" : undefined} />)}
+      <div className="group-card-head">
+        <span className="tag tag-you">{kind}</span>
+        <span className="muted group-meta">{live.length ? `${plural(rounds, "round")}, ${rest}s rest after each` : `${kind} removed`}</span>
+        {live.length > 0 ? (
+          <button type="button" className="btn btn-quiet btn-small" onClick={() => setRemoving(true)}>Remove</button>
+        ) : (
+          <button type="button" className="btn btn-quiet btn-small" onClick={() => void entries.reduce((q, k) => q.then(() => edit((x) => restoreExercise(db, x, k))), Promise.resolve())}>Undo remove</button>
+        )}
+      </div>
+      <ReasonDialog open={removing} title={`Remove this ${kind.toLowerCase()}?`} reasons={REMOVE_REASONS} confirmLabel="Remove"
+        note="Every exercise in it goes. Sets already done are kept, and progression isn't affected."
+        onCancel={() => setRemoving(false)}
+        onPick={(r) => { setRemoving(false); void live.reduce((q, k) => q.then(() => edit((x) => removeExercise(db, x, k, r))), Promise.resolve()); }} />
       <ol className="rounds">
         {Array.from({ length: rounds }, (_, r) => (
           <li key={r} className="round">
@@ -219,12 +231,22 @@ function GroupCard({ s, p, item, entries, edit, startRest }: {
               return (
                 <SetRow key={k} label={e.name} name={e.name} set={set} field={fieldOf(p, e.exercise)} each={e.loadPer === "each"}
                   update={(v) => edit((x) => updateSet(db, x, k, r, v))}
-                  onDone={() => { if (last || live.every((o) => o === k || s.exercises[o]!.sets[r]?.done)) startRest(rest); }} />
+                  onDone={() => { if (last || live.every((o) => o === k || s.exercises[o]!.sets[r]?.done)) startRest(rest); }}
+                  remove={!set.done ? () => void edit((x) => removeSet(db, x, k, r)) : undefined} />
               );
             })}
           </li>
         ))}
       </ol>
+      {live.length > 0 && entries.filter((k) => s.exercises[k]!.removed).map((k) => (
+        <p key={k} className="removed-line">
+          <span>{s.exercises[k]!.name} removed</span>
+          <button type="button" className="btn btn-quiet btn-small" onClick={() => void edit((x) => restoreExercise(db, x, k))}>Undo</button>
+        </p>
+      ))}
+      {live.length > 0 && (
+        <button type="button" className="btn btn-quiet btn-small" onClick={() => void edit((x) => addRound(db, x, live))}>+ Round</button>
+      )}
     </section>
   );
 }

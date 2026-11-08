@@ -536,3 +536,6 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 .rest-time { flex: 1; font-size: 1.6rem; font-weight: 900; font-variant-numeric: tabular-nums; }
 .rest-bar.is-over { background: #16a34a; color: #fff; }
 .done-bar { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); }
+.removed-line { display: flex; align-items: center; gap: 12px; margin: 8px 0; color: var(--muted); }
+.removed-line span { flex: 1; }
+.group-meta { flex: 1; }

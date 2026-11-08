@@ -136,3 +136,27 @@ test("set days: today's workout shows as done after, and another day's can be do
   await page.getByRole("button", { name: "Start workout" }).click();
   await expect(page.getByRole("heading", { name: "Session B" })).toBeVisible();
 });
+
+test("supersets: drop a line from a round, add a round, remove and restore the whole group", async ({ page }) => {
+  await dianeOnBlock1(page);
+  await page.getByRole("radio", { name: /Green/ }).check();
+  await page.getByRole("button", { name: "Start workout" }).click();
+  const superset = page.getByRole("region", { name: "Superset" });
+  await expect(superset.locator(".round")).toHaveCount(5);
+  await expect(superset.getByRole("button", { name: "Remove", exact: true })).toHaveCount(1);
+
+  // Drop the row from round 5, then add a round back
+  await superset.locator(".round").nth(4).getByRole("button", { name: "Remove Barbell row" }).click();
+  await expect(superset.locator(".round").nth(4).locator(".set-row")).toHaveCount(1);
+  await superset.getByRole("button", { name: "+ Round" }).click();
+  await expect(superset.locator(".round")).toHaveCount(6);
+
+  // Remove the whole superset, then undo
+  await superset.getByRole("button", { name: "Remove", exact: true }).click();
+  await page.getByRole("dialog").getByRole("radio", { name: "Equipment busy" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Remove" }).click();
+  await expect(superset).toContainText("Superset removed");
+  await expect(superset.locator(".round")).toHaveCount(0);
+  await superset.getByRole("button", { name: "Undo remove" }).click();
+  await expect(superset.locator(".round")).toHaveCount(6);
+});

@@ -111,11 +111,31 @@ export const addSet = (db: JfdiDatabase, s: SessionRecord, entry: number) =>
     sets.push({ ...copy, done: false });
   });
 
-/** Removes a set that hasn't been done. */
+/**
+ * Removes a set that hasn't been done. Removing an exercise's last set removes the exercise instead
+ * (keeping that set for Undo), so it never sits there with nothing to do.
+ */
 export const removeSet = (db: JfdiDatabase, s: SessionRecord, entry: number, set: number) =>
   change(db, s, (x) => {
-    const sets = x.exercises[entry]!.sets;
-    if (!sets[set]?.done) sets.splice(set, 1);
+    const e = x.exercises[entry]!;
+    if (e.sets[set]?.done) return;
+    if (e.sets.length === 1) {
+      if (e.added) { x.exercises.splice(entry, 1); return; }
+      e.removed = { reason: null };
+      return;
+    }
+    e.sets.splice(set, 1);
+  });
+
+/** Another round of a superset or giant set: one more set for each exercise in it. */
+export const addRound = (db: JfdiDatabase, s: SessionRecord, entries: number[]) =>
+  change(db, s, (x) => {
+    for (const k of entries) {
+      const e = x.exercises[k]!;
+      if (e.removed) continue;
+      const { done: _d, rpe: _r, ...copy } = e.sets.at(-1) ?? { done: false };
+      e.sets.push({ ...copy, done: false });
+    }
   });
 
 /** Adds an exercise from the library at the end. It has no place in the prescription. */
@@ -130,13 +150,15 @@ export const addExercise = (db: JfdiDatabase, s: SessionRecord, exerciseId: stri
     });
   });
 
-/** Removes an exercise for the rest of the session. Sets already done stay; the rest go. Progression isn't affected. */
+/**
+ * Removes an exercise for the rest of the session. Progression isn't affected. Its sets not done are kept
+ * until the session finishes, so Undo brings them back; finishing drops them.
+ */
 export const removeExercise = (db: JfdiDatabase, s: SessionRecord, entry: number, reason: string | null) =>
   change(db, s, (x) => {
     const e = x.exercises[entry]!;
     if (e.added && !e.sets.some((set) => set.done)) { x.exercises.splice(entry, 1); return; }
     e.removed = { reason };
-    e.sets = e.sets.filter((set) => set.done);
   });
 
 /** Brings back an exercise removed by mistake, with its planned sets. */
@@ -154,6 +176,7 @@ export const finishSession = (db: JfdiDatabase, s: SessionRecord, endedEarly: st
   change(db, s, (x) => {
     x.status = "done";
     x.finishedAt = now.toISOString();
+    for (const e of x.exercises) if (e.removed) e.sets = e.sets.filter((set) => set.done);
     x.endedEarly = endedEarly;
   });
 

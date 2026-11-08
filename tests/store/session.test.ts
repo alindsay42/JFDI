@@ -9,7 +9,7 @@ import { library } from "../../src/store/household.ts";
 import { addProfile } from "../../src/store/profiles.ts";
 import { assignProgramme } from "../../src/store/programmes.ts";
 import {
-  activeSession, addExercise, addSet, discardSession, fieldOf, finishSession, getSkip, removeExercise, removeSet, restAfter, restoreExercise,
+  activeSession, addExercise, addRound, addSet, discardSession, fieldOf, finishSession, getSkip, removeExercise, removeSet, restAfter, restoreExercise,
   setNotes, skipInForce, skipWorkout, startSession, updateSet,
 } from "../../src/store/session.ts";
 import { BLOCK1 } from "../helpers/block1.ts";
@@ -85,9 +85,14 @@ describe("during a workout", () => {
     let s = await startSession(db, await profile(), p, await plan("2027-01-01"), "green", at("2027-01-01"));
     s = await updateSet(db, s, 3, 0, { done: true });
     s = await removeExercise(db, s, 3, "Lower back tight");
-    expect(s.exercises[3]).toMatchObject({ removed: { reason: "Lower back tight" }, sets: [{ done: true }] });
+    expect(s.exercises[3]).toMatchObject({ removed: { reason: "Lower back tight" } });
+    expect(s.exercises[3]!.sets).toHaveLength(3);
     s = await restoreExercise(db, s, 3);
     expect(s.exercises[3]).not.toHaveProperty("removed");
+    expect(s.exercises[3]!.sets).toHaveLength(3);
+    s = await removeExercise(db, s, 3, "Lower back tight");
+    s = await finishSession(db, s, null, at("2027-01-01", "19:00"));
+    expect(s.exercises[3]!.sets).toEqual([{ done: true, kg: 30, reps: 6 }]);
     expect(await valid()).toEqual([]);
   });
 
@@ -100,6 +105,29 @@ describe("during a workout", () => {
     s = await removeExercise(db, s, s.exercises.length - 1, null);
     expect(s.exercises.at(-1)!.exercise).toBe("db-curl");
     await expect(addExercise(db, s, "moon-squat")).rejects.toThrow("isn't in the library");
+  });
+});
+
+describe("rounds of a group", () => {
+  it("+ Round adds a set to each exercise still in it; dropping an exercise's last set removes it", async () => {
+    let s = await startSession(db, await profile(), p, await plan("2027-01-01"), "green", at("2027-01-01"));
+    s = await addRound(db, s, [1, 2]);
+    expect([s.exercises[1]!.sets.length, s.exercises[2]!.sets.length]).toEqual([6, 6]);
+    expect(s.exercises[2]!.sets[5]).toEqual({ done: false, kg: 15, reps: 6 });
+    for (let i = 0; i < 5; i++) s = await removeSet(db, s, 2, 0);
+    expect(s.exercises[2]!.sets).toHaveLength(1);
+    s = await removeSet(db, s, 2, 0);
+    expect(s.exercises[2]).toMatchObject({ removed: { reason: null } });
+    s = await addRound(db, s, [1, 2]);
+    expect([s.exercises[1]!.sets.length, s.exercises[2]!.sets.length]).toEqual([7, 1]);
+    s = await updateSet(db, s, 1, 0, { done: true });
+    s = await removeSet(db, s, 1, 0);
+    expect(s.exercises[1]!.sets).toHaveLength(7);
+    s = await addExercise(db, s, "db-curl");
+    s = await removeSet(db, s, 7, 0);
+    s = await removeSet(db, s, 7, 0);
+    s = await removeSet(db, s, 7, 0);
+    expect(s.exercises.some((e) => e.exercise === "db-curl")).toBe(false);
   });
 });
 
