@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 export interface ChartPoint { date: string; value: number; detail?: string }
+export interface ChartBand { date: string; lo: number; hi: number }
+export interface ChartMarker { date: string; value: number; label: string }
 
 const H = 240;
 const PAD = { top: 16, right: 16, bottom: 32, left: 48 };
@@ -20,14 +22,21 @@ function niceTicks(min: number, max: number, count = 4): number[] {
 }
 
 /**
- * One series over time, in the person's colour, with an optional goal line. Tap or hover for each
- * point's value. The list under each chart is its table view.
+ * One series over time, in the person's colour, with an optional goal line, or a shaded band (the target
+ * pace) and dated goals drawn as diamonds. Tap or hover for each point's value. The list under each chart
+ * is its table view.
  */
-export function LineChart({ points, unit, label, goal }: {
+export function LineChart({ points, unit, label, goal, band, markers, until, labelLast }: {
   points: ChartPoint[];
   unit: string;
   label: string;
   goal?: { value: number; date?: string; label: string } | undefined;
+  band?: ChartBand[];
+  markers?: ChartMarker[];
+  /** Carry the time axis on to this date, past the last point */
+  until?: string | null;
+  /** Write the latest value beside its dot */
+  labelLast?: boolean;
 }) {
   const box = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState<number | null>(null);
@@ -42,21 +51,26 @@ export function LineChart({ points, unit, label, goal }: {
   }, []);
 
   const geo = useMemo(() => {
-    const values = points.map((p) => p.value).concat(goal ? [goal.value] : []);
+    const values = points.map((p) => p.value)
+      .concat(goal ? [goal.value] : [], (band ?? []).flatMap((b) => [b.lo, b.hi]), (markers ?? []).map((m) => m.value));
     const lo = Math.min(...values);
     const hi = Math.max(...values);
     const pad = Math.max((hi - lo) * 0.1, 1);
     const ticks = niceTicks(lo - pad, hi + pad);
     const yMin = ticks[0]!;
     const yMax = ticks.at(-1)!;
-    const dates = points.map((p) => time(p.date)).concat(goal?.date ? [time(goal.date)] : []);
-    const tMin = Math.min(...dates);
-    const tMax = Math.max(...dates);
+    const dates = points.map((p) => p.date)
+      .concat(goal?.date ? [goal.date] : [], until ? [until] : [], (band ?? []).map((b) => b.date), (markers ?? []).map((m) => m.date))
+      .sort();
+    const first = dates[0]!;
+    const last = dates.at(-1)!;
+    const tMin = time(first);
+    const tMax = time(last);
     const span = tMax - tMin || 86_400_000;
     const x = (d: string) => PAD.left + ((time(d) - tMin + (tMax === tMin ? span / 2 : 0)) / span) * (W - PAD.left - PAD.right);
     const y = (v: number) => PAD.top + (1 - (v - yMin) / (yMax - yMin || 1)) * (H - PAD.top - PAD.bottom);
-    return { ticks, x, y };
-  }, [points, goal, W]);
+    return { ticks, x, y, first, last };
+  }, [points, goal, band, markers, until, W]);
 
   const pick = (clientX: number) => {
     const r = box.current?.getBoundingClientRect();
@@ -69,7 +83,11 @@ export function LineChart({ points, unit, label, goal }: {
 
   const path = points.map((p, i) => `${i ? "L" : "M"}${geo.x(p.date).toFixed(1)},${geo.y(p.value).toFixed(1)}`).join(" ");
   const a = active !== null ? points[active] : undefined;
-  const labelIdx = points.length > 1 ? [0, points.length - 1] : [0];
+  const ends = geo.first === geo.last ? [geo.first] : [geo.first, geo.last];
+  const bandPath = band && band.length > 1
+    ? `M${band.map((b) => `${geo.x(b.date).toFixed(1)},${geo.y(b.hi).toFixed(1)}`).join(" L")} L${[...band].reverse().map((b) => `${geo.x(b.date).toFixed(1)},${geo.y(b.lo).toFixed(1)}`).join(" L")} Z`
+    : null;
+  const lastPoint = points.at(-1);
 
   return (
     <div className="chart" ref={box} onPointerMove={(e) => pick(e.clientX)} onPointerDown={(e) => pick(e.clientX)} onPointerLeave={() => setActive(null)}>
@@ -80,11 +98,25 @@ export function LineChart({ points, unit, label, goal }: {
             <text x={PAD.left - 8} y={geo.y(t) + 4} textAnchor="end" className="chart-tick">{t}</text>
           </g>
         ))}
-        {labelIdx.map((i) => (
-          <text key={i} x={geo.x(points[i]!.date)} y={H - 8} textAnchor={i === 0 && points.length > 1 ? "start" : "end"} className="chart-tick">
-            {short.format(new Date(time(points[i]!.date)))}
+        {ends.map((d, i) => (
+          <text key={d} x={geo.x(d)} y={H - 8} textAnchor={ends.length === 1 ? "middle" : i === 0 ? "start" : "end"} className="chart-tick">
+            {short.format(new Date(time(d)))}
           </text>
         ))}
+        {bandPath && <path d={bandPath} className="chart-band" />}
+        {markers?.map((m) => {
+          const mx = geo.x(m.date);
+          const my = geo.y(m.value);
+          // Label to the left of the diamond, unless it would run off the chart
+          const left = mx - 9 - m.label.length * 6.5 > PAD.left;
+          return (
+            <g key={m.date} className="chart-marker">
+              <line x1={mx} x2={mx} y1={PAD.top} y2={H - PAD.bottom} />
+              <path d={`M${mx - 6},${my} L${mx},${my - 6} L${mx + 6},${my} L${mx},${my + 6} Z`} />
+              <text x={left ? mx - 9 : mx + 9} y={my - 9} textAnchor={left ? "end" : "start"}>{m.label}</text>
+            </g>
+          );
+        })}
         {goal && (
           <g className="chart-goal">
             <line x1={PAD.left} x2={W - PAD.right} y1={geo.y(goal.value)} y2={geo.y(goal.value)} />
@@ -96,6 +128,9 @@ export function LineChart({ points, unit, label, goal }: {
         {points.map((p, i) => (
           <circle key={i} cx={geo.x(p.date)} cy={geo.y(p.value)} r={i === active ? 7 : 4.5} className="chart-dot" />
         ))}
+        {labelLast && lastPoint && (
+          <text x={geo.x(lastPoint.date) + 9} y={geo.y(lastPoint.value) + 4} className="chart-last">{lastPoint.value}</text>
+        )}
         {a && <line x1={geo.x(a.date)} x2={geo.x(a.date)} y1={PAD.top} y2={H - PAD.bottom} className="chart-cross" />}
       </svg>
       {a && (

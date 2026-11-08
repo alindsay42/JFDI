@@ -601,3 +601,16 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
   .cal-walk { font-size: 0; width: 8px; height: 8px; padding: 0; border-radius: 2px; border: 0; background: var(--muted); }
   .cal-key .cal-walk { font-size: 0.7rem; width: auto; height: auto; padding: 0 4px; background: transparent; border: 1px solid var(--line); }
 }
+.chart-band { fill: rgb(22 163 74 / 0.2); }
+.chart-marker line { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 4; opacity: 0.7; }
+.chart-marker path { fill: var(--surface); stroke: var(--text); stroke-width: 1.5; }
+.chart-marker text { fill: var(--text); font-size: 12px; }
+.chart-last { fill: var(--text); font-size: 13px; font-weight: 700; }
+.chart-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 6px 0 0; color: var(--muted); font-size: 0.85rem; }
+.chart-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.chart-key-line { width: 16px; height: 3px; border-radius: 2px; background: var(--you); }
+.chart-key-band { width: 16px; height: 10px; border-radius: 3px; background: rgb(22 163 74 / 0.35); }
+.bw-goals { list-style: none; margin: 8px 0; padding: 0; }
+.bw-goals li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.pace-note { margin: 4px 0 0; }
+.pace-status { align-self: center; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--line); font-size: 0.95rem; font-weight: 600; color: var(--text); }

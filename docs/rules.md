@@ -4,6 +4,21 @@ Generated from the rule tables in `tests/engine/` by `npm run rules`. Do not edi
 
 Each row is a test: the app must give exactly this answer, or the change can't be merged.
 
+## Bodyweight target pace
+
+The cone on the bodyweight chart: a reasonable range to land in, starting from the weigh-in when the first goal was set. Gaining is +0.5 to +1kg a month. Losing is 0.5% to 1% of the starting bodyweight a week. A goal within 0.5kg of the start is holding, with 1kg either side. A month is 30.44 days; edges are rounded to 0.1kg.
+
+| Case | Start (kg) | Goal (kg) | Weeks since start | Latest (kg) | Range then, and where the latest sits |
+| --- | --- | --- | --- | --- | --- |
+| Andrew's Phase 1: 4 weeks in, up 0.6kg | 75.7 | 77 | 4 | 76.3 | 76.2 to 76.6kg: within |
+| Gaining, but faster than +1kg a month | 75.7 | 77 | 4 | 77 | 76.2 to 76.6kg: above |
+| Gaining, but nothing on yet | 75.7 | 77 | 4 | 75.7 | 76.2 to 76.6kg: below |
+| 8 weeks of gaining | 75.7 | 79.5 | 8 | 77 | 76.6 to 77.5kg: within |
+| Losing from 80kg: 0.4 to 0.8kg a week | 80 | 75 | 4 | 78 | 76.8 to 78.4kg: within |
+| Losing faster than 1% a week | 80 | 75 | 4 | 76.5 | 76.8 to 78.4kg: below |
+| Holding: a goal within 0.5kg of the start | 62 | 62.4 | 6 | 62.8 | 61 to 63kg: within |
+| Holding, but 1.5kg up | 62 | 62.4 | 6 | 63.5 | 61 to 63kg: above |
+
 ## Estimated one-rep max
 
 Turns a set into an estimated one-rep max, so sets of different reps can share one chart and be compared with targets. Uses the dos Remedios table, with reps between its rows worked out proportionally. Sets of more than 15 reps aren't estimated.

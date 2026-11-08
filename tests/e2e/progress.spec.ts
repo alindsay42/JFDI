@@ -80,3 +80,27 @@ test("bodyweight: add a weigh-in and delete it", async ({ page }) => {
   await bw.getByRole("button", { name: "Delete weigh-in on Thu, 5 Nov 2026" }).click();
   await expect(bw.locator(".lift-summary")).toContainText("75.3kg");
 });
+
+test("bodyweight goal: the target pace and the goal show on the chart, and it can be removed", async ({ page }) => {
+  await withHistory(page);
+  const bw = page.locator(".card", { has: page.getByRole("heading", { name: "Bodyweight" }) });
+  await bw.getByRole("button", { name: "Set a goal weight" }).click();
+  await bw.getByLabel("Goal bodyweight").fill("77");
+  await bw.getByLabel("Reach it by").fill("2026-12-27");
+  await bw.getByLabel("Goal name").fill("End Phase 1");
+  await bw.getByRole("button", { name: "Save goal" }).click();
+
+  await expect(bw.locator(".pace-note")).toContainText("Next: End Phase 1: 77kg by Sun, 27 Dec 2026. 1.7kg to gain in 7 weeks, about 0.23kg a week.");
+  await expect(bw.locator(".chart-legend")).toContainText("Target pace, +0.5 to +1kg a month");
+  await expect(bw.locator(".chart-band")).toHaveCount(1);
+  await expect(bw.locator(".chart-marker text")).toHaveText("End Phase 1 · 77kg");
+
+  await bw.getByRole("textbox", { name: "Bodyweight" }).fill("76.2");
+  await bw.getByRole("button", { name: "Save weigh-in" }).click();
+  await expect(bw.locator(".lift-summary")).toContainText("Above the target pace");
+  await bw.screenshot({ path: `test-results/bodyweight-goal-${test.info().project.name}.png` });
+
+  await bw.getByRole("button", { name: "Remove goal for Sun, 27 Dec 2026" }).click();
+  await expect(bw.locator(".chart-band")).toHaveCount(0);
+  await expect(bw.getByText("Set a goal weight and a date")).toBeVisible();
+});

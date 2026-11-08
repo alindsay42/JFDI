@@ -30,6 +30,7 @@ The example log is **made up** to show the format: an illustrative first week on
 | `programmes.active` | no | The programme being run now (see below) |
 | `programmes.history` | yes | Programmes finished or ended early (AR-11), each with start and end dates |
 | `targets` | no | Goals this person has adopted, copied from a programme or set by hand, with an optional `by` date |
+| `bodyweight` | no | Bodyweight goals: `start` (the date the target pace on the chart starts from) and up to 6 `goals`, each a `kg`, a `by` date and an optional `label` such as "End Phase 1". See the bodyweight target pace in [rules.md](rules.md) |
 
 Everything about one person lives here, never in the programme, so two people can run the same programme file.
 

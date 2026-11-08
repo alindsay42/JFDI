@@ -5,7 +5,9 @@ import { asProgramme } from "../../src/formats/programme.ts";
 import { JfdiDatabase } from "../../src/store/db.ts";
 import { addProfile } from "../../src/store/profiles.ts";
 import { assignProgramme } from "../../src/store/programmes.ts";
-import { clearGoal, deleteSession, deleteWeighIn, putWeighIn, saveSession, setGoal } from "../../src/store/progress.ts";
+import { addBodyweightGoal, clearGoal, deleteSession, deleteWeighIn, putWeighIn, removeBodyweightGoal, saveSession, setGoal } from "../../src/store/progress.ts";
+import { validateProfile } from "../../src/formats/validate.js";
+import { equipment, library } from "../../src/store/household.ts";
 import { finishSession, startSession, updateSet } from "../../src/store/session.ts";
 import { BLOCK1 } from "../helpers/block1.ts";
 
@@ -90,5 +92,36 @@ describe("goals", () => {
     expect(await db.profiles.get("diane")).not.toHaveProperty("targets");
     await clearGoal(db, "nobody", "x");
     await expect(setGoal(db, "nobody", { exercise: "x" })).rejects.toThrow('No profile "nobody"');
+  });
+});
+
+describe("bodyweight goals", () => {
+  const plan = async () => (await db.profiles.get("diane"))?.bodyweight;
+
+  it("starts the pace from the latest weigh-in, keeps goals in date order and replaces one on the same date", async () => {
+    await putWeighIn(db, "diane", { date: "2026-11-01", kg: 62 });
+    await putWeighIn(db, "diane", { date: "2026-11-07", kg: 62.4 });
+    await addBodyweightGoal(db, "diane", { kg: 64, by: "2027-03-01", label: "  Spring  " }, "2026-11-08");
+    await addBodyweightGoal(db, "diane", { kg: 63.04, by: "2027-01-01" }, "2026-11-20");
+    await addBodyweightGoal(db, "diane", { kg: 64.5, by: "2027-03-01", label: " " }, "2026-11-20");
+    expect(await plan()).toEqual({ start: "2026-11-07", goals: [{ kg: 63, by: "2027-01-01" }, { kg: 64.5, by: "2027-03-01" }] });
+    const profile = (await db.profiles.get("diane"))!;
+    expect(validateProfile(profile, { programmes: new Map([[BLOCK1.id, BLOCK1]]), equipment, library })).toEqual([]);
+
+    await removeBodyweightGoal(db, "diane", "2027-01-01");
+    expect((await plan())?.goals).toHaveLength(1);
+    await removeBodyweightGoal(db, "diane", "2027-03-01");
+    expect(await db.profiles.get("diane")).not.toHaveProperty("bodyweight");
+    await removeBodyweightGoal(db, "diane", "2027-03-01");
+  });
+
+  it("starts from today with no weigh-ins, allows up to 6, and explains bad input", async () => {
+    await addBodyweightGoal(db, "diane", { kg: 60, by: "2027-01-01", label: "A name that is far too long to fit on the chart" }, "2026-11-08");
+    expect(await plan()).toEqual({ start: "2026-11-08", goals: [{ kg: 60, by: "2027-01-01", label: "A name that is far too long to" }] });
+    for (let m = 2; m <= 6; m++) await addBodyweightGoal(db, "diane", { kg: 60, by: `2027-0${m}-01` }, "2026-11-08");
+    await expect(addBodyweightGoal(db, "diane", { kg: 60, by: "2027-07-01" }, "2026-11-08")).rejects.toThrow("Up to 6 goals");
+    await expect(addBodyweightGoal(db, "diane", { kg: 10, by: "2027-07-01" }, "2026-11-08")).rejects.toThrow("between 20 and 300kg");
+    await expect(addBodyweightGoal(db, "diane", { kg: 60, by: "" }, "2026-11-08")).rejects.toThrow("Choose the date");
+    await expect(addBodyweightGoal(db, "nobody", { kg: 60, by: "2027-07-01" }, "2026-11-08")).rejects.toThrow('No profile "nobody"');
   });
 });

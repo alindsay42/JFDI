@@ -1,5 +1,5 @@
 import { useMemo, useState, type FormEvent } from "react";
-import { addDays, calendarWeeks, liftSeries, liftsLogged, weeklyChange } from "../engine/progress.ts";
+import { addDays, bodyweightView, calendarWeeks, liftSeries, liftsLogged, weeklyChange, type Pace, type PaceStatus } from "../engine/progress.ts";
 import { setDaysOn } from "../engine/schedule.ts";
 import type { JFDIProfile } from "../formats/generated/profile.ts";
 import type { Programme } from "../formats/programme.ts";
@@ -9,7 +9,7 @@ import { LineChart } from "../shared/LineChart.tsx";
 import type { DayRecord, SessionRecord, WeighInRecord } from "../store/db.ts";
 import { db } from "../store/db.ts";
 import { localDate } from "../store/programmes.ts";
-import { clearGoal, deleteSession, deleteWeighIn, putWeighIn, saveSession, setGoal } from "../store/progress.ts";
+import { addBodyweightGoal, clearGoal, deleteSession, deleteWeighIn, putWeighIn, removeBodyweightGoal, saveSession, setGoal } from "../store/progress.ts";
 import { fieldOf, type LoggedSet, type SetField } from "../store/session.ts";
 
 export interface ProgressData {
@@ -385,8 +385,17 @@ function Goal({ profile, exercise, current }: { profile: JFDIProfile; exercise: 
 
 // ----- Bodyweight -----
 
+const STATUS: Record<PaceStatus, string> = { within: "On the target pace", above: "Above the target pace", below: "Below the target pace" };
+
+function paceText(p: Pace): string {
+  if (p.aim === "gain") return `+${p.low} to +${p.high}kg a month`;
+  if (p.aim === "lose") return `${-p.high} to ${-p.low}kg down a month (0.5 to 1% a week)`;
+  return "within 1kg of the start";
+}
+
 export function Bodyweight({ profile, weighIns }: { profile: JFDIProfile; weighIns: WeighInRecord[] }) {
-  const [date, setDate] = useState(localDate(new Date()));
+  const today = localDate(new Date());
+  const [date, setDate] = useState(today);
   const [kg, setKg] = useState("");
   const [fasted, setFasted] = useState(true);
   const [error, setError] = useState("");
@@ -395,6 +404,8 @@ export function Bodyweight({ profile, weighIns }: { profile: JFDIProfile; weighI
   const points = weighIns.map((w) => ({ date: w.date, value: w.kg, ...(w.fasted ? { detail: "Fasted" } : {}) }));
   const change = weeklyChange(points);
   const shown = all ? [...weighIns].reverse() : [...weighIns].reverse().slice(0, 5);
+  const plan = profile.bodyweight;
+  const view = bodyweightView(weighIns, plan, today);
 
   const save = (e: FormEvent) => {
     e.preventDefault();
@@ -406,7 +417,7 @@ export function Bodyweight({ profile, weighIns }: { profile: JFDIProfile; weighI
     <section className="card" aria-labelledby="bw-heading">
       <h2 id="bw-heading">Bodyweight</h2>
       <form className="goal-form" onSubmit={save}>
-        <label className="field field-inline"><span>Date</span><input type="date" value={date} max={localDate(new Date())} required onChange={(e) => setDate(e.target.value)} /></label>
+        <label className="field field-inline"><span>Date</span><input type="date" value={date} max={today} required onChange={(e) => setDate(e.target.value)} /></label>
         <label className="field field-inline"><span>Weight</span>
           <span className="num-field"><input aria-label="Bodyweight" inputMode="decimal" value={kg} onChange={(e) => setKg(e.target.value)} /><span aria-hidden="true">kg</span></span>
         </label>
@@ -414,29 +425,112 @@ export function Bodyweight({ profile, weighIns }: { profile: JFDIProfile; weighI
         <button type="submit" className="btn btn-you" disabled={!(value > 0)}>Save weigh-in</button>
       </form>
       {error && <p className="problems" role="alert">{error}</p>}
-      {points.length > 1 && (
+      {points.length > 0 && (points.length > 1 || view.band.length > 0) && (
         <>
           <p className="lift-summary">
             <span><strong>{formatKg(points.at(-1)!.value)}</strong> latest</span>
             {change !== null && <span><strong>{change > 0 ? "+" : ""}{change}kg</strong> a week</span>}
+            {view.status && <span className="pace-status">{STATUS[view.status]}</span>}
           </p>
-          <LineChart points={points} unit="kg" label="Bodyweight by date" />
+          <LineChart
+            points={points} unit="kg" label="Bodyweight by date, with the target pace and goals" labelLast
+            band={view.band} until={view.until}
+            markers={view.shown.map((g) => ({ date: g.by, value: g.kg, label: `${g.label ? `${g.label} · ` : ""}${formatKg(g.kg)}` }))}
+          />
+          {view.pace && (
+            <p className="chart-legend">
+              <span><span className="chart-key-line" aria-hidden="true" /> Your weight</span>
+              <span><span className="chart-key-band" aria-hidden="true" /> Target pace, {paceText(view.pace)}</span>
+              {view.shown.length > 0 && <span>◇ Goal</span>}
+            </p>
+          )}
         </>
       )}
+      <BodyweightGoals profileId={profile.id} goals={plan?.goals ?? []} next={view.next} today={today} />
       {weighIns.length > 0 && (
-        <ul className="history">
-          {shown.map((w) => (
-            <li key={w.date} className="weigh-row">
-              <span className="history-date">{formatShortDate(w.date)}</span>
-              <span className="history-name">{formatKg(w.kg)}{w.fasted && <span className="muted"> · fasted</span>}</span>
-              <span className="history-meta">
-                <button type="button" className="icon-btn set-remove" aria-label={`Delete weigh-in on ${formatShortDate(w.date)}`} onClick={() => void deleteWeighIn(db, profile.id, w.date)}>×</button>
-              </span>
+        <>
+          <h3>Weigh-ins</h3>
+          <ul className="history">
+            {shown.map((w) => (
+              <li key={w.date} className="weigh-row">
+                <span className="history-date">{formatShortDate(w.date)}</span>
+                <span className="history-name">{formatKg(w.kg)}{w.fasted && <span className="muted"> · fasted</span>}</span>
+                <span className="history-meta">
+                  <button type="button" className="icon-btn set-remove" aria-label={`Delete weigh-in on ${formatShortDate(w.date)}`} onClick={() => void deleteWeighIn(db, profile.id, w.date)}>×</button>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+      {weighIns.length > shown.length && <button type="button" className="btn btn-quiet btn-small" onClick={() => setAll(true)}>Show all {weighIns.length}</button>}
+    </section>
+  );
+}
+
+function BodyweightGoals({ profileId, goals, next, today }: {
+  profileId: string;
+  goals: Array<{ kg: number; by: string; label?: string }>;
+  next: ReturnType<typeof bodyweightView>["next"];
+  today: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const [kg, setKg] = useState("");
+  const [by, setBy] = useState("");
+  const [label, setLabel] = useState("");
+  const [error, setError] = useState("");
+  const value = Number(kg.replace(",", "."));
+  const name = (g: { kg: number; by: string; label?: string }) => `${g.label ? `${g.label}: ` : ""}${formatKg(g.kg)} by ${formatShortDate(g.by)}`;
+
+  const save = (e: FormEvent) => {
+    e.preventDefault();
+    setError("");
+    addBodyweightGoal(db, profileId, { kg: value, by, label }, today)
+      .then(() => { setOpen(false); setKg(""); setBy(""); setLabel(""); })
+      .catch((err: Error) => setError(err.message));
+  };
+
+  return (
+    <div className="bw-goal-section">
+      <h3>Goals</h3>
+      {goals.length === 0 && !open && <p className="muted">Set a goal weight and a date, and the chart shows a reasonable pace to get there.</p>}
+      {next && (
+        <p className="pace-note">
+          Next: {name(next.goal)}.{" "}
+          {next.reached
+            ? <strong>Reached.</strong>
+            : <><strong>{Math.abs(next.toGo)}kg to {next.toGo > 0 ? "gain" : "lose"}</strong>
+              {next.perWeek !== null && <> in {plural(next.weeks, "week")}, about {Math.abs(next.perWeek)}kg a week</>}.</>}
+        </p>
+      )}
+      {goals.length > 0 && (
+        <ul className="bw-goals">
+          {goals.map((g) => (
+            <li key={g.by}>
+              <span>{name(g)}</span>
+              <button type="button" className="icon-btn set-remove" aria-label={`Remove goal for ${formatShortDate(g.by)}`} onClick={() => void removeBodyweightGoal(db, profileId, g.by)}>×</button>
             </li>
           ))}
         </ul>
       )}
-      {weighIns.length > shown.length && <button type="button" className="btn btn-quiet btn-small" onClick={() => setAll(true)}>Show all {weighIns.length}</button>}
-    </section>
+      {open ? (
+        <form className="goal-form" onSubmit={save}>
+          <label className="field field-inline"><span>Goal</span>
+            <span className="num-field"><input aria-label="Goal bodyweight" inputMode="decimal" value={kg} onChange={(e) => setKg(e.target.value)} /><span aria-hidden="true">kg</span></span>
+          </label>
+          <label className="field field-inline"><span>By</span><input aria-label="Reach it by" type="date" value={by} min={today} required onChange={(e) => setBy(e.target.value)} /></label>
+          <label className="field field-inline"><span>Name (optional)</span><input aria-label="Goal name" value={label} maxLength={30} placeholder="End Phase 1" onChange={(e) => setLabel(e.target.value)} /></label>
+          <button type="button" className="btn btn-quiet" onClick={() => { setOpen(false); setError(""); }}>Cancel</button>
+          <button type="submit" className="btn btn-you" disabled={!(value > 0) || !by}>Save goal</button>
+        </form>
+      ) : (
+        goals.length < 6 && (
+          <div className="actions actions-start">
+            <button type="button" className="btn btn-quiet btn-small" onClick={() => setOpen(true)}>{goals.length ? "Add another goal" : "Set a goal weight"}</button>
+          </div>
+        )
+      )}
+      {error && <p className="problems" role="alert">{error}</p>}
+    </div>
   );
 }

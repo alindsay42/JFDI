@@ -70,3 +70,40 @@ export async function clearGoal(db: JfdiDatabase, profileId: string, exercise: s
     await markChanged(db);
   });
 }
+
+export interface BodyweightGoalInput { kg: number; by: string; label?: string }
+
+/**
+ * Adds a bodyweight goal, replacing any goal on the same date. The first goal sets where the target pace starts:
+ * the latest weigh-in, or today if there isn't one.
+ */
+export async function addBodyweightGoal(db: JfdiDatabase, profileId: string, goal: BodyweightGoalInput, today: string): Promise<void> {
+  if (!(goal.kg >= 20 && goal.kg <= 300)) throw new Error("Goal weight must be between 20 and 300kg");
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(goal.by)) throw new Error("Choose the date to reach it by");
+  const label = goal.label?.trim().slice(0, 30);
+  const clean = { kg: Math.round(goal.kg * 10) / 10, by: goal.by, ...(label ? { label } : {}) };
+  await db.transaction("rw", [db.profiles, db.weighIns, db.settings], async () => {
+    const p = await db.profiles.get(profileId);
+    if (!p) throw new Error(`No profile "${profileId}"`);
+    const latest = (await db.weighIns.where("profile").equals(profileId).sortBy("date")).at(-1);
+    const plan = p.bodyweight ?? { start: latest?.date ?? today, goals: [] };
+    const goals = [...plan.goals.filter((g) => g.by !== clean.by), clean].sort((a, b) => a.by.localeCompare(b.by));
+    if (goals.length > 6) throw new Error("Up to 6 goals. Remove one first.");
+    await db.profiles.put({ ...p, bodyweight: { start: plan.start, goals }, updatedAt: new Date().toISOString() });
+    await markChanged(db);
+  });
+}
+
+/** Removes the bodyweight goal on a date. Removing the last one clears the target pace too. */
+export async function removeBodyweightGoal(db: JfdiDatabase, profileId: string, by: string): Promise<void> {
+  await db.transaction("rw", db.profiles, db.settings, async () => {
+    const p = await db.profiles.get(profileId);
+    if (!p?.bodyweight) return;
+    const goals = p.bodyweight.goals.filter((g) => g.by !== by);
+    const next = { ...p, updatedAt: new Date().toISOString() };
+    if (goals.length) next.bodyweight = { start: p.bodyweight.start, goals };
+    else delete next.bodyweight;
+    await db.profiles.put(next);
+    await markChanged(db);
+  });
+}
