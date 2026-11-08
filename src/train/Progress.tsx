@@ -5,15 +5,40 @@ import { Confirm } from "../shared/Confirm.tsx";
 import { formatShortDate, plural } from "../shared/format.ts";
 import { go } from "../shared/route.ts";
 import { Screen } from "../shared/Screen.tsx";
+import { asProgramme } from "../formats/programme.ts";
+import { Bodyweight, Calendar, DayLog, LiftProgress } from "./ProgressParts.tsx";
 import { db, type SessionRecord } from "../store/db.ts";
 import { deleteProfile } from "../store/profiles.ts";
 
-/** One person's history: sessions logged here or imported, check-ins and weigh-ins. */
-export function History({ profile }: { profile: JFDIProfile }) {
+/** One person's progress: the calendar and each day's log, lift charts, bodyweight, and every session. */
+export function Progress({ profile }: { profile: JFDIProfile }) {
+  const [selected, setSelected] = useState<string | null>(null);
+  const data = useLiveQuery(async () => {
+    const active = profile.programmes.active;
+    const programme = active ? await db.programmes.get(active.programme) : undefined;
+    return {
+      sessions: await db.sessions.where("profile").equals(profile.id).toArray(),
+      days: await db.days.where("profile").equals(profile.id).toArray(),
+      weighIns: await db.weighIns.where("profile").equals(profile.id).sortBy("date"),
+      programme: programme ? asProgramme(programme) : null,
+    };
+  }, [profile.id, profile.programmes.active?.programme]);
+  const choose = (date: string) => {
+    setSelected(date);
+    requestAnimationFrame(() => document.getElementById("day-log")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+  };
   return (
-    <Screen profile={profile} route="history">
-      <h1 className="page-title">{profile.name}'s history</h1>
-      <SessionList profileId={profile.id} />
+    <Screen profile={profile} route="progress">
+      <h1 className="page-title">{profile.name}'s progress</h1>
+      {data && (
+        <>
+          <Calendar profile={profile} data={data} selected={selected} choose={choose} />
+          {selected && <DayLog profile={profile} date={selected} data={data} close={() => setSelected(null)} />}
+          <LiftProgress profile={profile} sessions={data.sessions} />
+          <Bodyweight profile={profile} weighIns={data.weighIns} />
+        </>
+      )}
+      <SessionList profileId={profile.id} choose={choose} />
       <DeletePerson profile={profile} />
     </Screen>
   );
@@ -21,7 +46,7 @@ export function History({ profile }: { profile: JFDIProfile }) {
 
 const READINESS: Record<string, string> = { green: "Green", amber: "Amber", red: "Red" };
 
-function SessionList({ profileId }: { profileId: string }) {
+function SessionList({ profileId, choose }: { profileId: string; choose: (date: string) => void }) {
   const sessions = useLiveQuery(() => db.sessions.where("profile").equals(profileId).reverse().sortBy("startedAt"), [profileId]);
   const counts = useLiveQuery(
     async () => ({
@@ -35,14 +60,14 @@ function SessionList({ profileId }: { profileId: string }) {
   const shown = all ? sessions : sessions.slice(0, 10);
   return (
     <section className="card" aria-labelledby="history-heading">
-      <h2 id="history-heading">Sessions</h2>
+      <h2 id="history-heading">All sessions</h2>
       {sessions.length === 0 && counts.days === 0 && counts.weighIns === 0 ? (
         <p className="hint">Nothing logged yet. Sessions you log, or import from Rebuild Log on the Backup tab, show here.</p>
       ) : (
         <>
           <p>{plural(sessions.length, "session")}, {plural(counts.days, "day")} with a check-in or walk, {plural(counts.weighIns, "weigh-in")}.</p>
           <ul className="history">
-            {shown.map((s) => <HistoryRow key={s.id} s={s} />)}
+            {shown.map((s) => <HistoryRow key={s.id} s={s} open={() => choose(s.date)} />)}
           </ul>
           {sessions.length > shown.length && (
             <button type="button" className="btn btn-quiet" onClick={() => setAll(true)}>Show all {sessions.length}</button>
@@ -53,10 +78,10 @@ function SessionList({ profileId }: { profileId: string }) {
   );
 }
 
-function HistoryRow({ s }: { s: SessionRecord }) {
+function HistoryRow({ s, open }: { s: SessionRecord; open: () => void }) {
   const done = s.exercises.filter((e) => !e.removed).length;
   return (
-    <li className="history-row">
+    <li className="history-row" onClick={open} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter") open(); }}>
       <span className="history-date">{formatShortDate(s.date)}</span>
       <span className="history-name">
         {s.session.name}
