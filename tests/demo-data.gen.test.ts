@@ -17,7 +17,7 @@ const out = process.env.DEMO_OUT;
 const toLogged = (s: SessionRecord) => ({
   date: s.date, status: s.status, readiness: s.readiness,
   programme: s.programme ? { id: s.programme.id, week: s.programme.week ?? 1 } : null,
-  workout: s.session.id, ...(s.deload ? { deload: true } : {}), ...(s.check48h ? { check48h: s.check48h.status } : {}), exercises: s.exercises,
+  workout: s.session.id, ...(s.deload ? { deload: true } : {}), exercises: s.exercises,
 });
 
 // Strength as an estimated one-rep max at the start, and kg gained a week (a list: [from week, gain])

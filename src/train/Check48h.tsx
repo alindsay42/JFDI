@@ -40,7 +40,6 @@ export function Check48h({ p, sessions, now }: { p: Programme; sessions: Session
       <section className="card check48-done" aria-label="48-hour check">
         <p>
           {name}: <strong>{CHECK_ANSWERS.find(([k]) => k === answered.status)![1]}</strong>.
-          {answered.status === "worse" && " Its weights go back a step next time."}
         </p>
         <button type="button" className="btn btn-quiet btn-small" onClick={() => setChanging(true)}>Change</button>
       </section>

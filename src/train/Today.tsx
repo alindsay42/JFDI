@@ -7,6 +7,7 @@ import { asProgramme, type Item, type Programme } from "../formats/programme.ts"
 import { daysUntil, formatKg, formatLongDate, plural } from "../shared/format.ts";
 import { go, href } from "../shared/route.ts";
 import { Check48h } from "./Check48h.tsx";
+import { setDayReadiness } from "../store/progress.ts";
 import { Walks } from "./Walks.tsx";
 import { setDaysOn } from "../engine/schedule.ts";
 import { Screen } from "../shared/Screen.tsx";
@@ -26,7 +27,6 @@ export const toLogged = (s: SessionRecord): LoggedSession => ({
   programme: s.programme ? { id: s.programme.id, week: s.programme.week ?? 1 } : null,
   workout: s.session.id,
   ...(s.deload ? { deload: true } : {}),
-  ...(s.check48h ? { check48h: s.check48h.status } : {}),
   exercises: s.exercises,
 });
 
@@ -56,7 +56,7 @@ export function Today({ profile, now = new Date() }: { profile: JFDIProfile; now
       ) : (
         <>
           <Check48h p={asProgramme(data.programme)} sessions={data.sessions} now={now} />
-          <Plan profile={profile} p={asProgramme(data.programme)} sessions={data.sessions} skipped={data.skip} now={now} />
+          <Plan profile={profile} p={asProgramme(data.programme)} sessions={data.sessions} skipped={data.skip} now={now} checkedIn={data.day?.readiness ?? null} />
         </>
       )}
       {data && !data.inProgress && <TodayWalks profile={profile} p={data.programme ? asProgramme(data.programme) : null} day={data.day} now={now} />}
@@ -91,11 +91,18 @@ function InProgress({ s }: { s: SessionRecord }) {
   );
 }
 
-function Plan({ profile, p, sessions, skipped, now }: {
+function Plan({ profile, p, sessions, skipped, now, checkedIn }: {
   profile: JFDIProfile; p: Programme; sessions: SessionRecord[]; skipped: Awaited<ReturnType<typeof getSkip>>; now: Date;
+  /** Today's check-in, if already picked */
+  checkedIn: Readiness | null;
 }) {
   const check = p.readiness.preset !== "off" && !!p.readiness.levels;
-  const [readiness, setReadiness] = useState<Readiness | null>(null);
+  const [readiness, setReadinessState] = useState<Readiness | null>(checkedIn);
+  // Saved straight away, so it's on the calendar (Red too) and still there after leaving Today
+  const setReadiness = (l: Readiness) => {
+    setReadinessState(l);
+    void setDayReadiness(db, profile.id, localDate(now), l);
+  };
   const [anyway, setAnyway] = useState(false);
   const [chosen, setChosen] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -221,7 +228,7 @@ function Plan({ profile, p, sessions, skipped, now }: {
 
 const WHY: Partial<Record<Next["why"], string>> = {
   add: "up", "reduce: stalled": "down 10%", "hold: hard": "held: last time was hard", "hold: sets skipped": "held: sets skipped",
-  "hold: readiness": "held", "build reps": "build reps", "back off: 48-hour check": "eased back: last time left you worse",
+  "hold: readiness": "held", "build reps": "build reps",
 };
 
 function targetText(p: Programme, item: Item, j: number, next: Next | undefined): string {

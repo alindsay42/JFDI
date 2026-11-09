@@ -408,7 +408,7 @@ function DailyCheck({ draft }: { draft: DraftState }) {
 
           <label className="check">
             <input type="checkbox" checked={!!p.readiness.check48h} onChange={(e) => update((q) => setCheck48h(q, e.target.checked))} />
-            <span>48-hour check: the day after each workout, ask how you've felt since. Clearly worse eases its weights back next time.</span>
+            <span>48-hour check: the day after each workout, ask how you've felt since. It's kept in the log and doesn't change the workout.</span>
           </label>
         </>
       )}

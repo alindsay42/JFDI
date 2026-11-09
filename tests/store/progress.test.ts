@@ -163,3 +163,15 @@ describe("walks", () => {
     await expect(addWalk(db, "diane", "", 30)).rejects.toThrow("date of the walk");
   });
 });
+
+describe("the day's check-in", () => {
+  it("records it straight away, keeps walks, and changes it", async () => {
+    const { setDayReadiness } = await import("../../src/store/progress.ts");
+    await addWalk(db, "diane", "2027-01-02", 30);
+    await setDayReadiness(db, "diane", "2027-01-02", "red");
+    await setDayReadiness(db, "diane", "2027-01-02", "red");
+    expect(await db.days.get(["diane", "2027-01-02"])).toMatchObject({ readiness: "red", activities: [{ minutes: 30 }] });
+    await setDayReadiness(db, "diane", "2027-01-03", "amber");
+    expect((await db.days.get(["diane", "2027-01-03"]))?.readiness).toBe("amber");
+  });
+});

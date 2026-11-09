@@ -88,15 +88,6 @@ describe("today, ad hoc (Diane's Block 1)", () => {
     expect(target(t, "plank").kg).toBeNull();
   });
 
-  it("a workout the 48-hour check said left things clearly worse steps its weights back next time", () => {
-    const sessions = [
-      done("2027-01-01", "session-a", { "back-squat": [40, [5, 5, 5, 5, 5]] }, { check48h: "worse" }),
-      done("2027-01-04", "session-b", {}, { check48h: "same" }),
-    ];
-    const t = today({ programme: block1(), assignment: diane, sessions, date: "2027-01-08", readiness: "green" });
-    expect(target(t, "back-squat")).toMatchObject({ kg: 37.5, why: "back off: 48-hour check" });
-  });
-
   it("after a deload week, weights pick up from before it, not from the lighter deload sessions", () => {
     const sessions = [
       done("2027-02-05", "session-a", { "back-squat": [40, [5, 5, 5, 5, 5]] }),

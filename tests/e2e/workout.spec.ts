@@ -185,7 +185,7 @@ test("48-hour check: asked the day after, a wrong tap can be changed, and it sho
   await expect(done).toContainText("Friday's Session A: A bit worn but settling.");
   await done.getByRole("button", { name: "Change" }).click();
   await page.getByRole("button", { name: "Clearly worse" }).click();
-  await expect(done).toContainText("Clearly worse. Its weights go back a step next time.");
+  await expect(done).toContainText("Friday's Session A: Clearly worse.");
 
   await page.getByRole("link", { name: "Progress" }).click();
   await page.getByRole("gridcell", { name: /Friday, 1 January 2027/ }).click();
@@ -213,4 +213,16 @@ test("walks: log one from Today, and add one to an earlier day", async ({ page }
   await expect(log).toContainText("Walk, 25 minutes");
   await log.getByRole("button", { name: "Remove Walk, 25 minutes" }).click();
   await expect(log).not.toContainText("Walk, 25 minutes");
+});
+
+test("the check-in is kept for the day, Red included, and shows on the calendar", async ({ page }) => {
+  await page.clock.install({ time: new Date("2027-01-01T10:00:00") });
+  await dianeOnBlock1(page);
+  await page.getByRole("radio", { name: /Red/ }).check();
+  await expect(page.getByRole("heading", { name: "No lifting today" })).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole("radio", { name: /Red/ })).toBeChecked();
+  await page.getByRole("link", { name: "Progress" }).click();
+  await page.getByRole("gridcell", { name: /Friday, 1 January 2027/ }).click();
+  await expect(page.locator(".day-log")).toContainText("Red day");
 });

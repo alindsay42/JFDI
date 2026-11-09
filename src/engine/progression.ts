@@ -14,8 +14,6 @@ export interface Performance {
   sets: SetDone[];
   /** How readiness treated progression that day */
   day?: "normal" | "hold" | "skip";
-  /** The 48-hour check's answer for that workout */
-  check?: "same" | "settling" | "worse";
 }
 
 export interface Next {
@@ -26,7 +24,7 @@ export interface Next {
   /** Reps to aim for on each set */
   reps: Range;
   /** Why, in words */
-  why: "start" | "add" | "repeat" | "build reps" | "hold: hard" | "hold: readiness" | "hold: sets skipped" | "reduce: stalled" | "back off: 48-hour check" | "no change";
+  why: "start" | "add" | "repeat" | "build reps" | "hold: hard" | "hold: readiness" | "hold: sets skipped" | "reduce: stalled" | "no change";
 }
 
 /** Rounds to the nearest 0.5kg, never below 0. */
@@ -71,13 +69,6 @@ export function nextTarget(rule: ProgressionRule, target: Range, history: Perfor
   const kg = workingKg(last) ?? startKg;
   if (rule.type === "none") return { kg, reps: target, why: "no change" };
   if (kg === null) return { kg: null, reps: target, why: "repeat" };
-  // Left things clearly worse: one jump back, whatever else happened
-  if (last.check === "worse") {
-    const back = roundKg(kg - rule.incrementKg);
-    const why = "back off: 48-hour check" as const;
-    if (rule.type === "topSetBackoff") return { kg: back, backoffKg: roundKg((back * rule.backoffPercent) / 100), reps: target, why };
-    return { kg: back, reps: target, why };
-  }
 
   const stalled = () => {
     if (!rule.stall) return null;

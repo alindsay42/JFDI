@@ -143,3 +143,13 @@ export async function removeActivity(db: JfdiDatabase, profile: string, date: st
     await markChanged(db);
   });
 }
+
+/** Records the day's check-in (Green, Amber or Red) as soon as it's picked, keeping anything else on the day. */
+export async function setDayReadiness(db: JfdiDatabase, profile: string, date: string, readiness: "green" | "amber" | "red"): Promise<void> {
+  await db.transaction("rw", db.days, db.settings, async () => {
+    const day = (await db.days.get([profile, date])) ?? { profile, date };
+    if (day.readiness === readiness) return;
+    await db.days.put({ ...day, readiness });
+    await markChanged(db);
+  });
+}
