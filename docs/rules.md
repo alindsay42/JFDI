@@ -38,7 +38,7 @@ Turns a set into an estimated one-rep max, so sets of different reps can share o
 
 ## Next weight and reps
 
-What each exercise asks for next time, from its last sessions in this programme. Linear adds weight when every set hits the reps; double builds reps to the top of the range first. Two misses in a row at the same weight drop it 10%. A hard set (RPE at or above the hold level), skipped sets, or a readiness hold keep the weight where it is.
+What each exercise asks for next time, from its last sessions in this programme. Linear adds weight when every set hits the reps; double builds reps to the top of the range first. Two misses in a row at the same weight drop it 10%. A hard set (RPE at or above the hold level), skipped sets, or a readiness hold keep the weight where it is. When the 48-hour check says a workout left things clearly worse, each of its exercises goes back one jump.
 
 | Case | Progression | Reps | Last sessions (most recent first) | Starting weight | Next time |
 | --- | --- | --- | --- | --- | --- |
@@ -66,6 +66,12 @@ What each exercise asks for next time, from its last sessions in this programme.
 | Top set harder than planned: hold | top 2.5 @8 85% | 3 | 100: 3@9,3,3 | 90 | 100kg, back-off 85kg · hold: hard |
 | Top set missed twice: drop 10% | top 2.5 @8 85% stall 2 | 3 | 100: 2,3,3 \| 100: 2,3,3 | 90 | 90kg, back-off 76.5kg · reduce: stalled |
 | Top set missed once: repeat | top 2.5 @8 85% stall 2 | 3 | 100: 2,3,3 | 90 | 100kg, back-off 85kg · repeat |
+| 48-hour check clearly worse: back one jump | linear 2.5 | 5 | worse: 40: 5,5,5 | 30 | 37.5kg · back off: 48-hour check |
+| Clearly worse beats a stall drop, and isn't counted as a miss | double 2.5 stall 2 | 8-12 | worse: 22.5: 8,7,6 \| 22.5: 8,7,7 | 20 | 20kg · back off: 48-hour check |
+| Clearly worse can't go below nothing | linear 5 | 5 | worse: 2.5: 5,5,5 | 0 | 0kg · back off: 48-hour check |
+| Clearly worse on a top set: back one jump, back-off follows | top 2.5 @8 85% | 3 | worse: 100: 3@8,3,3 | 90 | 97.5kg, back-off 83kg · back off: 48-hour check |
+| Clearly worse, no weight to take off | linear 2.5 | 8 | worse: x: 8,8,8 | none | no weight · repeat |
+| Clearly worse on a none-progression: stays put | none | 10 | worse: 12.5: 10,10 | 10 | 12.5kg · no change |
 | Top set on a hold day | top 2.5 @8 85% | 3 | hold: 100: 3,3,3 | 90 | 100kg, back-off 85kg · hold: readiness |
 
 ## Readiness rules on the day

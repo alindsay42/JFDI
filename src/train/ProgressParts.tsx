@@ -9,7 +9,9 @@ import { LineChart } from "../shared/LineChart.tsx";
 import type { DayRecord, SessionRecord, WeighInRecord } from "../store/db.ts";
 import { db } from "../store/db.ts";
 import { localDate } from "../store/programmes.ts";
-import { addBodyweightGoal, clearGoal, deleteSession, deleteWeighIn, putWeighIn, removeBodyweightGoal, saveSession, setGoal } from "../store/progress.ts";
+import { CHECK_ANSWERS } from "./Check48h.tsx";
+import { Walks } from "./Walks.tsx";
+import { type CheckAnswer, addBodyweightGoal, clearGoal, deleteSession, deleteWeighIn, putWeighIn, removeBodyweightGoal, saveSession, setGoal } from "../store/progress.ts";
 import { fieldOf, type LoggedSet, type SetField } from "../store/session.ts";
 
 export interface ProgressData {
@@ -107,7 +109,6 @@ export function DayLog({ profile, date, data, close }: { profile: JFDIProfile; d
   const sessions = data.sessions.filter((s) => s.date === date && s.status === "done");
   const day = data.days.find((d) => d.date === date);
   const weigh = data.weighIns.find((w) => w.date === date);
-  void profile;
   return (
     <section className="card day-log" id="day-log" aria-labelledby="day-heading">
       <div className="week-head">
@@ -116,15 +117,13 @@ export function DayLog({ profile, date, data, close }: { profile: JFDIProfile; d
       </div>
       {!sessions.length && !day && !weigh && <p className="hint">Nothing logged on this day.</p>}
       {sessions.map((s) => <SessionLog key={s.id} s={s} p={data.programme} />)}
-      {day && (
+      {day && (day.readiness || day.notes) && (
         <div className="day-extra">
           {day.readiness && <p><span className={`dot dot-${day.readiness}`} /> {READINESS[day.readiness]} day</p>}
-          {day.activities?.map((a, i) => (
-            <p key={i}>{a.exercise === "walk" ? "Walk" : a.exercise}{a.minutes ? `, ${a.minutes} minutes` : ""}{a.kg ? `, ${formatKg(a.kg)}` : ""}</p>
-          ))}
           {day.notes && <p className="hint">{day.notes}</p>}
         </div>
       )}
+      {date <= localDate(new Date()) && <Walks profile={profile.id} date={date} day={day} />}
       {weigh && <p>Weighed {formatKg(weigh.kg)}{weigh.fasted ? ", fasted" : ""}.</p>}
     </section>
   );
@@ -181,6 +180,7 @@ function SessionSummary({ s, p }: { s: SessionRecord; p: Programme | null }) {
           );
         })}
       </ul>
+      {s.check48h && <p className="hint">48-hour check: {CHECK_ANSWERS.find(([k]) => k === s.check48h!.status)?.[1]}</p>}
       {s.notes && <p className="hint">{s.notes}</p>}
     </>
   );
@@ -205,6 +205,19 @@ function SessionEditor({ s, p, done }: { s: SessionRecord; p: Programme | null; 
 
   return (
     <form onSubmit={(e) => void save(e)} className="session-editor">
+      {(s.check48h || p?.readiness.check48h) && (
+        <label className="field field-inline">
+          <span>48-hour check</span>
+          <select value={draft.check48h?.status ?? ""} onChange={(ev) => edit((x) => {
+            const v = ev.target.value as CheckAnswer | "";
+            const at = x.finishedAt && x.finishedAt > new Date().toISOString() ? x.finishedAt : new Date().toISOString();
+            x.check48h = v ? { status: v, at: s.check48h?.status === v ? s.check48h.at : at } : null;
+          })}>
+            <option value="">Not answered</option>
+            {CHECK_ANSWERS.map(([k, label]) => <option key={k} value={k}>{label}</option>)}
+          </select>
+        </label>
+      )}
       {draft.exercises.map((e, k) => {
         const field = fieldOf(p, e.exercise);
         return (

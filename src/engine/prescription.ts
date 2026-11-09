@@ -15,6 +15,8 @@ export interface LoggedSession {
   workout: string;
   /** Done in a deload week. It doesn't count towards progression, so the week after picks up where it left off */
   deload?: boolean;
+  /** The 48-hour check's answer */
+  check48h?: "same" | "settling" | "worse";
   exercises: Array<{ exercise: string; removed?: unknown; sets: SetDone[] }>;
 }
 
@@ -63,7 +65,7 @@ export function historyOf(p: Programme, a: Assignment, sessions: LoggedSession[]
     .sort((x, y) => (x.date < y.date ? 1 : -1))
     .flatMap((s) => s.exercises
       .filter((e) => e.exercise === exercise && !e.removed)
-      .map((e) => ({ sets: e.sets, day: progressionDay(p, s.readiness) })));
+      .map((e) => ({ sets: e.sets, day: progressionDay(p, s.readiness), ...(s.check48h ? { check: s.check48h } : {}) })));
 }
 
 function startKg(p: Programme, a: Assignment, slot: Slot): number | null {

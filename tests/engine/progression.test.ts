@@ -22,11 +22,15 @@ export function parseHistory(text: string): Performance[] {
   return text.split("|").map((part) => {
     let s = part.trim();
     let day: Performance["day"] = "normal";
+    let check: Performance["check"];
+    const w = /^worse: (.*)$/.exec(s);
+    if (w) { check = "worse"; s = w[1]!; }
     const d = /^(hold|skip): (.*)$/.exec(s);
     if (d) { day = d[1] as Performance["day"]; s = d[2]!; }
     const [kg, sets] = s.split(":").map((x) => x.trim());
     return {
       day,
+      ...(check ? { check } : {}),
       sets: sets!.split(",").map((t) => {
         if (t === "-") return { done: false, ...(kg !== "x" ? { kg: Number(kg) } : {}) };
         const [reps, rpe] = t.split("@");

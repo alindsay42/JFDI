@@ -9,7 +9,8 @@ import { assignProgramme, localDate, ProfileError, stopProgramme } from "../stor
 import { db } from "../store/db.ts";
 import { Frame } from "./Frame.tsx";
 import {
-  addDay, copyWeek, MAX_DAYS, MAX_WEEKS, moveDay, removeDay, setDay, setMinRestDays, setMode, setWeekCount,
+  addDay, amberChoices, copyWeek, MAX_DAYS, MAX_WEEKS, moveDay, removeDay, setAmber, setCheck48h, setCheckStyle, setDay,
+  setLevelDescription, setMinRestDays, setMode, setWeekCount, type AmberChoices, type CheckStyle,
 } from "./model.ts";
 import { useDraft, type DraftState } from "./useDraft.ts";
 import { WorkoutEditor } from "./WorkoutEditor.tsx";
@@ -161,6 +162,8 @@ function Planner({ draft, profile, runners }: { draft: DraftState; profile: JFDI
           {plan.mode === "adhoc" ? <AdhocWeek draft={draft} week={wi} /> : <SetDaysWeek draft={draft} week={wi} />}
         </section>
       ))}
+
+      <DailyCheck draft={draft} />
 
       {!draft.isNew && (
         <section className="card danger-zone">
@@ -315,5 +318,114 @@ function SetDaysWeek({ draft, week }: { draft: DraftState; week: number }) {
         );
       })}
     </ol>
+  );
+}
+
+const STYLES: Array<[CheckStyle, string]> = [["off", "Off"], ["freshness", "How you feel"], ["injury", "Injury-aware"]];
+
+/** The Green / Amber / Red check before each workout, and what Amber and Red do. */
+function DailyCheck({ draft }: { draft: DraftState }) {
+  const p = draft.programme!;
+  const { update } = draft;
+  const levels = p.readiness.levels;
+  const on = p.readiness.preset !== "off" && !!levels;
+  const amber = amberChoices(p);
+  const setA = (c: Partial<AmberChoices>) => update((q) => setAmber(q, { ...amberChoices(q), ...c }));
+  const hasMain = p.workouts.some((w) => w.items.some((i) => i.tier === "primary"));
+  const hasExtra = p.workouts.some((w) => w.items.some((i) => i.tier === "tertiary"));
+
+  return (
+    <section className="card daily-check" aria-labelledby="check-heading">
+      <h2 id="check-heading">Daily check</h2>
+      <p className="hint">Before each workout, pick Green, Amber or Red for how you are that day. Amber makes the workout lighter, and Red moves it to next time.</p>
+      <fieldset className="segmented" aria-label="Daily check">
+        <legend>Daily check</legend>
+        {STYLES.map(([style, label]) => (
+          <label key={style}>
+            <input type="radio" name="check-style" checked={p.readiness.preset === style} onChange={() => update((q) => setCheckStyle(q, style))} />
+            <span>{label}</span>
+          </label>
+        ))}
+      </fieldset>
+      {on && (
+        <>
+          <div className="check-level check-green">
+            <h3>Green</h3>
+            <Wording level="green" text={levels.green.description} draft={draft} />
+            <p className="hint">The workout as written.</p>
+          </div>
+
+          <div className="check-level check-amber">
+            <h3>Amber</h3>
+            <Wording level="amber" text={levels.amber.description} draft={draft} />
+            <div className="check-list">
+              <label className="check">
+                <input type="checkbox" checked={amber.dropSpine} onChange={(e) => setA({ dropSpine: e.target.checked })} />
+                <span>Drop exercises that load the spine (squats, deadlifts, rows and the like)</span>
+              </label>
+              <label className="check">
+                <input type="checkbox" checked={amber.halveAll} onChange={(e) => setA({ halveAll: e.target.checked })} />
+                <span>Halve every exercise's sets</span>
+              </label>
+              <span className="check">
+                <input type="checkbox" aria-label="Main exercises down to fewer sets" checked={amber.mainSets !== null}
+                  onChange={(e) => setA({ mainSets: e.target.checked ? 3 : null })} />
+                <span>Main exercises down to</span>
+                <select aria-label="Sets for main exercises on Amber" value={amber.mainSets ?? 3} disabled={amber.mainSets === null}
+                  onChange={(e) => setA({ mainSets: Number(e.target.value) })}>
+                  {[1, 2, 3, 4, 5].map((n) => <option key={n} value={n}>{n}</option>)}
+                </select>
+                <span>sets</span>
+              </span>
+              <label className="check">
+                <input type="checkbox" checked={amber.dropExtras} onChange={(e) => setA({ dropExtras: e.target.checked })} />
+                <span>Drop the extras</span>
+              </label>
+              <span className="check">
+                <input type="checkbox" aria-label="Leave more reps in the tank" checked={amber.rir !== null}
+                  onChange={(e) => setA({ rir: e.target.checked ? 2 : null })} />
+                <span>Leave</span>
+                <select aria-label="Reps to leave in the tank on Amber" value={amber.rir ?? 2} disabled={amber.rir === null}
+                  onChange={(e) => setA({ rir: Number(e.target.value) })}>
+                  {[1, 2, 3].map((n) => <option key={n} value={n}>{n}</option>)}
+                </select>
+                <span>more reps in the tank</span>
+              </span>
+            </div>
+            <fieldset className="segmented" aria-label="After an Amber workout">
+              <legend>After an Amber workout</legend>
+              <label><input type="radio" name="amber-after" checked={!amber.hold} onChange={() => setA({ hold: false })} /><span>Progress as normal</span></label>
+              <label><input type="radio" name="amber-after" checked={amber.hold} onChange={() => setA({ hold: true })} /><span>Repeat the weights</span></label>
+            </fieldset>
+            {(amber.mainSets !== null && !hasMain) || (amber.dropExtras && !hasExtra) ? (
+              <p className="hint">
+                Mark exercises {[amber.mainSets !== null && !hasMain && "Main", amber.dropExtras && !hasExtra && "Extra"].filter(Boolean).join(" or ")} in each workout for this to do anything.
+              </p>
+            ) : null}
+          </div>
+
+          <div className="check-level check-red">
+            <h3>Red</h3>
+            <Wording level="red" text={levels.red.description} draft={draft} />
+            <p className="hint">No lifting. The workout moves to next time.</p>
+          </div>
+
+          <label className="check">
+            <input type="checkbox" checked={!!p.readiness.check48h} onChange={(e) => update((q) => setCheck48h(q, e.target.checked))} />
+            <span>Ask how each workout sat, 48 hours later. Clearly worse steps the weights back next time.</span>
+          </label>
+        </>
+      )}
+    </section>
+  );
+}
+
+function Wording({ level, text, draft }: { level: "green" | "amber" | "red"; text: string; draft: DraftState }) {
+  const name = level[0]!.toUpperCase() + level.slice(1);
+  return (
+    <label className="field">
+      <span>What {name} means</span>
+      <input value={text} maxLength={200} onChange={(e) => draft.update((q) => setLevelDescription(q, level, e.target.value))} />
+    </label>
   );
 }

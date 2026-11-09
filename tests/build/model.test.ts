@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   addDay, addExercises, copyWeek, group, groupOf, moveDay, moveItem, moveSlot, newProgramme, parseRange, formatRange, pruneWorkouts,
   removeDay, removeExercises, renameWorkout, setDay, setMinRestDays, setMode, setWeekCount, spreadDays, startKg, updateItem, updateSlot,
-  weekWorkouts, duplicateWorkout, slug, placesOf,
+  weekWorkouts, duplicateWorkout, slug, placesOf, setCheckStyle, amberChoices, setAmber, setLevelDescription, setCheck48h, CHECK_TEMPLATES,
 } from "../../src/build/model.ts";
 import { asFile, asProgramme, type Programme } from "../../src/formats/programme.ts";
 import { checkAgainstLibrary, validateProgramme } from "../../src/formats/validate.js";
@@ -251,5 +251,50 @@ describe("default names follow the schedule", () => {
     p = setMode(p, "adhoc");
     expect(p.workouts.map((w) => w.name)).toEqual(["Day 1", "Day 2", "Heavy deadlift"]);
     expect(placesOf(setWeekCount(p, 2), "day-1")).toEqual(["Week 1 Day 1"]);
+  });
+});
+
+describe("the daily check", () => {
+  it("starts from a template, matching Block 1's freshness check", () => {
+    const p = setCheckStyle({ ...block1(), readiness: { preset: "off" } }, "freshness");
+    const b = block1().readiness.levels!;
+    expect(p.readiness.levels!.amber).toEqual(b.amber);
+    expect(p.readiness.levels!.green).toEqual(b.green);
+    expect({ ...p.readiness.levels!.red, description: "" }).toEqual({ ...b.red, description: "" });
+    expect(amberChoices(p)).toEqual({ mainSets: 3, halveAll: false, dropExtras: true, rir: 2, dropSpine: false, hold: false });
+    expect(problems(p)).toEqual([]);
+  });
+
+  it("injury-aware: takes load off the back, halves the sets, holds weights, and asks 48 hours later", () => {
+    const p = setCheckStyle(block1(), "injury");
+    expect(p.readiness.check48h).toBe(true);
+    expect(amberChoices(p)).toEqual({ mainSets: null, halveAll: true, dropExtras: true, rir: null, dropSpine: true, hold: true });
+    expect(problems(p)).toEqual([]);
+    expect(setCheckStyle(p, "off").readiness).toEqual({ preset: "off" });
+    // A copy each time, so editing one programme's levels never changes the template
+    expect(setCheckStyle(p, "injury").readiness.levels).not.toBe(CHECK_TEMPLATES.injury.levels);
+  });
+
+  it("Amber's choices write rules in a fixed order, keeping any others", () => {
+    let p = setCheckStyle(block1(), "freshness");
+    p.readiness.levels!.amber.rules.push({ rule: "replaceWorkout", workout: "session-b" });
+    p = setAmber(p, { mainSets: null, halveAll: true, dropExtras: false, rir: 1, dropSpine: true, hold: true });
+    expect(p.readiness.levels!.amber.rules).toEqual([
+      { rule: "swapFlagged", flag: "spineLoading" }, { rule: "setsPercent", percent: 50 }, { rule: "addRir", reps: 1 },
+      { rule: "replaceWorkout", workout: "session-b" },
+    ]);
+    expect(p.readiness.levels!.amber.progressionOnThisDay).toBe("hold");
+    expect(amberChoices(p)).toEqual({ mainSets: null, halveAll: true, dropExtras: false, rir: 1, dropSpine: true, hold: true });
+  });
+
+  it("wording and the 48-hour check can be changed; with the check off there's nothing to change", () => {
+    let p = setLevelDescription(setCheckStyle(block1(), "freshness"), "green", "Go");
+    p = setCheck48h(p, true);
+    expect(p.readiness.levels!.green.description).toBe("Go");
+    expect(p.readiness.check48h).toBe(true);
+    const off = setCheckStyle(block1(), "off");
+    expect(setAmber(off, amberChoices(off))).toBe(off);
+    expect(setLevelDescription(off, "red", "x")).toBe(off);
+    expect(amberChoices(off)).toEqual({ mainSets: null, halveAll: false, dropExtras: false, rir: null, dropSpine: false, hold: false });
   });
 });
