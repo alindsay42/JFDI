@@ -188,13 +188,10 @@ test("daily check: pick a starting point, choose what Amber does, mark exercises
   await page.getByRole("link", { name: "Done" }).first().click();
 
   const check = page.getByRole("region", { name: "Daily check" }).or(page.locator(".daily-check"));
-  await check.getByRole("radio", { name: "Injury-aware" }).check();
-  await expect(check.getByRole("checkbox", { name: /Drop exercises that load the spine/ })).toBeChecked();
-  await expect(check.getByRole("checkbox", { name: "Halve every exercise's sets" })).toBeChecked();
-  await expect(check.getByRole("radio", { name: "Repeat the weights" })).toBeChecked();
-  await expect(check.getByRole("checkbox", { name: /48 hours later/ })).toBeChecked();
-
-  await check.getByRole("radio", { name: "How you feel" }).check();
+  await check.getByRole("radio", { name: "On", exact: true }).check();
+  await expect(check.getByRole("checkbox", { name: "Halve every exercise's sets" })).not.toBeChecked();
+  await expect(check.getByRole("radio", { name: "Progress as normal" })).toBeChecked();
+  await expect(check.getByRole("checkbox", { name: /48-hour check/ })).not.toBeChecked();
   await expect(check.getByLabel("Sets for main exercises on Amber")).toHaveValue("3");
   await expect(check.getByText("Mark exercises Main or Extra in each workout")).toBeVisible();
   await check.getByLabel("Sets for main exercises on Amber").selectOption("2");
@@ -211,5 +208,5 @@ test("daily check: pick a starting point, choose what Amber does, mark exercises
   await page.reload();
   await expect(check.getByLabel("Sets for main exercises on Amber")).toHaveValue("2");
   await expect(check.getByLabel("What Amber means")).toHaveValue("A bit flat");
-  await expect(check.getByRole("checkbox", { name: /48 hours later/ })).not.toBeChecked();
+  await expect(check.getByRole("checkbox", { name: /48-hour check/ })).not.toBeChecked();
 });

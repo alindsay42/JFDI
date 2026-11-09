@@ -474,38 +474,24 @@ const RED: Level = {
   label: "Red", description: "Not today. No lifting, and the workout moves to next time.", rules: [{ rule: "noLifting" }], progressionOnThisDay: "skip",
 };
 
-/** The two starting points. Each can be changed afterwards. */
-export const CHECK_TEMPLATES: Record<Exclude<CheckStyle, "off">, Required<Pick<Readiness, "check48h" | "levels">>> = {
-  freshness: {
-    check48h: false,
-    levels: {
-      green: { label: "Green", description: "Feeling 90 to 100%. Hit it full on.", rules: [], progressionOnThisDay: "normal" },
-      amber: {
-        label: "Amber", description: "Feeling 60 to 89%. A bit off but still want to train.",
-        rules: [{ rule: "setsTo", tier: "primary", sets: 3 }, { rule: "dropTier", tier: "tertiary" }, { rule: "addRir", reps: 2 }],
-        progressionOnThisDay: "normal",
-      },
-      red: { ...RED, description: "Under 60%. No lifting today. The workout moves to next time." },
+/** What the daily check starts as when it's switched on. Everything can be changed afterwards. */
+export const CHECK_TEMPLATE: Required<Pick<Readiness, "check48h" | "levels">> = {
+  check48h: false,
+  levels: {
+    green: { label: "Green", description: "Feeling 90 to 100%. Hit it full on.", rules: [], progressionOnThisDay: "normal" },
+    amber: {
+      label: "Amber", description: "Feeling 60 to 89%. Poor sleep, a cold, a long day: still want to train, but easier.",
+      rules: [{ rule: "setsTo", tier: "primary", sets: 3 }, { rule: "dropTier", tier: "tertiary" }, { rule: "addRir", reps: 2 }],
+      progressionOnThisDay: "normal",
     },
-  },
-  injury: {
-    check48h: true,
-    levels: {
-      green: { label: "Green", description: "No more than usual. Train as written.", rules: [], progressionOnThisDay: "normal" },
-      amber: {
-        label: "Amber", description: "Niggly or stiff. Take the load off your back and do half.",
-        rules: [{ rule: "swapFlagged", flag: "spineLoading" }, { rule: "setsPercent", percent: 50 }, { rule: "dropTier", tier: "tertiary" }],
-        progressionOnThisDay: "hold",
-      },
-      red: { ...RED, description: "Flared up. No lifting today; a walk if it helps. The workout moves to next time." },
-    },
+    red: { ...RED, description: "Under 60%. No lifting today. The workout moves to next time." },
   },
 };
 
-/** Turns the daily check off, or starts it from one of the two templates. */
+/** Turns the daily check off, or on from its starting point. */
 export function setCheckStyle(p: Programme, style: CheckStyle): Programme {
   if (style === "off") return { ...p, readiness: { preset: "off" } };
-  return { ...p, readiness: { preset: style, ...structuredClone(CHECK_TEMPLATES[style]) } };
+  return { ...p, readiness: { preset: "freshness", ...structuredClone(CHECK_TEMPLATE) } };
 }
 
 /** What Amber does, as the choices on screen. */
@@ -516,7 +502,6 @@ export interface AmberChoices {
   dropExtras: boolean;
   /** More reps left in the tank on every set */
   rir: number | null;
-  dropSpine: boolean;
   /** The next workout repeats Amber's weights */
   hold: boolean;
 }
@@ -531,21 +516,19 @@ export function amberChoices(p: Programme): AmberChoices {
     halveAll: !!find("setsPercent", (r) => !r.tier && r.percent === 50),
     dropExtras: !!find("dropTier", (r) => r.tier === "tertiary"),
     rir: find("addRir")?.reps ?? null,
-    dropSpine: rules.some((r) => r.rule === "swapFlagged" && r.flag === "spineLoading"),
     hold: amber?.progressionOnThisDay === "hold",
   };
 }
 
 const isChoice = (r: Rule) =>
   (r.rule === "setsTo" && r.tier === "primary") || (r.rule === "setsPercent" && !r.tier && r.percent === 50) ||
-  (r.rule === "dropTier" && r.tier === "tertiary") || r.rule === "addRir" || (r.rule === "swapFlagged" && r.flag === "spineLoading");
+  (r.rule === "dropTier" && r.tier === "tertiary") || r.rule === "addRir";
 
-/** Writes Amber's rules from the choices, in a fixed order. Any other rules in the file are kept after them. */
+/** Writes Amber's rules from the choices, in a fixed order. Any other rules (from a programme file) are kept after them. */
 export function setAmber(p: Programme, c: AmberChoices): Programme {
   const levels = p.readiness.levels;
   if (!levels) return p;
   const rules: Rule[] = [];
-  if (c.dropSpine) rules.push({ rule: "swapFlagged", flag: "spineLoading" });
   if (c.halveAll) rules.push({ rule: "setsPercent", percent: 50 });
   if (c.mainSets) rules.push({ rule: "setsTo", tier: "primary", sets: c.mainSets });
   if (c.dropExtras) rules.push({ rule: "dropTier", tier: "tertiary" });

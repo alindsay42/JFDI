@@ -321,7 +321,7 @@ function SetDaysWeek({ draft, week }: { draft: DraftState; week: number }) {
   );
 }
 
-const STYLES: Array<[CheckStyle, string]> = [["off", "Off"], ["freshness", "How you feel"], ["injury", "Injury-aware"]];
+const STYLES: Array<[CheckStyle, string]> = [["off", "Off"], ["freshness", "On"]];
 
 /** The Green / Amber / Red check before each workout, and what Amber and Red do. */
 function DailyCheck({ draft }: { draft: DraftState }) {
@@ -337,12 +337,12 @@ function DailyCheck({ draft }: { draft: DraftState }) {
   return (
     <section className="card daily-check" aria-labelledby="check-heading">
       <h2 id="check-heading">Daily check</h2>
-      <p className="hint">Before each workout, pick Green, Amber or Red for how you are that day. Amber makes the workout lighter, and Red moves it to next time.</p>
+      <p className="hint">Before each workout, pick Green, Amber or Red for how you feel that day. Green is the workout in full. Amber is for a day you're less able, whatever the reason, and makes it easier. Red moves it to next time. Each workout records which it was.</p>
       <fieldset className="segmented" aria-label="Daily check">
         <legend>Daily check</legend>
         {STYLES.map(([style, label]) => (
           <label key={style}>
-            <input type="radio" name="check-style" checked={p.readiness.preset === style} onChange={() => update((q) => setCheckStyle(q, style))} />
+            <input type="radio" name="check-style" checked={style === "off" ? !on : on} onChange={() => update((q) => setCheckStyle(q, style))} />
             <span>{label}</span>
           </label>
         ))}
@@ -359,10 +359,6 @@ function DailyCheck({ draft }: { draft: DraftState }) {
             <h3>Amber</h3>
             <Wording level="amber" text={levels.amber.description} draft={draft} />
             <div className="check-list">
-              <label className="check">
-                <input type="checkbox" checked={amber.dropSpine} onChange={(e) => setA({ dropSpine: e.target.checked })} />
-                <span>Drop exercises that load the spine (squats, deadlifts, rows and the like)</span>
-              </label>
               <label className="check">
                 <input type="checkbox" checked={amber.halveAll} onChange={(e) => setA({ halveAll: e.target.checked })} />
                 <span>Halve every exercise's sets</span>
@@ -412,7 +408,7 @@ function DailyCheck({ draft }: { draft: DraftState }) {
 
           <label className="check">
             <input type="checkbox" checked={!!p.readiness.check48h} onChange={(e) => update((q) => setCheck48h(q, e.target.checked))} />
-            <span>Ask how each workout sat, 48 hours later. Clearly worse steps the weights back next time.</span>
+            <span>48-hour check: the day after each workout, ask how you've felt since. Clearly worse eases its weights back next time.</span>
           </label>
         </>
       )}

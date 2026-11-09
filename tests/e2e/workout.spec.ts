@@ -165,7 +165,7 @@ test("48-hour check: asked the day after, a wrong tap can be changed, and it sho
   await page.clock.install({ time: new Date("2027-01-01T10:00:00") }); // a Friday
   await dianeOnBlock1(page);
   await page.goto("./#/programme/strength-block-1");
-  await page.getByRole("checkbox", { name: /48 hours later/ }).check();
+  await page.getByRole("checkbox", { name: /48-hour check/ }).check();
   await page.getByRole("button", { name: "Save", exact: true }).click();
   await expect(page.getByRole("status")).toHaveText("Saved.");
   await page.getByRole("link", { name: "Today" }).click();
@@ -175,14 +175,14 @@ test("48-hour check: asked the day after, a wrong tap can be changed, and it sho
   await page.getByRole("button", { name: "Finish workout" }).click();
   await page.getByRole("dialog").getByRole("button", { name: "Finish" }).click();
   // Not asked on the day itself
-  await expect(page.getByRole("heading", { name: /sit\?/ })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: /felt since/ })).toHaveCount(0);
 
   await page.clock.setSystemTime(new Date("2027-01-02T09:00:00"));
   await page.reload();
-  await expect(page.getByRole("heading", { name: "How did Friday's Session A sit?" })).toBeVisible();
-  await page.getByRole("button", { name: "Up a bit but settling" }).click();
+  await expect(page.getByRole("heading", { name: "How have you felt since Friday's Session A?" })).toBeVisible();
+  await page.getByRole("button", { name: "A bit worn but settling" }).click();
   const done = page.getByRole("region", { name: "48-hour check" });
-  await expect(done).toContainText("Friday's Session A: Up a bit but settling.");
+  await expect(done).toContainText("Friday's Session A: A bit worn but settling.");
   await done.getByRole("button", { name: "Change" }).click();
   await page.getByRole("button", { name: "Clearly worse" }).click();
   await expect(done).toContainText("Clearly worse. Its weights go back a step next time.");

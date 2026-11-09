@@ -1,4 +1,4 @@
-// "How did that workout sit?", asked from the day after a workout when the programme has the 48-hour check on.
+// "How have you felt since that workout?", asked from the day after a workout when the programme has the 48-hour check on.
 // A wrong tap can be changed straight away, or later from the day's log on Progress.
 import { useState } from "react";
 import type { Programme } from "../formats/programme.ts";
@@ -7,7 +7,7 @@ import { db } from "../store/db.ts";
 import { localDate } from "../store/programmes.ts";
 import { answerCheck48h, type CheckAnswer } from "../store/progress.ts";
 
-export const CHECK_ANSWERS: Array<[CheckAnswer, string]> = [["same", "Same as before"], ["settling", "Up a bit but settling"], ["worse", "Clearly worse"]];
+export const CHECK_ANSWERS: Array<[CheckAnswer, string]> = [["same", "Fine"], ["settling", "A bit worn but settling"], ["worse", "Clearly worse"]];
 const weekday = new Intl.DateTimeFormat("en-GB", { weekday: "long" });
 
 /** The workout to ask about: the latest one done on this programme, from the day after it. */
@@ -48,8 +48,8 @@ export function Check48h({ p, sessions, now }: { p: Programme; sessions: Session
   }
   return (
     <section className="card check48" aria-labelledby="check48-heading">
-      <h2 id="check48-heading">How did {name} sit?</h2>
-      <p className="hint">Compared with before it, over the day or two since.</p>
+      <h2 id="check48-heading">How have you felt since {name}?</h2>
+      <p className="hint">Compared with before it.</p>
       <div className="check48-options">
         {CHECK_ANSWERS.map(([k, label]) => (
           <button key={k} type="button" className={`btn check48-${k}${answered?.status === k ? " is-current" : ""}`} onClick={() => answer(k)}>{label}</button>
