@@ -297,7 +297,7 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 .result ul { margin: 6px 0 0; padding-left: 1.2em; }
 
 .history { list-style: none; margin: 12px 0; padding: 0; }
-.history-row {
+.history-row, .weigh-row {
   display: grid;
   grid-template-columns: 9.5em minmax(0, 1fr) auto;
   gap: 12px;
@@ -314,7 +314,7 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 .dot-red { background: #dc2626; }
 .tag { padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); font-size: 0.8rem; }
 @media (max-width: 640px) {
-  .history-row { grid-template-columns: 1fr auto; }
+  .history-row, .weigh-row { grid-template-columns: 1fr auto; }
   .history-name { grid-column: 1 / -1; grid-row: 1; }
   .load-row { grid-template-columns: minmax(0, 1fr) auto; }
   .load-name { grid-column: 1 / -1; }
@@ -539,3 +539,78 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 .removed-line { display: flex; align-items: center; gap: 12px; margin: 8px 0; color: var(--muted); }
 .removed-line span { flex: 1; }
 .group-meta { flex: 1; }
+
+/* Progress */
+.cal-range { font-size: 0.85rem; font-weight: 700; }
+.cal-nav { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+.cal { display: grid; gap: 4px; }
+.cal-row { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.cal-dow span { text-align: center; font-size: 0.8rem; font-weight: 700; color: var(--muted); }
+.cal-day {
+  min-height: 64px; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 6px;
+  border: 1px solid var(--line); border-radius: 10px; background: var(--surface); font: inherit; color: inherit; cursor: pointer; text-align: left; min-width: 0;
+}
+.cal-day.is-today { border: 2px solid var(--you); }
+.cal-day.is-future { background: transparent; }
+.cal-day[aria-selected="true"] { background: color-mix(in srgb, var(--you) 15%, var(--surface)); border-color: var(--you); }
+.cal-num { font-weight: 700; font-size: 0.9rem; }
+.cal-marks { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; }
+.cal-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: var(--you); }
+.cal-ring { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: transparent !important; border: 2px solid currentColor; }
+.cal-ring.dot-green { color: #16a34a; } .cal-ring.dot-amber { color: #f59e0b; } .cal-ring.dot-red { color: #dc2626; }
+.cal-walk { font-size: 0.7rem; padding: 0 4px; border-radius: 4px; border: 1px solid var(--line); color: var(--muted); }
+.cal-plan { font-size: 0.7rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+.cal-key { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.day-log h3 { margin: 0; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 1.1rem; }
+.session-log { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 12px; }
+.log-lines { list-style: none; margin: 8px 0; padding: 0; display: grid; gap: 6px; }
+.log-lines li { display: grid; grid-template-columns: minmax(8em, 14em) 1fr; gap: 4px 12px; }
+.log-lines li.is-removed { color: var(--muted); }
+.log-name { font-weight: 700; }
+.log-sets { font-variant-numeric: tabular-nums; }
+@media (max-width: 640px) { .log-lines li { grid-template-columns: 1fr; } .cal-day { min-height: 52px; padding: 4px; } .cal-plan { display: none; } }
+.edit-ex { border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; margin: 0 0 10px; display: grid; gap: 6px; }
+.edit-ex legend { font-weight: 700; padding: 0 4px; display: flex; gap: 8px; }
+.edit-done { min-height: 44px; }
+.day-extra p { margin: 4px 0; }
+.lift-summary { display: flex; flex-wrap: wrap; gap: 6px 20px; margin: 12px 0 4px; color: var(--muted); }
+.lift-summary strong { color: var(--text); font-size: 1.3rem; margin-right: 4px; }
+.goal-form { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 14px; margin-top: 12px; }
+.goal-form input[type="date"] { min-height: 44px; padding: 0 10px; border: 2px solid var(--line); border-radius: 10px; background: var(--bg); }
+.lift-table { margin-top: 12px; }
+.lift-table summary { cursor: pointer; font-weight: 600; min-height: 44px; display: flex; align-items: center; }
+.lift-table td, .lift-table th { text-align: left; }
+.history-row[role="button"] { cursor: pointer; }
+.chart { position: relative; width: 100%; margin-top: 8px; touch-action: pan-y; }
+.chart svg { display: block; overflow: visible; }
+.chart-grid { stroke: var(--line); stroke-width: 1; }
+.chart-tick { fill: var(--muted); font-size: 12px; }
+.chart-line { fill: none; stroke: var(--you); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.chart-dot { fill: var(--you); stroke: var(--surface); stroke-width: 2; }
+.chart-cross { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 3; }
+.chart-goal line { stroke: var(--text); stroke-width: 1.5; stroke-dasharray: 6 5; }
+.chart-goal circle { fill: var(--surface); stroke: var(--text); stroke-width: 2; }
+.chart-goal text { fill: var(--text); font-size: 12px; font-weight: 700; }
+.chart-tip {
+  position: absolute; top: 0; transform: translateX(-50%); pointer-events: none; display: grid; gap: 2px; padding: 6px 10px; white-space: nowrap;
+  border-radius: 8px; background: var(--text); color: var(--bg); font-size: 0.85rem;
+}
+.plan-controls > * { min-width: 0; max-width: 100%; }
+.plan-controls select { max-width: 100%; }
+@media (max-width: 640px) {
+  .cal-walk { font-size: 0; width: 8px; height: 8px; padding: 0; border-radius: 2px; border: 0; background: var(--muted); }
+  .cal-key .cal-walk { font-size: 0.7rem; width: auto; height: auto; padding: 0 4px; background: transparent; border: 1px solid var(--line); }
+}
+.chart-band { fill: rgb(22 163 74 / 0.2); }
+.chart-marker line { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 4; opacity: 0.7; }
+.chart-marker path { fill: var(--surface); stroke: var(--text); stroke-width: 1.5; }
+.chart-marker text { fill: var(--text); font-size: 12px; }
+.chart-last { fill: var(--text); font-size: 13px; font-weight: 700; }
+.chart-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 6px 0 0; color: var(--muted); font-size: 0.85rem; }
+.chart-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.chart-key-line { width: 16px; height: 3px; border-radius: 2px; background: var(--you); }
+.chart-key-band { width: 16px; height: 10px; border-radius: 3px; background: rgb(22 163 74 / 0.35); }
+.bw-goals { list-style: none; margin: 8px 0; padding: 0; }
+.bw-goals li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.pace-note { margin: 4px 0 0; }
+.pace-status { align-self: center; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--line); font-size: 0.95rem; font-weight: 600; color: var(--text); }

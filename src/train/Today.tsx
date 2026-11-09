@@ -22,6 +22,7 @@ export const toLogged = (s: SessionRecord): LoggedSession => ({
   readiness: s.readiness,
   programme: s.programme ? { id: s.programme.id, week: s.programme.week ?? 1 } : null,
   workout: s.session.id,
+  ...(s.deload ? { deload: true } : {}),
   exercises: s.exercises,
 });
 

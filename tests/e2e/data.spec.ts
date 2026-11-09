@@ -23,7 +23,7 @@ test("import Rebuild Log history, then again without doubling it", async ({ page
   await page.getByTestId("Choose a Rebuild Log backup").setInputFiles(REBUILD_BACKUP);
   await expect(page.getByRole("status")).toContainText("0 new sessions, 26 updated");
 
-  await page.getByRole("link", { name: "History" }).click();
+  await page.getByRole("link", { name: "Progress" }).click();
   await expect(page.getByText("26 sessions, 54 days with a check-in or walk, 9 weigh-ins.")).toBeVisible();
   await expect(page.locator(".history-row")).toHaveCount(10);
   await page.getByRole("button", { name: "Show all 26" }).click();
@@ -58,7 +58,7 @@ test("back up on one tablet and restore on another", async ({ page, browser }) =
 
   await tablet.getByRole("link", { name: "Back" }).click();
   await tablet.getByRole("button", { name: "Andrew" }).click();
-  await tablet.getByRole("link", { name: "History" }).click();
+  await tablet.getByRole("link", { name: "Progress" }).click();
   await expect(tablet.getByText("26 sessions, 54 days")).toBeVisible();
   await other.close();
 });

@@ -7,7 +7,7 @@ import { UpdateBanner } from "./shared/UpdateBanner.tsx";
 import { WhoIsTraining } from "./shared/WhoIsTraining.tsx";
 import { db, testVersion } from "./store/db.ts";
 import { getCurrentProfileId } from "./store/profiles.ts";
-import { History } from "./train/History.tsx";
+import { Progress } from "./train/Progress.tsx";
 import { Session } from "./train/Session.tsx";
 import { Today } from "./train/Today.tsx";
 
@@ -30,7 +30,7 @@ export function App() {
       : <BuildHome profile={current} profiles={profiles} />;
   }
   else if (route === "who" || !current) screen = <WhoIsTraining profiles={profiles} currentId={current?.id ?? null} />;
-  else if (route === "history") screen = <History profile={current} />;
+  else if (route === "progress") screen = <Progress profile={current} />;
   else if (route === "session") screen = <Session profile={current} />;
   else screen = <Today profile={current} />;
 

@@ -69,6 +69,20 @@ export interface JFDIProfile {
     history: PastAssignment[];
   };
   targets?: Target[];
+  /**
+   * Bodyweight goals. The target pace on the chart starts from the weigh-in on or before start
+   */
+  bodyweight?: {
+    start: Date;
+    /**
+     * Up to 6, in date order
+     */
+    goals: {
+      kg: number;
+      by: Date;
+      label?: string;
+    }[];
+  };
 }
 /**
  * Optional override of the active programme's daily check, in the same shape as a programme's readiness

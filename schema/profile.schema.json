@@ -47,7 +47,30 @@
         "history": { "type": "array", "items": { "$ref": "#/$defs/pastAssignment" } }
       }
     },
-    "targets": { "type": "array", "items": { "$ref": "#/$defs/target" } }
+    "targets": { "type": "array", "items": { "$ref": "#/$defs/target" } },
+    "bodyweight": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start", "goals"],
+      "description": "Bodyweight goals. The target pace on the chart starts from the weigh-in on or before start",
+      "properties": {
+        "start": { "$ref": "#/$defs/date" },
+        "goals": {
+          "type": "array",
+          "description": "Up to 6, in date order",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kg", "by"],
+            "properties": {
+              "kg": { "type": "number", "minimum": 20, "maximum": 300 },
+              "by": { "$ref": "#/$defs/date" },
+              "label": { "type": "string", "minLength": 1, "maxLength": 30 }
+            }
+          }
+        }
+      }
+    }
   },
   "$defs": {
     "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 64 },

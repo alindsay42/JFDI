@@ -88,6 +88,16 @@ describe("today, ad hoc (Diane's Block 1)", () => {
     expect(target(t, "plank").kg).toBeNull();
   });
 
+  it("after a deload week, weights pick up from before it, not from the lighter deload sessions", () => {
+    const sessions = [
+      done("2027-02-05", "session-a", { "back-squat": [40, [5, 5, 5, 5, 5]] }),
+      done("2027-02-08", "session-b", { "back-squat": [25.5, [5, 5, 5]] }, { deload: true }),
+    ];
+    const t = today({ programme: block1(), assignment: diane, sessions, date: "2027-02-15", readiness: "green" });
+    expect(workoutOf(t)!.deload).toBe(false);
+    expect(target(t, "back-squat")).toMatchObject({ kg: 42.5, why: "add" });
+  });
+
   it("optional exercises appear from their unlock week; a group that loses some reshapes", () => {
     const p = block1();
     p.workouts[0]!.items[3]!.slots[1]!.optional = { unlock: { fromWeek: 3 } };

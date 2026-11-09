@@ -74,7 +74,7 @@ test("do a workout: tick sets, change a weight, rest timer, remove and add exerc
   await expect(page.getByRole("heading", { name: "Rest day" })).toBeVisible();
   await page.getByRole("button", { name: "Train today anyway" }).click();
   await expect(page.getByRole("heading", { name: "Session B" })).toBeVisible();
-  await page.getByRole("link", { name: "History" }).click();
+  await page.getByRole("link", { name: "Progress" }).click();
   await expect(page.locator(".history-row")).toHaveCount(1);
 });
 
@@ -96,7 +96,7 @@ test("ending early records why", async ({ page }) => {
   await page.getByRole("button", { name: "End early" }).click();
   await page.getByRole("dialog").getByRole("radio", { name: "Feeling unwell" }).click();
   await page.getByRole("dialog").getByRole("button", { name: "End workout" }).click();
-  await page.getByRole("link", { name: "History" }).click();
+  await page.getByRole("link", { name: "Progress" }).click();
   await expect(page.locator(".history-row")).toContainText("Ended early");
 });
 
@@ -109,7 +109,7 @@ test("discard a workout part-way through; it stays next up", async ({ page }) =>
   await page.getByRole("dialog").getByRole("button", { name: "Discard" }).click();
   await page.getByRole("radio", { name: /Green/ }).check();
   await expect(page.getByRole("heading", { name: "Session A" })).toBeVisible();
-  await page.getByRole("link", { name: "History" }).click();
+  await page.getByRole("link", { name: "Progress" }).click();
   await expect(page.locator(".history-row")).toHaveCount(0);
 });
 

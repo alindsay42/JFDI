@@ -41,7 +41,7 @@ test("switching between people, and it's remembered after closing", async ({ pag
 test("nothing scrolls sideways", async ({ page }) => {
   await page.goto("./");
   await addPerson(page, "A name long enough to test wrapping", "Teal");
-  for (const route of ["#/today", "#/who"]) {
+  for (const route of ["#/today", "#/who", "#/progress", "#/programme", "#/data"]) {
     await page.goto(`./${route}`);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     expect(overflow, route).toBeLessThanOrEqual(0);
