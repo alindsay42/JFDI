@@ -7,6 +7,9 @@ const dateTime = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long
 export const fromDate = (d: string) => new Date(`${d}T12:00:00`);
 export const formatLongDate = (d: string) => longDate.format(fromDate(d));
 export const formatShortDate = (d: string) => shortDate.format(fromDate(d));
+const dayMonth = new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "numeric", month: "short" });
+/** "Fri 6 Nov", for recent dates */
+export const formatDayMonth = (d: string) => dayMonth.format(fromDate(d)).replace(",", "");
 export const formatDateTime = (iso: string) => dateTime.format(new Date(iso));
 
 /** Whole days from `today` to `date`, both calendar dates. Negative when `date` has passed. */

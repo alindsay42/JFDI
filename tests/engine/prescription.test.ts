@@ -88,6 +88,22 @@ describe("today, ad hoc (Diane's Block 1)", () => {
     expect(target(t, "plank").kg).toBeNull();
   });
 
+  it("a deload week the person started applies the programme's deload, only if it has one", () => {
+    const sessions = [done("2027-01-01", "session-a", { "back-squat": [40, [5, 5, 5, 5, 5]] }), done("2027-01-04", "session-b", {})];
+    const t = today({ programme: block1(), assignment: diane, sessions, date: "2027-01-08", readiness: "green", deloadWeek: true });
+    expect(workoutOf(t)!.deload).toBe(true);
+    expect(target(t, "back-squat")).toMatchObject({ kg: 25.5 });
+    const none = { ...block1(), phases: block1().phases.map((ph) => ({ ...ph, blocks: ph.blocks.map(({ deload: _d, ...b }) => b) })) } as Programme;
+    const u = today({ programme: none, assignment: diane, sessions, date: "2027-01-08", readiness: "green", deloadWeek: true });
+    expect(workoutOf(u)!.deload).toBe(false);
+  });
+
+  it("programmes set to repeat the weights target what was lifted last time", () => {
+    const sessions = [done("2027-01-01", "session-a", { "back-squat": [42.5, [5, 5, 5, 5, 5]] }), done("2027-01-04", "session-b", {})];
+    const t = today({ programme: { ...block1(), weights: "repeat" }, assignment: diane, sessions, date: "2027-01-08", readiness: "green" });
+    expect(target(t, "back-squat")).toMatchObject({ kg: 42.5, why: "no change" });
+  });
+
   it("after a deload week, weights pick up from before it, not from the lighter deload sessions", () => {
     const sessions = [
       done("2027-02-05", "session-a", { "back-squat": [40, [5, 5, 5, 5, 5]] }),

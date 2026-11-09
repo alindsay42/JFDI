@@ -194,3 +194,18 @@ describe("skipping (ad hoc)", () => {
     expect(await getSkip(db, "diane")).toBeUndefined();
   });
 });
+
+describe("deload weeks started from Today", () => {
+  it("lasts 7 days for that programme, and can be ended early", async () => {
+    const { startDeloadWeek, endDeloadWeek, getDeloadWeek, deloadInForce } = await import("../../src/store/session.ts");
+    await startDeloadWeek(db, "diane", "strength-block-1", new Date("2026-12-28T09:00:00"));
+    const w = await getDeloadWeek(db, "diane");
+    expect(w).toEqual({ programme: "strength-block-1", from: "2026-12-28", until: "2027-01-03" });
+    expect(deloadInForce(w, "strength-block-1", "2027-01-03")).toBe(true);
+    expect(deloadInForce(w, "strength-block-1", "2027-01-04")).toBe(false);
+    expect(deloadInForce(w, "strength-block-1", "2026-12-27")).toBe(false);
+    expect(deloadInForce(w, "other", "2026-12-30")).toBe(false);
+    await endDeloadWeek(db, "diane");
+    expect(deloadInForce(await getDeloadWeek(db, "diane"), "strength-block-1", "2026-12-30")).toBe(false);
+  });
+});

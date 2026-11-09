@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addDays, bodyweightView, calendarWeeks, liftSeries, liftsLogged, paceRange, paceStatus, targetPace, weeklyChange, type SessionForProgress } from "../../src/engine/progress.ts";
+import { addDays, bodyweightView, lastTime, setsText, calendarWeeks, liftSeries, liftsLogged, paceRange, paceStatus, targetPace, weeklyChange, type SessionForProgress } from "../../src/engine/progress.ts";
 import { bodyweightPaceRules } from "./bodyweight.rules.ts";
 
 const s = (id: string, date: string, ex: Record<string, Array<[number | undefined, number | undefined, boolean?]>>, status: "done" | "active" = "done"): SessionForProgress => ({
@@ -121,5 +121,37 @@ describe("bodyweight view", () => {
     expect(later.until).toBe("2027-02-22");
     const future = bodyweightView([w("2027-02-10", 77.5)], { start: "2027-02-10", goals: [phase1] }, "2027-02-01");
     expect(future.until).toBe("2027-03-24");
+  });
+});
+
+describe("last time", () => {
+  const sess = (id: string, date: string, status: "done" | "active", sets: Array<Partial<import("../../src/engine/progress.ts").LoggedSet>>, exercise = "back-squat") =>
+    ({ id, date, status, exercises: [{ exercise, name: "x", sets: sets.map((x) => ({ done: true, ...x })) }] });
+
+  it("finds the latest finished workout with ticked sets, leaving out the one in progress", () => {
+    const list = [
+      sess("a", "2026-11-01", "done", [{ kg: 50, reps: 5 }, { kg: 50, reps: 4 }, { kg: 50, reps: 5, done: false }]),
+      sess("c", "2026-11-04", "done", [{ kg: 52.5, reps: 5, done: false }]),
+      sess("b", "2026-11-04", "done", [{ kg: 47.5, reps: 5 }]),
+      sess("d", "2026-11-05", "active", [{ kg: 55, reps: 5 }]),
+      sess("e", "2026-11-05", "done", [{ kg: 55, reps: 5 }]),
+      sess("f", "2026-11-03", "done", [{ seconds: 30 }], "plank"),
+      { ...sess("h", "2026-11-06", "done", [{ kg: 30, reps: 5 }]), deload: true },
+    ];
+    expect(lastTime(list, "back-squat")).toEqual({ date: "2026-11-05", session: "e", sets: [{ kg: 55, reps: 5, done: true }] });
+    expect(lastTime(list, "back-squat", "e")).toMatchObject({ session: "b" });
+    expect(lastTime([...list, sess("g", "2026-11-04", "done", [{ kg: 40, reps: 5 }]), sess("a0", "2026-11-04", "done", [{ kg: 40, reps: 5 }])], "back-squat", "e")).toMatchObject({ session: "g" });
+    expect(lastTime(list.slice(0, 1), "back-squat")!.sets).toHaveLength(2);
+    expect(lastTime(list, "deadlift")).toBeNull();
+  });
+
+  it("writes the sets the way you'd say them", () => {
+    const d = (x: object) => ({ done: true, ...x });
+    expect(setsText([d({ kg: 52.5, reps: 5 }), d({ kg: 52.5, reps: 5 }), d({ kg: 52.5, reps: 4 })])).toBe("52.5kg × 5, 5, 4");
+    expect(setsText([d({ kg: 50, reps: 5 }), d({ kg: 52.5, reps: 4 }), d({ reps: 8 })])).toBe("50kg × 5, 52.5kg × 4, 8");
+    expect(setsText([d({ reps: 8 }), d({ reps: 6 })])).toBe("8, 6 reps");
+    expect(setsText([d({ seconds: 30 }), d({ seconds: 45 })])).toBe("30s, 45s");
+    expect(setsText([d({ metres: 20 }), d({ calories: 12 }), d({})])).toBe("20m, 12 cal, 0");
+    expect(setsText([d({ kg: 20, seconds: 30 })])).toBe("20kg × 30s");
   });
 });

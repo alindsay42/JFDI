@@ -23,6 +23,10 @@
     "plan": { "$ref": "#/$defs/plan" },
     "phases": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/phase" } },
     "readiness": { "$ref": "#/$defs/readiness" },
+    "weights": {
+      "enum": ["progress", "repeat"],
+      "description": "progress (the default): each exercise's progression rule suggests the next weight. repeat: the target is what was lifted last time, and the person decides when to go up"
+    },
     "targets": { "type": "array", "items": { "$ref": "#/$defs/target" } }
   },
 
@@ -301,8 +305,9 @@
           "type": "object",
           "additionalProperties": false,
           "required": ["setsPercent", "loadPercent"],
-          "anyOf": [{ "required": ["everyWeeks"] }, { "required": ["afterStalls"] }],
+          "anyOf": [{ "required": ["everyWeeks"] }, { "required": ["afterStalls"] }, { "required": ["onDemand"] }],
           "properties": {
+            "onDemand": { "type": "boolean", "description": "The person can start a deload week from Today" },
             "everyWeeks": { "type": "integer", "minimum": 2 },
             "afterStalls": { "type": "integer", "minimum": 1 },
             "setsPercent": { "$ref": "#/$defs/percent" },

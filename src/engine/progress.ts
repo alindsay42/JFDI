@@ -2,11 +2,13 @@
 import { estimateOneRepMax } from "./estimate.ts";
 import { daysBetween, mondayOf } from "./schedule.ts";
 
-export interface LoggedSet { kg?: number; reps?: number; seconds?: number; metres?: number; done: boolean }
+export interface LoggedSet { kg?: number; reps?: number; seconds?: number; metres?: number; calories?: number; done: boolean }
 export interface SessionForProgress {
   id: string;
   date: string;
   status: "active" | "done";
+  /** Done in a deload week */
+  deload?: boolean;
   exercises: Array<{ exercise: string; name: string; removed?: unknown; sets: LoggedSet[] }>;
 }
 
@@ -179,4 +181,35 @@ export function bodyweightView(weighIns: WeighInPoint[], plan: BodyweightPlan | 
   const band = [{ date: anchor.date, lo: lo0, hi: hi0 }, { date: until, lo: lo1, hi: hi1 }];
   const status = latest!.date > anchor.date ? paceStatus(pace, anchor, latest!) : null;
   return { anchor, pace, until, band, shown, next, status };
+}
+
+// ----- Last time -----
+
+export interface LastTime { date: string; session: string; sets: LoggedSet[] }
+
+/**
+ * The ticked sets from the most recent finished workout with this exercise, leaving out one workout
+ * (the one in progress) and deload weeks, which targets leave out too. Removed exercises' done sets count;
+ * a workout with none ticked is passed over.
+ */
+export function lastTime(sessions: SessionForProgress[], exercise: string, leaveOut?: string): LastTime | null {
+  let found: LastTime | null = null;
+  for (const s of sessions) {
+    if (s.status !== "done" || s.id === leaveOut || s.deload) continue;
+    const sets = s.exercises.filter((e) => e.exercise === exercise).flatMap((e) => e.sets).filter((x) => x.done);
+    if (!sets.length) continue;
+    if (!found || s.date > found.date || (s.date === found.date && s.id > found.session)) found = { date: s.date, session: s.id, sets };
+  }
+  return found;
+}
+
+const one = (x: LoggedSet): string =>
+  x.seconds !== undefined ? `${x.seconds}s` : x.metres !== undefined ? `${x.metres}m` : x.calories !== undefined ? `${x.calories} cal` : `${x.reps ?? 0}`;
+
+/** "52.5kg × 5, 5, 4" when every set had the same weight, "50kg × 5, 52.5kg × 4" when it changed, "30s, 30s" for timed. */
+export function setsText(sets: LoggedSet[]): string {
+  const weights = sets.map((x) => x.kg ?? null);
+  if (weights.every((w) => w === null)) return sets.map(one).join(", ") + (sets.every((x) => x.reps !== undefined && x.seconds === undefined && x.metres === undefined && x.calories === undefined) ? " reps" : "");
+  if (weights.every((w) => w === weights[0])) return `${weights[0]}kg × ${sets.map(one).join(", ")}`;
+  return sets.map((x) => (x.kg !== undefined ? `${x.kg}kg × ${one(x)}` : one(x))).join(", ");
 }

@@ -46,6 +46,7 @@ Every object that others point to has an `id`: lowercase letters, digits and hyp
 | `exercises`, `equipment`, `progressions`, `workouts`, `phases` | yes | Lists, described below |
 | `plan` | yes | Described below |
 | `readiness` | yes | Described below. Use preset `off` for no daily check |
+| `weights` | no | `progress` (the default): each exercise's progression rule suggests the next weight. `repeat`: the target is simply what was lifted last time, and the person decides when to go up |
 | `targets` | no | Described below |
 
 ## Equipment
@@ -194,7 +195,7 @@ Block fields:
 | --- | --- |
 | `id`, `name` | |
 | `weeks` | Number of weeks, or `null` for "until it stalls" |
-| `deload` | `{ "everyWeeks": 6, "setsPercent": 60, "loadPercent": 60 }`, and/or `"afterStalls": 2` |
+| `deload` | How a deload week works: `setsPercent` and `loadPercent` (60 means 60% of normal), plus when: `"onDemand": true` (started from Today), `"everyWeeks": 6`, and/or `"afterStalls": 2` |
 | `endWhen` | Free text for an open-ended block, such as "Most main lifts have stalled once" |
 
 Phase fields: `id`, `name`, `focus`, `blocks` (ordered), and `gates`.

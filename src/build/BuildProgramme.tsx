@@ -11,6 +11,7 @@ import { Frame } from "./Frame.tsx";
 import {
   addDay, amberChoices, copyWeek, MAX_DAYS, MAX_WEEKS, moveDay, removeDay, setAmber, setCheck48h, setCheckStyle, setDay,
   setLevelDescription, setMinRestDays, setMode, setWeekCount, type AmberChoices, type CheckStyle,
+  DEFAULT_DELOAD, deloadOf, setDeload, setWeightsMode, type DeloadChoices,
 } from "./model.ts";
 import { useDraft, type DraftState } from "./useDraft.ts";
 import { WorkoutEditor } from "./WorkoutEditor.tsx";
@@ -163,6 +164,8 @@ function Planner({ draft, profile, runners }: { draft: DraftState; profile: JFDI
         </section>
       ))}
 
+      <Weights draft={draft} />
+      <Deloads draft={draft} />
       <DailyCheck draft={draft} />
 
       {!draft.isNew && (
@@ -423,5 +426,70 @@ function Wording({ level, text, draft }: { level: "green" | "amber" | "red"; tex
       <span>What {name} means</span>
       <input value={text} maxLength={200} onChange={(e) => draft.update((q) => setLevelDescription(q, level, e.target.value))} />
     </label>
+  );
+}
+
+/** Whether the app suggests the next weight, or shows last time's and leaves going up to the person. */
+function Weights({ draft }: { draft: DraftState }) {
+  const p = draft.programme!;
+  const repeat = p.weights === "repeat";
+  return (
+    <section className="card" aria-labelledby="weights-heading">
+      <h2 id="weights-heading">Weights</h2>
+      <div className="choice-list">
+        <label className="check">
+          <input type="radio" name="weights" checked={!repeat} onChange={() => draft.update((q) => setWeightsMode(q, "progress"))} />
+          <span><strong>Suggest the next step.</strong> When you hit your reps, the next workout adds weight. Miss them and it stays the same.</span>
+        </label>
+        <label className="check">
+          <input type="radio" name="weights" checked={repeat} onChange={() => draft.update((q) => setWeightsMode(q, "repeat"))} />
+          <span><strong>Show what I did last time.</strong> The target is last time's weight, and you decide when to go up.</span>
+        </label>
+      </div>
+      <p className="hint">Either way, you can change the weight on the day, and last time is shown under each exercise.</p>
+    </section>
+  );
+}
+
+const PERCENTS = [30, 40, 50, 60, 70, 80, 90];
+
+/** Deload weeks: started from Today when you choose, every few weeks, or both; and how much lighter. */
+function Deloads({ draft }: { draft: DraftState }) {
+  const p = draft.programme!;
+  const d = deloadOf(p);
+  const set = (c: Partial<DeloadChoices>) => draft.update((q) => setDeload(q, { onDemand: false, everyWeeks: null, ...DEFAULT_DELOAD, ...(deloadOf(q) ?? {}), ...c }));
+  return (
+    <section className="card" aria-labelledby="deload-heading">
+      <h2 id="deload-heading">Deload weeks</h2>
+      <p className="hint">A lighter week to recover, usually when you've stopped making progress. Afterwards, weights pick up from where they were before it.</p>
+      <div className="check-list">
+        <label className="check">
+          <input type="checkbox" checked={!!d?.onDemand} onChange={(e) => set({ onDemand: e.target.checked })} />
+          <span>Let me start a deload week from Today</span>
+        </label>
+        <span className="check">
+          <input type="checkbox" aria-label="Deload on a schedule" checked={!!d?.everyWeeks} onChange={(e) => set({ everyWeeks: e.target.checked ? 6 : null })} />
+          <span>Every</span>
+          <select aria-label="Weeks between deloads" value={d?.everyWeeks ?? 6} disabled={!d?.everyWeeks} onChange={(e) => set({ everyWeeks: Number(e.target.value) })}>
+            {[3, 4, 5, 6, 7, 8, 10, 12].map((n) => <option key={n} value={n}>{n}</option>)}
+          </select>
+          <span>weeks</span>
+        </span>
+      </div>
+      {d && (
+        <div className="check-list">
+          <span className="check">
+            <span>Weights at</span>
+            <select aria-label="Deload weight, percent of normal" value={d.loadPercent} onChange={(e) => set({ loadPercent: Number(e.target.value) })}>
+              {PERCENTS.map((n) => <option key={n} value={n}>{n}%</option>)}
+            </select>
+            <span>of normal, sets at</span>
+            <select aria-label="Deload sets, percent of normal" value={d.setsPercent} onChange={(e) => set({ setsPercent: Number(e.target.value) })}>
+              {PERCENTS.map((n) => <option key={n} value={n}>{n}%</option>)}
+            </select>
+          </span>
+        </div>
+      )}
+    </section>
   );
 }

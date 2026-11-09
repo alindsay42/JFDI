@@ -1,11 +1,12 @@
 import { useLiveQuery } from "dexie-react-hooks";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import type { JFDIProfile } from "../formats/generated/profile.ts";
 import { asProgramme, type Item, type Programme } from "../formats/programme.ts";
 import { Confirm } from "../shared/Confirm.tsx";
 import { plural } from "../shared/format.ts";
 import { go } from "../shared/route.ts";
 import { Screen } from "../shared/Screen.tsx";
+import { LastTime } from "./LastTime.tsx";
 import { db, type SessionRecord } from "../store/db.ts";
 import { library } from "../store/household.ts";
 import {
@@ -27,6 +28,8 @@ export function Session({ profile }: { profile: JFDIProfile }) {
     const p = s?.programme ? await db.programmes.get(s.programme.id) : undefined;
     return { s: s ?? null, p: p ? asProgramme(p) : null };
   }, [profile.id]);
+  // Earlier workouts, for "last time" under each exercise
+  const history = useLiveQuery(() => db.sessions.where("profile").equals(profile.id).filter((x) => x.status === "done").toArray(), [profile.id]);
   const [s, setS] = useState<SessionRecord | null>(null);
   const latest = useRef<SessionRecord | null>(null);
   const queue = useRef(Promise.resolve());
@@ -72,7 +75,9 @@ export function Session({ profile }: { profile: JFDIProfile }) {
   }
   return (
     <Screen profile={profile} route="today">
-      <Workout s={s} p={loaded.p} edit={edit} startRest={(sec) => setRest(sec > 0 ? { until: Date.now() + sec * 1000, total: sec } : null)} />
+      <History.Provider value={history ?? []}>
+        <Workout s={s} p={loaded.p} edit={edit} startRest={(sec) => setRest(sec > 0 ? { until: Date.now() + sec * 1000, total: sec } : null)} />
+      </History.Provider>
       {rest && <RestTimer rest={rest} change={(d) => setRest({ ...rest, until: rest.until + d * 1000 })} stop={() => setRest(null)} />}
     </Screen>
   );
@@ -151,6 +156,9 @@ function Workout({ s, p, edit, startRest }: { s: SessionRecord; p: Programme | n
   );
 }
 
+/** Finished workouts, for "last time" under each exercise */
+const History = createContext<SessionRecord[]>([]);
+
 function ExerciseHead({ s, k, edit, sub }: { s: SessionRecord; k: number; edit: (fn: Edit) => Promise<void>; sub?: string }) {
   const e = s.exercises[k]!;
   const [removing, setRemoving] = useState(false);
@@ -172,6 +180,7 @@ function ExerciseHead({ s, k, edit, sub }: { s: SessionRecord; k: number; edit: 
 
 function ExerciseCard({ s, p, k, edit, startRest }: { s: SessionRecord; p: Programme | null; k: number; edit: (fn: Edit) => Promise<void>; startRest: (sec: number) => void }) {
   const e = s.exercises[k]!;
+  const history = useContext(History);
   const field = fieldOf(p, e.exercise);
   const rest = restAfter(p, s.prescribed, e.slot, e.exercise);
   return (
@@ -179,6 +188,7 @@ function ExerciseCard({ s, p, k, edit, startRest }: { s: SessionRecord; p: Progr
       <ExerciseHead s={s} k={k} edit={edit} sub={e.removed ? `Removed${e.removed.reason ? `: ${e.removed.reason}` : ""}` : undefined} />
       {!e.removed && (
         <>
+          <LastTime sessions={history} exercise={e.exercise} leaveOut={s.id} />
           <ol className="sets">
             {e.sets.map((set, j) => (
               <li key={j}>
@@ -204,6 +214,7 @@ function GroupCard({ s, p, item, entries, edit, startRest }: {
   const kind = item.type === "superset" ? "Superset" : item.type === "giant" ? "Giant set" : "Finisher";
   const rest = item.restSec ?? 90;
   const [removing, setRemoving] = useState(false);
+  const history = useContext(History);
   return (
     <section className="card group-card" aria-label={kind}>
       <div className="group-card-head">
@@ -215,6 +226,11 @@ function GroupCard({ s, p, item, entries, edit, startRest }: {
           <button type="button" className="btn btn-quiet btn-small" onClick={() => void entries.reduce((q, k) => q.then(() => edit((x) => restoreExercise(db, x, k))), Promise.resolve())}>Undo remove</button>
         )}
       </div>
+      {live.length > 0 && (
+        <div className="group-last">
+          {live.map((k) => <LastTime key={k} sessions={history} exercise={s.exercises[k]!.exercise} leaveOut={s.id} name={s.exercises[k]!.name} />)}
+        </div>
+      )}
       <ReasonDialog open={removing} title={`Remove this ${kind.toLowerCase()}?`} reasons={REMOVE_REASONS} confirmLabel="Remove"
         note="Every exercise in it goes. Sets already done are kept, and progression isn't affected."
         onCancel={() => setRemoving(false)}
