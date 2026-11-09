@@ -13,6 +13,8 @@ export interface LoggedSession {
   readiness: Readiness | null;
   programme: { id: string; week: number } | null;
   workout: string;
+  /** Done in a deload week. It doesn't count towards progression, so the week after picks up where it left off */
+  deload?: boolean;
   exercises: Array<{ exercise: string; removed?: unknown; sets: SetDone[] }>;
 }
 
@@ -57,7 +59,7 @@ const progressionDay = (p: Programme, r: Readiness | null) =>
 /** One exercise's history in this programme, most recent first. Removed exercises don't count. */
 export function historyOf(p: Programme, a: Assignment, sessions: LoggedSession[], exercise: string): Performance[] {
   return sessions
-    .filter((s) => s.status === "done" && s.programme?.id === p.id && s.date >= a.startDate)
+    .filter((s) => s.status === "done" && !s.deload && s.programme?.id === p.id && s.date >= a.startDate)
     .sort((x, y) => (x.date < y.date ? 1 : -1))
     .flatMap((s) => s.exercises
       .filter((e) => e.exercise === exercise && !e.removed)
