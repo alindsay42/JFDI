@@ -2,13 +2,22 @@ import { useEffect, useRef, useState } from "react";
 import type { Exercise, Item, Programme, Slot } from "../formats/programme.ts";
 import {
   addExercises, formatRange, group, groupOf, moveItem, moveSlot, parseRange, removeExercises, renameWorkout, startKg, targetField,
-  updateItem, updateSlot, workoutSlots, type SlotRef,
+  TIER_NAMES, updateItem, updateSlot, workoutSlots, type SlotRef,
 } from "./model.ts";
 import { PickLists } from "./PickLists.tsx";
 import { href } from "../shared/route.ts";
 import type { DraftState } from "./useDraft.ts";
 import { equipment, library } from "../store/household.ts";
-import type { Workout } from "../formats/programme.ts";
+import type { Tier, Workout } from "../formats/programme.ts";
+
+/** Main, Supporting or Extra: what Amber acts on. Only shown when the programme has the daily check on. */
+function TierSelect({ label, tier, onChange, disabled }: { label: string; tier: Tier; onChange: (t: Tier) => void; disabled?: boolean }) {
+  return (
+    <select className="tier-select" aria-label={label} value={tier} disabled={disabled} onChange={(e) => onChange(e.target.value as Tier)}>
+      {(Object.keys(TIER_NAMES) as Tier[]).map((t) => <option key={t} value={t}>{TIER_NAMES[t]}</option>)}
+    </select>
+  );
+}
 
 const GROUP_NAMES: Record<Item["type"], string> = { single: "", superset: "Superset", giant: "Giant set", finisher: "Finisher" };
 const UNITS: Record<string, string> = { reps: "reps", seconds: "sec", metres: "m", calories: "cal" };
@@ -80,6 +89,10 @@ export function WorkoutEditor({ draft, workout }: { draft: DraftState; workout: 
                   <div className="group-head">
                     {handle}
                     <span className="tag tag-you">{GROUP_NAMES[item.type]}</span>
+                    {p.readiness.preset !== "off" && (
+                      <TierSelect label={`${GROUP_NAMES[item.type]} priority`} tier={item.tier} disabled={pairing !== null}
+                        onChange={(t) => update((q) => updateItem(q, id, i, { tier: t }))} />
+                    )}
                     <NumberField label="Rounds" value={item.rounds} min={1} max={item.type === "finisher" ? 50 : 20} whole
                       disabled={pairing !== null} onCommit={(v) => update((q) => updateItem(q, id, i, { rounds: v ?? 1 }))} suffix="rounds" />
                     <NumberField label="Rest after each round" value={item.restSec} min={0} max={3600} whole optional
@@ -154,6 +167,9 @@ function ExerciseRow({ p, workoutId, item, at, ex, handle, pairing, setPairing, 
       {handle}
       <span className="ex-name">{name}</span>
       <span className="ex-fields">
+        {item.type === "single" && p.readiness.preset !== "off" && (
+          <TierSelect label={`${name} priority`} tier={item.tier} onChange={(t) => update((q) => updateItem(q, workoutId, at.item, { tier: t }))} />
+        )}
         {ex && !NO_KG.has(ex.implement) && (
           <NumberField label={`${name} weight`} value={kg} min={0} max={1000} optional suffix={ex.loadPer === "each" ? "kg each" : "kg"}
             onCommit={(v) => set({ start: v === undefined ? undefined : { kg: v } })} />

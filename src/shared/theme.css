@@ -614,3 +614,19 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 .bw-goals li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--line); }
 .pace-note { margin: 4px 0 0; }
 .pace-status { align-self: center; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--line); font-size: 0.95rem; font-weight: 600; color: var(--text); }
+.daily-check > .segmented { margin: 8px 0 4px; }
+.check-level { margin-top: 16px; padding: 4px 0 4px 14px; border-left: 4px solid var(--line); }
+.check-level h3 { margin: 0 0 6px; }
+.check-green { border-left-color: #16a34a; }
+.check-amber { border-left-color: #f59e0b; }
+.check-red { border-left-color: #dc2626; }
+.check-list { display: grid; gap: 8px; margin: 10px 0; }
+.check-list .check { flex-wrap: wrap; padding-block: 6px; }
+.check-list select { min-height: 40px; }
+.daily-check > .check { margin-top: 16px; padding-block: 8px; }
+.tier-select { min-height: 40px; }
+.check48-options { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+.check48-options .btn { flex: 1 1 160px; }
+.check48-options .is-current { border-color: var(--you); }
+.check48-done { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
+.check48-done p { margin: 0; }

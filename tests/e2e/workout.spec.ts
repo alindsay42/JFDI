@@ -160,3 +160,69 @@ test("supersets: drop a line from a round, add a round, remove and restore the w
   await superset.getByRole("button", { name: "Undo remove" }).click();
   await expect(superset.locator(".round")).toHaveCount(6);
 });
+
+test("48-hour check: asked the day after, a wrong tap can be changed, and it shows in the day's log", async ({ page }) => {
+  await page.clock.install({ time: new Date("2027-01-01T10:00:00") }); // a Friday
+  await dianeOnBlock1(page);
+  await page.goto("./#/programme/strength-block-1");
+  await page.getByRole("checkbox", { name: /48-hour check/ }).check();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(page.getByRole("status")).toHaveText("Saved.");
+  await page.getByRole("link", { name: "Today" }).click();
+  await page.getByRole("radio", { name: /Green/ }).check();
+  await page.getByRole("button", { name: "Start workout" }).click();
+  await page.getByRole("region", { name: "Back squat" }).getByRole("button", { name: "Set 1 done" }).click();
+  await page.getByRole("button", { name: "Finish workout" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Finish" }).click();
+  // Not asked on the day itself
+  await expect(page.getByRole("heading", { name: /felt since/ })).toHaveCount(0);
+
+  await page.clock.setSystemTime(new Date("2027-01-02T09:00:00"));
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "How have you felt since Friday's Session A?" })).toBeVisible();
+  await page.getByRole("button", { name: "A bit worn but settling" }).click();
+  const done = page.getByRole("region", { name: "48-hour check" });
+  await expect(done).toContainText("Friday's Session A: A bit worn but settling.");
+  await done.getByRole("button", { name: "Change" }).click();
+  await page.getByRole("button", { name: "Clearly worse" }).click();
+  await expect(done).toContainText("Friday's Session A: Clearly worse.");
+
+  await page.getByRole("link", { name: "Progress" }).click();
+  await page.getByRole("gridcell", { name: /Friday, 1 January 2027/ }).click();
+  await expect(page.locator(".day-log")).toContainText("48-hour check: Clearly worse");
+  await page.locator(".day-log").getByRole("button", { name: "Edit" }).click();
+  await expect(page.getByLabel("48-hour check")).toHaveValue("worse");
+});
+
+test("walks: log one from Today, and add one to an earlier day", async ({ page }) => {
+  await page.clock.install({ time: new Date("2027-01-02T10:00:00") });
+  await dianeOnBlock1(page);
+  const walks = page.getByRole("region", { name: "Walks" });
+  await walks.getByRole("button", { name: "Log a walk" }).click();
+  await walks.getByLabel("Walk minutes").fill("40");
+  await walks.getByRole("button", { name: "Log walk" }).click();
+  await expect(walks).toContainText("Walk, 40 minutes");
+
+  await page.getByRole("link", { name: "Progress" }).click();
+  await expect(page.getByRole("gridcell", { name: /Saturday, 2 January 2027.*walk/ })).toBeVisible();
+  await page.getByRole("gridcell", { name: /Friday, 1 January 2027/ }).click();
+  const log = page.locator(".day-log");
+  await log.getByRole("button", { name: "Log a walk" }).click();
+  await log.getByLabel("Walk minutes").fill("25");
+  await log.getByRole("button", { name: "Log walk" }).click();
+  await expect(log).toContainText("Walk, 25 minutes");
+  await log.getByRole("button", { name: "Remove Walk, 25 minutes" }).click();
+  await expect(log).not.toContainText("Walk, 25 minutes");
+});
+
+test("the check-in is kept for the day, Red included, and shows on the calendar", async ({ page }) => {
+  await page.clock.install({ time: new Date("2027-01-01T10:00:00") });
+  await dianeOnBlock1(page);
+  await page.getByRole("radio", { name: /Red/ }).check();
+  await expect(page.getByRole("heading", { name: "No lifting today" })).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole("radio", { name: /Red/ })).toBeChecked();
+  await page.getByRole("link", { name: "Progress" }).click();
+  await page.getByRole("gridcell", { name: /Friday, 1 January 2027/ }).click();
+  await expect(page.locator(".day-log")).toContainText("Red day");
+});

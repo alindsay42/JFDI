@@ -174,3 +174,39 @@ test("changing something and changing it back leaves nothing to save", async ({ 
   await page.reload();
   await expect(page.getByText("Unsaved changes.")).toBeHidden();
 });
+
+test("daily check: pick a starting point, choose what Amber does, mark exercises Main", async ({ page }) => {
+  await start(page);
+  await page.getByLabel("Name").fill("Check test");
+  await page.getByRole("button", { name: "Create" }).click();
+  await page.getByRole("link", { name: /Day 1/ }).click();
+  await page.getByLabel("Search exercises").fill("back squat");
+  await page.getByRole("listbox", { name: "All exercises" }).getByRole("option", { name: "Back squat", exact: true }).click();
+  await page.getByRole("button", { name: "Add highlighted" }).click();
+  // No priority on rows while the daily check is off
+  await expect(page.getByLabel("Back squat priority")).toHaveCount(0);
+  await page.getByRole("link", { name: "Done" }).first().click();
+
+  const check = page.getByRole("region", { name: "Daily check" }).or(page.locator(".daily-check"));
+  await check.getByRole("radio", { name: "On", exact: true }).check();
+  await expect(check.getByRole("checkbox", { name: "Halve every exercise's sets" })).not.toBeChecked();
+  await expect(check.getByRole("radio", { name: "Progress as normal" })).toBeChecked();
+  await expect(check.getByRole("checkbox", { name: /48-hour check/ })).not.toBeChecked();
+  await expect(check.getByLabel("Sets for main exercises on Amber")).toHaveValue("3");
+  await expect(check.getByText("Mark exercises Main or Extra in each workout")).toBeVisible();
+  await check.getByLabel("Sets for main exercises on Amber").selectOption("2");
+  await check.getByLabel("What Amber means").fill("A bit flat");
+
+  await page.getByRole("link", { name: /Day 1/ }).click();
+  await page.getByLabel("Back squat priority").selectOption({ label: "Main" });
+  await page.getByRole("link", { name: "Done" }).first().click();
+  await expect(check.getByText("Mark exercises Main or Extra")).toBeHidden();
+  await expect(check.getByText("Mark exercises Extra in each workout")).toBeVisible();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(page.getByRole("status")).toHaveText("Saved.");
+
+  await page.reload();
+  await expect(check.getByLabel("Sets for main exercises on Amber")).toHaveValue("2");
+  await expect(check.getByLabel("What Amber means")).toHaveValue("A bit flat");
+  await expect(check.getByRole("checkbox", { name: /48-hour check/ })).not.toBeChecked();
+});

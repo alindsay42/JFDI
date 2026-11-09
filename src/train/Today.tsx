@@ -6,8 +6,12 @@ import type { JFDIProfile } from "../formats/generated/profile.ts";
 import { asProgramme, type Item, type Programme } from "../formats/programme.ts";
 import { daysUntil, formatKg, formatLongDate, plural } from "../shared/format.ts";
 import { go, href } from "../shared/route.ts";
+import { Check48h } from "./Check48h.tsx";
+import { setDayReadiness } from "../store/progress.ts";
+import { Walks } from "./Walks.tsx";
+import { setDaysOn } from "../engine/schedule.ts";
 import { Screen } from "../shared/Screen.tsx";
-import { db, type SessionRecord } from "../store/db.ts";
+import { db, type DayRecord, type SessionRecord } from "../store/db.ts";
 import { localDate } from "../store/programmes.ts";
 import { placesOf } from "../build/model.ts";
 import { activeSession, fieldOf, getSkip, skipInForce, skipWorkout, startSession } from "../store/session.ts";
@@ -33,6 +37,7 @@ export function Today({ profile, now = new Date() }: { profile: JFDIProfile; now
     sessions: await db.sessions.where("profile").equals(profile.id).toArray(),
     inProgress: await activeSession(db, profile.id),
     skip: await getSkip(db, profile.id),
+    day: await db.days.get([profile.id, localDate(now)]),
   }), [profile.id, active?.programme]);
 
   return (
@@ -49,9 +54,27 @@ export function Today({ profile, now = new Date() }: { profile: JFDIProfile; now
           </div>
         </section>
       ) : (
-        <Plan profile={profile} p={asProgramme(data.programme)} sessions={data.sessions} skipped={data.skip} now={now} />
+        <>
+          <Check48h p={asProgramme(data.programme)} sessions={data.sessions} now={now} />
+          <Plan profile={profile} p={asProgramme(data.programme)} sessions={data.sessions} skipped={data.skip} now={now} checkedIn={data.day?.readiness ?? null} />
+        </>
       )}
+      {data && !data.inProgress && <TodayWalks profile={profile} p={data.programme ? asProgramme(data.programme) : null} day={data.day} now={now} />}
     </Screen>
+  );
+}
+
+/** Walks for today: in view straight away on a planned walk day, a quiet button on any other. */
+function TodayWalks({ profile, p, day, now }: { profile: JFDIProfile; p: Programme | null; day: DayRecord | undefined; now: Date }) {
+  const date = localDate(now);
+  const start = profile.programmes.active?.startDate;
+  const on = p && start && p.plan.mode === "setDays" ? setDaysOn(p.plan, start, date) : null;
+  const planned = on?.type === "conditioning";
+  return (
+    <section className="card" aria-labelledby="walks-heading">
+      <h2 id="walks-heading">{planned ? "Log your walk" : "Walks"}</h2>
+      <Walks profile={profile.id} date={date} day={day} planned={planned} minutes={planned ? on.minutes?.min : undefined} />
+    </section>
   );
 }
 
@@ -68,11 +91,18 @@ function InProgress({ s }: { s: SessionRecord }) {
   );
 }
 
-function Plan({ profile, p, sessions, skipped, now }: {
+function Plan({ profile, p, sessions, skipped, now, checkedIn }: {
   profile: JFDIProfile; p: Programme; sessions: SessionRecord[]; skipped: Awaited<ReturnType<typeof getSkip>>; now: Date;
+  /** Today's check-in, if already picked */
+  checkedIn: Readiness | null;
 }) {
   const check = p.readiness.preset !== "off" && !!p.readiness.levels;
-  const [readiness, setReadiness] = useState<Readiness | null>(null);
+  const [readiness, setReadinessState] = useState<Readiness | null>(checkedIn);
+  // Saved straight away, so it's on the calendar (Red too) and still there after leaving Today
+  const setReadiness = (l: Readiness) => {
+    setReadinessState(l);
+    void setDayReadiness(db, profile.id, localDate(now), l);
+  };
   const [anyway, setAnyway] = useState(false);
   const [chosen, setChosen] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);

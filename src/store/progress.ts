@@ -107,3 +107,49 @@ export async function removeBodyweightGoal(db: JfdiDatabase, profileId: string, 
     await markChanged(db);
   });
 }
+
+export type CheckAnswer = "same" | "settling" | "worse";
+
+/** Answers, changes or clears the 48-hour check on a finished workout. */
+export async function answerCheck48h(db: JfdiDatabase, profile: string, id: string, status: CheckAnswer | null, now = new Date()): Promise<void> {
+  const s = await db.sessions.get([profile, id]);
+  if (!s) throw new Error("That workout isn't here any more");
+  // Never before the workout finished, even with a clock that's out
+  const at = s.finishedAt && s.finishedAt > now.toISOString() ? s.finishedAt : now.toISOString();
+  await saveSession(db, { ...s, check48h: status ? { status, at } : null });
+}
+
+/** Logs a walk on a day. A day can have more than one. */
+export async function addWalk(db: JfdiDatabase, profile: string, date: string, minutes: number): Promise<void> {
+  if (!(minutes > 0 && minutes <= 1440)) throw new Error("Minutes must be between 1 and 1440");
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error("Choose the date of the walk");
+  await db.transaction("rw", db.days, db.settings, async () => {
+    const day = (await db.days.get([profile, date])) ?? { profile, date };
+    await db.days.put({ ...day, activities: [...(day.activities ?? []), { exercise: "walk", minutes: Math.round(minutes) }] });
+    await markChanged(db);
+  });
+}
+
+/** Removes one activity from a day; a day left with nothing on it goes. */
+export async function removeActivity(db: JfdiDatabase, profile: string, date: string, index: number): Promise<void> {
+  await db.transaction("rw", db.days, db.settings, async () => {
+    const day = await db.days.get([profile, date]);
+    if (!day?.activities?.[index]) return;
+    const activities = day.activities.filter((_, i) => i !== index);
+    const { activities: _a, ...rest } = day;
+    const next = activities.length ? { ...rest, activities } : rest;
+    if (Object.keys(next).length === 2) await db.days.delete([profile, date]);
+    else await db.days.put(next);
+    await markChanged(db);
+  });
+}
+
+/** Records the day's check-in (Green, Amber or Red) as soon as it's picked, keeping anything else on the day. */
+export async function setDayReadiness(db: JfdiDatabase, profile: string, date: string, readiness: "green" | "amber" | "red"): Promise<void> {
+  await db.transaction("rw", db.days, db.settings, async () => {
+    const day = (await db.days.get([profile, date])) ?? { profile, date };
+    if (day.readiness === readiness) return;
+    await db.days.put({ ...day, readiness });
+    await markChanged(db);
+  });
+}

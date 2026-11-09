@@ -6,6 +6,7 @@ import {
   WEEKDAYS, type Day, type Exercise, type GroupItem, type Item, type Plan, type Programme, type Range, type SetDaysWeek, type Slot,
   type Tier, type Weekday, type Workout,
 } from "../formats/programme.ts";
+import type { Rule as EngineRule } from "../engine/readiness.ts";
 
 export const MAX_WEEKS = 4;
 export const DAY_NAMES: Record<Weekday, string> = { mon: "Mon", tue: "Tue", wed: "Wed", thu: "Thu", fri: "Fri", sat: "Sat", sun: "Sun" };
@@ -458,3 +459,89 @@ export function placesOf(p: Programme, id: string): string[] {
   });
   return places;
 }
+
+// ----- The daily check (readiness) -----
+
+type Readiness = Programme["readiness"];
+type Level = NonNullable<Readiness["levels"]>["green"];
+// The engine's rule type, which narrows on `rule`
+type Rule = EngineRule;
+export type CheckStyle = Readiness["preset"];
+
+export const TIER_NAMES: Record<Tier, string> = { primary: "Main", secondary: "Supporting", tertiary: "Extra" };
+
+const RED: Level = {
+  label: "Red", description: "Not today. No lifting, and the workout moves to next time.", rules: [{ rule: "noLifting" }], progressionOnThisDay: "skip",
+};
+
+/** What the daily check starts as when it's switched on. Everything can be changed afterwards. */
+export const CHECK_TEMPLATE: Required<Pick<Readiness, "check48h" | "levels">> = {
+  check48h: false,
+  levels: {
+    green: { label: "Green", description: "Feeling 90 to 100%. Hit it full on.", rules: [], progressionOnThisDay: "normal" },
+    amber: {
+      label: "Amber", description: "Feeling 60 to 89%. Poor sleep, a cold, a long day: still want to train, but easier.",
+      rules: [{ rule: "setsTo", tier: "primary", sets: 3 }, { rule: "dropTier", tier: "tertiary" }, { rule: "addRir", reps: 2 }],
+      progressionOnThisDay: "normal",
+    },
+    red: { ...RED, description: "Under 60%. No lifting today. The workout moves to next time." },
+  },
+};
+
+/** Turns the daily check off, or on from its starting point. */
+export function setCheckStyle(p: Programme, style: CheckStyle): Programme {
+  if (style === "off") return { ...p, readiness: { preset: "off" } };
+  return { ...p, readiness: { preset: "freshness", ...structuredClone(CHECK_TEMPLATE) } };
+}
+
+/** What Amber does, as the choices on screen. */
+export interface AmberChoices {
+  /** Main exercises down to this many sets */
+  mainSets: number | null;
+  halveAll: boolean;
+  dropExtras: boolean;
+  /** More reps left in the tank on every set */
+  rir: number | null;
+  /** The next workout repeats Amber's weights */
+  hold: boolean;
+}
+
+export function amberChoices(p: Programme): AmberChoices {
+  const amber = p.readiness.levels?.amber;
+  const rules = (amber?.rules ?? []) as Rule[];
+  const find = <K extends Rule["rule"]>(k: K, when: (r: Extract<Rule, { rule: K }>) => boolean = () => true) =>
+    rules.find((r): r is Extract<Rule, { rule: K }> => r.rule === k && when(r as Extract<Rule, { rule: K }>));
+  return {
+    mainSets: find("setsTo", (r) => r.tier === "primary")?.sets ?? null,
+    halveAll: !!find("setsPercent", (r) => !r.tier && r.percent === 50),
+    dropExtras: !!find("dropTier", (r) => r.tier === "tertiary"),
+    rir: find("addRir")?.reps ?? null,
+    hold: amber?.progressionOnThisDay === "hold",
+  };
+}
+
+const isChoice = (r: Rule) =>
+  (r.rule === "setsTo" && r.tier === "primary") || (r.rule === "setsPercent" && !r.tier && r.percent === 50) ||
+  (r.rule === "dropTier" && r.tier === "tertiary") || r.rule === "addRir";
+
+/** Writes Amber's rules from the choices, in a fixed order. Any other rules (from a programme file) are kept after them. */
+export function setAmber(p: Programme, c: AmberChoices): Programme {
+  const levels = p.readiness.levels;
+  if (!levels) return p;
+  const rules: Rule[] = [];
+  if (c.halveAll) rules.push({ rule: "setsPercent", percent: 50 });
+  if (c.mainSets) rules.push({ rule: "setsTo", tier: "primary", sets: c.mainSets });
+  if (c.dropExtras) rules.push({ rule: "dropTier", tier: "tertiary" });
+  if (c.rir) rules.push({ rule: "addRir", reps: c.rir });
+  rules.push(...(levels.amber.rules as Rule[]).filter((r) => !isChoice(r)));
+  const amber = { ...levels.amber, rules: rules as Level["rules"], progressionOnThisDay: c.hold ? "hold" as const : "normal" as const };
+  return { ...p, readiness: { ...p.readiness, levels: { ...levels, amber } } };
+}
+
+export function setLevelDescription(p: Programme, level: "green" | "amber" | "red", description: string): Programme {
+  const levels = p.readiness.levels;
+  if (!levels) return p;
+  return { ...p, readiness: { ...p.readiness, levels: { ...levels, [level]: { ...levels[level], description } } } };
+}
+
+export const setCheck48h = (p: Programme, on: boolean): Programme => ({ ...p, readiness: { ...p.readiness, check48h: on } });

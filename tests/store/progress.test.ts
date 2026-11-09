@@ -5,7 +5,7 @@ import { asProgramme } from "../../src/formats/programme.ts";
 import { JfdiDatabase } from "../../src/store/db.ts";
 import { addProfile } from "../../src/store/profiles.ts";
 import { assignProgramme } from "../../src/store/programmes.ts";
-import { addBodyweightGoal, clearGoal, deleteSession, deleteWeighIn, putWeighIn, removeBodyweightGoal, saveSession, setGoal } from "../../src/store/progress.ts";
+import { addBodyweightGoal, addWalk, answerCheck48h, clearGoal, deleteSession, deleteWeighIn, putWeighIn, removeActivity, removeBodyweightGoal, saveSession, setGoal } from "../../src/store/progress.ts";
 import { validateProfile } from "../../src/formats/validate.js";
 import { equipment, library } from "../../src/store/household.ts";
 import { finishSession, startSession, updateSet } from "../../src/store/session.ts";
@@ -123,5 +123,55 @@ describe("bodyweight goals", () => {
     await expect(addBodyweightGoal(db, "diane", { kg: 10, by: "2027-07-01" }, "2026-11-08")).rejects.toThrow("between 20 and 300kg");
     await expect(addBodyweightGoal(db, "diane", { kg: 60, by: "" }, "2026-11-08")).rejects.toThrow("Choose the date");
     await expect(addBodyweightGoal(db, "nobody", { kg: 60, by: "2027-07-01" }, "2026-11-08")).rejects.toThrow('No profile "nobody"');
+  });
+});
+
+describe("the 48-hour check", () => {
+  it("answers, changes and clears it, never timed before the workout finished", async () => {
+    const s = await finished();
+    await answerCheck48h(db, "diane", s.id, "worse", new Date("2027-01-03T08:00:00"));
+    expect((await db.sessions.get(["diane", s.id]))!.check48h).toEqual({ status: "worse", at: new Date("2027-01-03T08:00:00").toISOString() });
+    await answerCheck48h(db, "diane", s.id, "same", new Date("2026-12-31T08:00:00"));
+    expect((await db.sessions.get(["diane", s.id]))!.check48h).toEqual({ status: "same", at: s.finishedAt });
+    await answerCheck48h(db, "diane", s.id, null);
+    expect((await db.sessions.get(["diane", s.id]))!.check48h).toBeNull();
+    await expect(answerCheck48h(db, "diane", "nope", "same")).rejects.toThrow("isn't here");
+  });
+});
+
+describe("walks", () => {
+  it("adds walks to a day, keeps the rest of the day, and removes them", async () => {
+    await db.days.put({ profile: "diane", date: "2027-01-02", readiness: "green" });
+    await addWalk(db, "diane", "2027-01-02", 30.4);
+    await addWalk(db, "diane", "2027-01-02", 45);
+    expect(await db.days.get(["diane", "2027-01-02"])).toMatchObject({
+      readiness: "green", activities: [{ exercise: "walk", minutes: 30 }, { exercise: "walk", minutes: 45 }],
+    });
+    await removeActivity(db, "diane", "2027-01-02", 0);
+    await removeActivity(db, "diane", "2027-01-02", 5);
+    await removeActivity(db, "diane", "2027-01-02", 0);
+    expect(await db.days.get(["diane", "2027-01-02"])).toEqual({ profile: "diane", date: "2027-01-02", readiness: "green" });
+
+    await addWalk(db, "diane", "2027-01-03", 20);
+    await removeActivity(db, "diane", "2027-01-03", 0);
+    expect(await db.days.get(["diane", "2027-01-03"])).toBeUndefined();
+    await removeActivity(db, "diane", "2027-01-04", 0);
+  });
+
+  it("explains bad input", async () => {
+    await expect(addWalk(db, "diane", "2027-01-02", 0)).rejects.toThrow("between 1 and 1440");
+    await expect(addWalk(db, "diane", "", 30)).rejects.toThrow("date of the walk");
+  });
+});
+
+describe("the day's check-in", () => {
+  it("records it straight away, keeps walks, and changes it", async () => {
+    const { setDayReadiness } = await import("../../src/store/progress.ts");
+    await addWalk(db, "diane", "2027-01-02", 30);
+    await setDayReadiness(db, "diane", "2027-01-02", "red");
+    await setDayReadiness(db, "diane", "2027-01-02", "red");
+    expect(await db.days.get(["diane", "2027-01-02"])).toMatchObject({ readiness: "red", activities: [{ minutes: 30 }] });
+    await setDayReadiness(db, "diane", "2027-01-03", "amber");
+    expect((await db.days.get(["diane", "2027-01-03"]))?.readiness).toBe("amber");
   });
 });
