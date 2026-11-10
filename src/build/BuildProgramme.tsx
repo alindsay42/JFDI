@@ -117,12 +117,12 @@ function Planner({ draft, profile, runners }: { draft: DraftState; profile: JFDI
             ))}
           </fieldset>
 
-          <fieldset className="segmented" aria-label="Weeks in the cycle">
-            <legend>Weeks in the cycle</legend>
+          <fieldset className="segmented" aria-label="Workouts repeat every">
+            <legend>Workouts repeat every</legend>
             {Array.from({ length: MAX_WEEKS }, (_, i) => i + 1).map((n) => (
               <label key={n}>
                 <input type="radio" name="weeks" checked={plan.weeks.length === n} onChange={() => update((q) => setWeekCount(q, n))} />
-                <span>{n}</span>
+                <span>{n === 1 ? "1 week" : `${n} weeks`}</span>
               </label>
             ))}
           </fieldset>
@@ -144,7 +144,9 @@ function Planner({ draft, profile, runners }: { draft: DraftState; profile: JFDI
           {plan.mode === "adhoc"
             ? "Workouts are done in order, on whichever days suit. A missed one stays next up."
             : "Workouts are on set weekdays. The calendar decides the week, and a missed workout stays missed."}
-          {plan.weeks.length > 1 && ` After week ${plan.weeks.length}, it goes back to week 1.`}
+          {plan.weeks.length > 1
+            ? ` Each week below has its own workouts, and after week ${plan.weeks.length} they start again from week 1. This is separate from training blocks, which set when the deload comes.`
+            : " The same workouts every week."}
         </p>
       </section>
 

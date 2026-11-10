@@ -109,7 +109,7 @@ test("change Block 1: reorder by dragging, split a group, switch to set days wit
 
   await page.getByRole("link", { name: "Strength Programme, Block 1" }).click();
   await page.getByRole("radio", { name: "Set days" }).check();
-  await page.getByRole("radio", { name: "2", exact: true }).check();
+  await page.getByRole("radio", { name: "2 weeks", exact: true }).check();
   await expect(page.getByRole("heading", { name: "Week 2" })).toBeVisible();
   await expect(page.getByRole("combobox", { name: "Mon is" }).first()).toHaveValue("workout");
   await page.getByRole("combobox", { name: "Sat is" }).first().selectOption("conditioning");
@@ -162,10 +162,10 @@ test("changing something and changing it back leaves nothing to save", async ({ 
   await page.getByRole("button", { name: "Save", exact: true }).click();
   await expect(page.getByRole("status")).toHaveText("Saved.");
 
-  await page.getByRole("radio", { name: "2", exact: true }).check();
+  await page.getByRole("radio", { name: "2 weeks", exact: true }).check();
   await expect(page.getByText("Unsaved changes.")).toBeVisible();
   await expect(page.getByRole("button", { name: "Use this programme" })).toBeDisabled();
-  await page.getByRole("radio", { name: "1", exact: true }).check();
+  await page.getByRole("radio", { name: "1 week", exact: true }).check();
   await expect(page.getByText("Unsaved changes.")).toBeHidden();
   await expect(page.getByRole("button", { name: "Use this programme" })).toBeEnabled();
   await page.getByRole("link", { name: "Programmes", exact: true }).click();
