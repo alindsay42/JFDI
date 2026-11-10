@@ -68,7 +68,7 @@ test("build a new programme from scratch, pair exercises, save it and set someon
   await expect(page.getByRole("heading", { name: "Diane is on this programme" })).toBeVisible();
   await page.getByRole("link", { name: "Today" }).click();
   await expect(page.getByRole("link", { name: "Andrew's strength" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Day 1" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Day 1", exact: true })).toBeVisible();
   await page.getByRole("link", { name: "Programme", exact: true }).click();
   await expect(page.getByRole("region", { name: "Diane's programme" }).or(page.locator(".card", { hasText: "Diane's programme" }))).toContainText("Andrew's strength");
 });

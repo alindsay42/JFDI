@@ -630,11 +630,11 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 .check48-options .is-current { border-color: var(--you); }
 .check48-done { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
 .check48-done p { margin: 0; }
-.last-time { display: block; color: var(--muted); font-size: 0.9rem; margin: 2px 0 6px; }
-.last-time strong { color: var(--text); font-weight: 600; }
-.preview-row .last-time { flex-basis: 100%; margin: 0; }
-.group-last { display: grid; gap: 2px; margin: 4px 0 8px; }
-.group-last .last-time { margin: 0; }
 .choice-list { display: grid; gap: 10px; margin: 8px 0; } .choice-list .check { align-items: flex-start; }
 .deload-note { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); } .deload-note p { margin: 0; flex: 1 1 240px; }
 .check-list label.check { flex-wrap: nowrap; }
+.last-chip {
+  min-height: 44px; padding: 0 10px; border: 1px dashed var(--line); border-radius: 10px; background: transparent;
+  color: var(--muted); font: inherit; font-size: 0.9rem; cursor: pointer; white-space: nowrap;
+}
+.last-chip:disabled { border-color: transparent; cursor: default; }

@@ -6,7 +6,7 @@ import { Confirm } from "../shared/Confirm.tsx";
 import { plural } from "../shared/format.ts";
 import { go } from "../shared/route.ts";
 import { Screen } from "../shared/Screen.tsx";
-import { LastTime } from "./LastTime.tsx";
+import { lastTime, setsText } from "../engine/progress.ts";
 import { db, type SessionRecord } from "../store/db.ts";
 import { library } from "../store/household.ts";
 import {
@@ -156,16 +156,44 @@ function Workout({ s, p, edit, startRest }: { s: SessionRecord; p: Programme | n
   );
 }
 
-/** Finished workouts, for "last time" under each exercise */
+/** Finished workouts, for "last time" on each set */
 const History = createContext<SessionRecord[]>([]);
 
-function ExerciseHead({ s, k, edit, sub }: { s: SessionRecord; k: number; edit: (fn: Edit) => Promise<void>; sub?: string }) {
+/** The values a set copies from last time: the weight and whatever the exercise counts */
+function copyOf(last: LoggedSet, field: SetField): Partial<LoggedSet> {
+  return { ...(last.kg !== undefined ? { kg: last.kg } : {}), ...(last[field] !== undefined ? { [field]: last[field] } : {}) };
+}
+const differs = (set: LoggedSet, last: LoggedSet, field: SetField) => set.kg !== last.kg || set[field] !== last[field];
+
+/** Last time's sets for an exercise, matched to this workout's sets by number. */
+function useLast(s: SessionRecord, exercise: string): LoggedSet[] {
+  const history = useContext(History);
+  return lastTime(history, exercise, s.id)?.sets ?? [];
+}
+
+/** Fills every set not yet ticked with last time's numbers, for the given exercises. */
+function fillFromLast(edit: (fn: Edit) => Promise<void>, fills: Array<{ k: number; last: LoggedSet[]; field: SetField }>) {
+  return edit(async (x) => {
+    let cur = x;
+    for (const { k, last, field } of fills) {
+      for (let j = 0; j < cur.exercises[k]!.sets.length; j++) {
+        const set = cur.exercises[k]!.sets[j]!;
+        const l = last[j];
+        if (l && !set.done && differs(set, l, field)) cur = await updateSet(db, cur, k, j, copyOf(l, field));
+      }
+    }
+    return cur;
+  });
+}
+
+function ExerciseHead({ s, k, edit, sub, extra }: { s: SessionRecord; k: number; edit: (fn: Edit) => Promise<void>; sub?: string; extra?: React.ReactNode }) {
   const e = s.exercises[k]!;
   const [removing, setRemoving] = useState(false);
   return (
     <div className="ex-head">
       <span className="ex-title">{e.name}{e.added && <span className="tag">Added</span>}</span>
       {sub && <span className="muted">{sub}</span>}
+      {extra}
       {e.removed ? (
         <button type="button" className="btn btn-quiet btn-small" onClick={() => void edit((x) => restoreExercise(db, x, k))}>Undo remove</button>
       ) : (
@@ -180,19 +208,20 @@ function ExerciseHead({ s, k, edit, sub }: { s: SessionRecord; k: number; edit: 
 
 function ExerciseCard({ s, p, k, edit, startRest }: { s: SessionRecord; p: Programme | null; k: number; edit: (fn: Edit) => Promise<void>; startRest: (sec: number) => void }) {
   const e = s.exercises[k]!;
-  const history = useContext(History);
   const field = fieldOf(p, e.exercise);
   const rest = restAfter(p, s.prescribed, e.slot, e.exercise);
+  const last = useLast(s, e.exercise);
+  const canFill = !e.removed && e.sets.some((set, j) => !set.done && last[j] && differs(set, last[j], field));
   return (
     <section className={`card ex-card${e.removed ? " is-removed" : ""}`} aria-label={e.name}>
-      <ExerciseHead s={s} k={k} edit={edit} sub={e.removed ? `Removed${e.removed.reason ? `: ${e.removed.reason}` : ""}` : undefined} />
+      <ExerciseHead s={s} k={k} edit={edit} sub={e.removed ? `Removed${e.removed.reason ? `: ${e.removed.reason}` : ""}` : undefined}
+        extra={canFill && <button type="button" className="btn btn-quiet btn-small" onClick={() => void fillFromLast(edit, [{ k, last, field }])}>Use last time</button>} />
       {!e.removed && (
         <>
-          <LastTime sessions={history} exercise={e.exercise} leaveOut={s.id} />
           <ol className="sets">
             {e.sets.map((set, j) => (
               <li key={j}>
-                <SetRow label={`Set ${j + 1}`} name={e.name} set={set} field={field} each={e.loadPer === "each"}
+                <SetRow label={`Set ${j + 1}`} name={e.name} set={set} field={field} each={e.loadPer === "each"} last={last[j]}
                   update={(v) => edit((x) => updateSet(db, x, k, j, v))}
                   onDone={() => startRest(rest)}
                   remove={!set.done ? () => void edit((x) => removeSet(db, x, k, j)) : undefined} />
@@ -215,22 +244,21 @@ function GroupCard({ s, p, item, entries, edit, startRest }: {
   const rest = item.restSec ?? 90;
   const [removing, setRemoving] = useState(false);
   const history = useContext(History);
+  const lasts = new Map(entries.map((k) => [k, lastTime(history, s.exercises[k]!.exercise, s.id)?.sets ?? []]));
+  const fills = live.map((k) => ({ k, last: lasts.get(k)!, field: fieldOf(p, s.exercises[k]!.exercise) }));
+  const canFill = fills.some(({ k, last, field }) => s.exercises[k]!.sets.some((set, j) => !set.done && last[j] && differs(set, last[j], field)));
   return (
     <section className="card group-card" aria-label={kind}>
       <div className="group-card-head">
         <span className="tag tag-you">{kind}</span>
         <span className="muted group-meta">{live.length ? `${plural(rounds, "round")}, ${rest}s rest after each` : `${kind} removed`}</span>
+        {canFill && <button type="button" className="btn btn-quiet btn-small" onClick={() => void fillFromLast(edit, fills)}>Use last time</button>}
         {live.length > 0 ? (
           <button type="button" className="btn btn-quiet btn-small" onClick={() => setRemoving(true)}>Remove</button>
         ) : (
           <button type="button" className="btn btn-quiet btn-small" onClick={() => void entries.reduce((q, k) => q.then(() => edit((x) => restoreExercise(db, x, k))), Promise.resolve())}>Undo remove</button>
         )}
       </div>
-      {live.length > 0 && (
-        <div className="group-last">
-          {live.map((k) => <LastTime key={k} sessions={history} exercise={s.exercises[k]!.exercise} leaveOut={s.id} name={s.exercises[k]!.name} />)}
-        </div>
-      )}
       <ReasonDialog open={removing} title={`Remove this ${kind.toLowerCase()}?`} reasons={REMOVE_REASONS} confirmLabel="Remove"
         note="Every exercise in it goes. Sets already done are kept, and progression isn't affected."
         onCancel={() => setRemoving(false)}
@@ -245,7 +273,7 @@ function GroupCard({ s, p, item, entries, edit, startRest }: {
               if (!set) return null;
               const last = n === live.length - 1;
               return (
-                <SetRow key={k} label={e.name} name={e.name} set={set} field={fieldOf(p, e.exercise)} each={e.loadPer === "each"}
+                <SetRow key={k} label={e.name} name={e.name} set={set} field={fieldOf(p, e.exercise)} each={e.loadPer === "each"} last={lasts.get(k)![r]}
                   update={(v) => edit((x) => updateSet(db, x, k, r, v))}
                   onDone={() => { if (last || live.every((o) => o === k || s.exercises[o]!.sets[r]?.done)) startRest(rest); }}
                   remove={!set.done ? () => void edit((x) => removeSet(db, x, k, r)) : undefined} />
@@ -267,8 +295,10 @@ function GroupCard({ s, p, item, entries, edit, startRest }: {
   );
 }
 
-function SetRow({ label, name, set, field, each, update, onDone, remove }: {
+function SetRow({ label, name, set, field, each, last, update, onDone, remove }: {
   label: string; name: string; set: LoggedSet; field: SetField; each: boolean;
+  /** The same set last time; tapping it copies its numbers in */
+  last?: LoggedSet | undefined;
   update: (v: Partial<LoggedSet>) => Promise<void>; onDone: () => void; remove?: () => void;
 }) {
   const tick = () => {
@@ -286,6 +316,12 @@ function SetRow({ label, name, set, field, each, update, onDone, remove }: {
         <option value="">RPE</option>
         {RPE.map((r) => <option key={r} value={r}>{r}</option>)}
       </select>
+      {last && !set.done && (
+        <button type="button" className="last-chip" aria-label={`${label}: use last time, ${setsText([last])}`}
+          disabled={!differs(set, last, field)} onClick={() => void update(copyOf(last, field))}>
+          last {setsText([last])}
+        </button>
+      )}
       <button type="button" className="tick" aria-pressed={set.done} aria-label={`${label} done`} onClick={tick}>✓</button>
       {remove && <button type="button" className="icon-btn set-remove" aria-label={`Remove ${label}`} onClick={remove}>×</button>}
     </div>

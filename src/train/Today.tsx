@@ -9,7 +9,6 @@ import { go, href } from "../shared/route.ts";
 import { Check48h } from "./Check48h.tsx";
 import { setDayReadiness } from "../store/progress.ts";
 import { Walks } from "./Walks.tsx";
-import { LastTime } from "./LastTime.tsx";
 import { setDaysOn } from "../engine/schedule.ts";
 import { Screen } from "../shared/Screen.tsx";
 import { db, type DayRecord, type SessionRecord } from "../store/db.ts";
@@ -214,7 +213,7 @@ function Plan({ profile, p, sessions, skipped, now, checkedIn, deloadWeek }: {
           <p className="hint">The planned workout moves to next time.</p>
         </>
       ) : (
-        <Preview p={p} t={t} sessions={sessions} />
+        <Preview p={p} t={t} />
       )}
       {t.kind === "workout" && (
         <div className="actions actions-start">
@@ -261,7 +260,7 @@ function targetText(p: Programme, item: Item, j: number, next: Next | undefined)
   return item.type === "single" ? `${kg}${slot.sets} × ${reps}` : `${kg}${reps}`;
 }
 
-function Preview({ p, t, sessions }: { p: Programme; t: Extract<TodayPlan, { kind: "workout" }>; sessions: SessionRecord[] }) {
+function Preview({ p, t }: { p: Programme; t: Extract<TodayPlan, { kind: "workout" }> }) {
   const where = p.plan.mode === "adhoc"
     ? `${p.plan.weeks.length > 1 ? `Week ${t.position.week + 1}, ` : ""}Day ${t.position.day + 1}`
     : p.plan.weeks.length > 1 ? `Week ${t.position.week + 1}` : "";
@@ -285,7 +284,6 @@ function Preview({ p, t, sessions }: { p: Programme; t: Extract<TodayPlan, { kin
                   <span className="preview-name">{ex?.name ?? slot.exercise}</span>
                   <span className="preview-target">{targetText(p, item, j, next)}</span>
                   {next && WHY[next.why] && <span className={`tag why-${next.why.split(":")[0]}`}>{WHY[next.why]}</span>}
-                  <LastTime sessions={sessions} exercise={slot.exercise} />
                 </span>
               );
             })}
