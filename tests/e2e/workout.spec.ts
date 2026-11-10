@@ -220,6 +220,10 @@ test("the check-in is kept for the day, Red included, and shows on the calendar"
   await dianeOnBlock1(page);
   await page.getByRole("radio", { name: /Red/ }).check();
   await expect(page.getByRole("heading", { name: "No lifting today" })).toBeVisible();
+  // Saved: the calendar shows it, so it's safe to close and reopen
+  await page.getByRole("link", { name: "Progress" }).click();
+  await expect(page.getByRole("gridcell", { name: /Friday, 1 January 2027/ })).toHaveAccessibleName(/Red day/);
+  await page.getByRole("link", { name: "Today" }).click();
   await page.reload();
   await expect(page.getByRole("radio", { name: /Red/ })).toBeChecked();
   await page.getByRole("link", { name: "Progress" }).click();
@@ -240,6 +244,8 @@ test("last time: each set can copy its numbers from last time, or all of them at
   await squat.getByRole("button", { name: "Set 2 done" }).click();
   await page.getByRole("button", { name: "Finish workout" }).click();
   await page.getByRole("dialog").getByRole("button", { name: /Finish/ }).click();
+  // Saved: Today has moved on to the rest day
+  await expect(page.getByRole("heading", { name: "Rest day" })).toBeVisible();
 
   await page.clock.setSystemTime(new Date("2027-01-04T10:00:00"));
   await page.reload();
