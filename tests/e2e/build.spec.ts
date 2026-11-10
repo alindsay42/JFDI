@@ -210,3 +210,31 @@ test("daily check: pick a starting point, choose what Amber does, mark exercises
   await expect(check.getByLabel("What Amber means")).toHaveValue("A bit flat");
   await expect(check.getByRole("checkbox", { name: /48-hour check/ })).not.toBeChecked();
 });
+
+test("each exercise's progression: how it goes up, by how much, and what a stall does", async ({ page }) => {
+  await start(page, { withBlock1: true });
+  await page.getByRole("link", { name: /Strength Programme, Block 1/ }).click();
+  await page.getByRole("link", { name: /Day 1/ }).click();
+  const squat = page.getByRole("button", { name: "Back squat progression: +2.5kg when you hit your reps. After 2 misses, drop 10%" });
+  await squat.click();
+  await page.getByLabel("Back squat: jump").selectOption("5");
+  await page.getByLabel("Back squat: drop the weight after a stall").uncheck();
+  await expect(page.getByRole("button", { name: "Back squat progression: +5kg when you hit your reps" })).toBeVisible();
+  await page.getByRole("button", { name: /^Barbell row progression/ }).click();
+  await page.getByLabel("Barbell row: how it goes up").selectOption({ label: "Keep it the same" });
+  await expect(page.getByRole("button", { name: "Barbell row progression: Stays the same" })).toBeVisible();
+  await page.getByRole("link", { name: "Done" }).first().click();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(page.getByRole("status")).toHaveText("Saved.");
+  await page.reload();
+  await page.getByRole("link", { name: /Day 1/ }).click();
+  await expect(page.getByRole("button", { name: "Back squat progression: +5kg when you hit your reps" })).toBeVisible();
+  // Bench press shared the squat's old rule and keeps it
+  await expect(page.getByRole("button", { name: "Bench press progression: +2.5kg when you hit your reps. After 2 misses, drop 10%" })).toBeVisible();
+
+  // With "show what I did last time", there's nothing to set
+  await page.getByRole("link", { name: "Done" }).first().click();
+  await page.getByRole("radio", { name: /Show what I did last time/ }).check();
+  await page.getByRole("link", { name: /Day 1/ }).click();
+  await expect(page.getByRole("button", { name: /progression:/ })).toHaveCount(0);
+});

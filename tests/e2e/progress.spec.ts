@@ -17,7 +17,7 @@ async function withHistory(page: Page) {
 test("the calendar shows workouts and walks, and a day's log opens", async ({ page }) => {
   await withHistory(page);
   await expect(page.getByText("12 Oct to 8 Nov")).toBeVisible();
-  const wed = page.getByRole("gridcell", { name: /Wednesday, 4 November 2026, 1 workout, walk/ });
+  const wed = page.getByRole("gridcell", { name: /Wednesday, 4 November 2026, 1 workout, .*walk/ });
   await wed.click();
   await expect(page.getByRole("heading", { name: "Wednesday, 4 November 2026" })).toBeVisible();
   await expect(page.locator(".day-log")).toContainText("Session B");

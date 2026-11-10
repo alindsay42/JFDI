@@ -76,6 +76,7 @@ export function Calendar({ profile, data, selected, choose }: {
               const label = [
                 formatLongDate(date),
                 sessions.length ? plural(sessions.length, "workout") : "",
+                day?.readiness ? `${READINESS[day.readiness]} day` : "",
                 walk ? "walk" : "",
                 plan ? `planned: ${plan}` : "",
               ].filter(Boolean).join(", ");

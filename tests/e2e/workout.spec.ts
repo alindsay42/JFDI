@@ -220,6 +220,10 @@ test("the check-in is kept for the day, Red included, and shows on the calendar"
   await dianeOnBlock1(page);
   await page.getByRole("radio", { name: /Red/ }).check();
   await expect(page.getByRole("heading", { name: "No lifting today" })).toBeVisible();
+  // Saved: the calendar shows it, so it's safe to close and reopen
+  await page.getByRole("link", { name: "Progress" }).click();
+  await expect(page.getByRole("gridcell", { name: /Friday, 1 January 2027/ })).toHaveAccessibleName(/Red day/);
+  await page.getByRole("link", { name: "Today" }).click();
   await page.reload();
   await expect(page.getByRole("radio", { name: /Red/ })).toBeChecked();
   await page.getByRole("link", { name: "Progress" }).click();
@@ -240,6 +244,8 @@ test("last time: each set can copy its numbers from last time, or all of them at
   await squat.getByRole("button", { name: "Set 2 done" }).click();
   await page.getByRole("button", { name: "Finish workout" }).click();
   await page.getByRole("dialog").getByRole("button", { name: /Finish/ }).click();
+  // Saved: Today has moved on to the rest day
+  await expect(page.getByRole("heading", { name: "Rest day" })).toBeVisible();
 
   await page.clock.setSystemTime(new Date("2027-01-04T10:00:00"));
   await page.reload();
@@ -285,4 +291,38 @@ test("deload when you choose: started from Today, lighter for 7 days, and can be
   await page.getByRole("button", { name: "End deload" }).click();
   await expect(squat.locator(".preview-target")).toContainText("30kg");
   await expect(page.getByRole("button", { name: "Make this a deload week" })).toBeVisible();
+});
+
+test("after a deload week, last time skips it and says so", async ({ page }) => {
+  await page.clock.install({ time: new Date("2027-01-01T10:00:00") });
+  await dianeOnBlock1(page);
+  await page.goto("./#/programme/strength-block-1");
+  await page.getByRole("checkbox", { name: "Let me start a deload week from Today" }).check();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(page.getByRole("status")).toHaveText("Saved.");
+  await page.getByRole("link", { name: "Today" }).click();
+
+  const squatSet1 = async () => {
+    await page.getByRole("radio", { name: /Green/ }).check();
+    await page.getByRole("button", { name: "Start workout" }).click();
+    await page.getByRole("region", { name: "Back squat" }).getByRole("button", { name: "Set 1 done" }).click();
+    await page.getByRole("button", { name: "Finish workout" }).click();
+    await page.getByRole("dialog").getByRole("button", { name: /Finish/ }).click();
+    await expect(page.getByRole("heading", { name: "Rest day" })).toBeVisible();
+  };
+  await squatSet1();
+  await page.clock.setSystemTime(new Date("2027-01-04T10:00:00"));
+  await page.reload();
+  await page.getByRole("button", { name: "Skip to next workout" }).click();
+  await page.getByRole("button", { name: "Make this a deload week" }).click();
+  await squatSet1();
+
+  await page.clock.setSystemTime(new Date("2027-01-11T10:00:00"));
+  await page.reload();
+  await page.getByRole("button", { name: "Skip to next workout" }).click();
+  await page.getByRole("radio", { name: /Green/ }).check();
+  await page.getByRole("button", { name: "Start workout" }).click();
+  const squat = page.getByRole("region", { name: "Back squat" });
+  await expect(squat.getByText("Last numbers are from before your deload week (Mon 4 Jan).")).toBeVisible();
+  await expect(squat.getByRole("button", { name: "Set 1: use last time, 30kg × 5" })).toBeVisible();
 });

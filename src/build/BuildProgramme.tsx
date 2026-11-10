@@ -446,7 +446,7 @@ function Weights({ draft }: { draft: DraftState }) {
           <span><strong>Show what I did last time.</strong> The target is last time's weight, and you decide when to go up.</span>
         </label>
       </div>
-      <p className="hint">Either way, you can change the weight on the day, and last time is shown under each exercise.</p>
+      <p className="hint">Either way, you can change the weight on the day, and each set shows what you did last time.</p>
     </section>
   );
 }

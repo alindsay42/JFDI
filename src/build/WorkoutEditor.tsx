@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import type { Exercise, Item, Programme, Slot } from "../formats/programme.ts";
 import {
   addExercises, formatRange, group, groupOf, moveItem, moveSlot, parseRange, removeExercises, renameWorkout, startKg, targetField,
-  TIER_NAMES, updateItem, updateSlot, workoutSlots, type SlotRef,
+  JUMPS, progressionSummary, setSlotProgression, slotProgression, STYLE_NAMES, TIER_NAMES, updateItem, updateSlot, workoutSlots,
+  type ProgressionChoice, type ProgressionStyle, type SlotRef,
 } from "./model.ts";
 import { PickLists } from "./PickLists.tsx";
 import { href } from "../shared/route.ts";
@@ -181,6 +182,60 @@ function ExerciseRow({ p, workoutId, item, at, ex, handle, pairing, setPairing, 
         <RangeField label={`${name} ${UNITS[field]}`} value={slot[field]} suffix={UNITS[field]!}
           onCommit={(r) => set({ [field]: r } as Partial<Slot>)} />
       </span>
+      {ex && !NO_KG.has(ex.implement) && p.weights !== "repeat" && (
+        <Progression name={name} field={field} choice={slotProgression(p, workoutId, at)}
+          onChange={(c) => update((q) => setSlotProgression(q, workoutId, at, c))} />
+      )}
+    </div>
+  );
+}
+
+/** How an exercise goes up: a one-line summary that opens to the choices. */
+function Progression({ name, field, choice, onChange }: { name: string; field: string; choice: ProgressionChoice; onChange: (c: ProgressionChoice) => void }) {
+  const [open, setOpen] = useState(false);
+  const set = (c: Partial<ProgressionChoice>) => onChange({ ...choice, ...c });
+  return (
+    <div className="prog">
+      <button type="button" className="prog-toggle" aria-expanded={open} aria-label={`${name} progression: ${progressionSummary(choice, field)}`} onClick={() => setOpen(!open)}>
+        <span aria-hidden="true">{open ? "▾" : "▸"}</span> {progressionSummary(choice, field)}
+      </button>
+      {open && (
+        <div className="prog-panel">
+          <label className="field field-inline"><span>Goes up by</span>
+            <select aria-label={`${name}: how it goes up`} value={choice.style} onChange={(e) => set({ style: e.target.value as ProgressionStyle })}>
+              {(Object.keys(STYLE_NAMES) as ProgressionStyle[]).map((k) => <option key={k} value={k}>{STYLE_NAMES[k]}</option>)}
+            </select>
+          </label>
+          {choice.style !== "none" && (
+            <>
+              <label className="field field-inline"><span>Jump</span>
+                <select aria-label={`${name}: jump`} value={choice.jumpKg} onChange={(e) => set({ jumpKg: Number(e.target.value) })}>
+                  {[...new Set([...JUMPS, choice.jumpKg])].sort((a, b) => a - b).map((n) => <option key={n} value={n}>{n}kg</option>)}
+                </select>
+              </label>
+              <span className="check">
+                <input type="checkbox" aria-label={`${name}: drop the weight after a stall`} checked={!!choice.stall}
+                  onChange={(e) => set({ stall: e.target.checked ? { misses: 2, reducePercent: 10 } : null })} />
+                <span>After</span>
+                <select aria-label={`${name}: misses before dropping`} value={choice.stall?.misses ?? 2} disabled={!choice.stall}
+                  onChange={(e) => set({ stall: { reducePercent: choice.stall?.reducePercent ?? 10, misses: Number(e.target.value) } })}>
+                  {[1, 2, 3, 4, 5].map((n) => <option key={n} value={n}>{n}</option>)}
+                </select>
+                <span>misses, drop</span>
+                <select aria-label={`${name}: drop by`} value={choice.stall?.reducePercent ?? 10} disabled={!choice.stall}
+                  onChange={(e) => set({ stall: { misses: choice.stall?.misses ?? 2, reducePercent: Number(e.target.value) } })}>
+                  {[5, 10, 15, 20].map((n) => <option key={n} value={n}>{n}%</option>)}
+                </select>
+              </span>
+              <p className="hint">
+                {choice.style === "linear" && "Hit the target on every set and the next workout adds the jump. Miss and it stays the same."}
+                {choice.style === "double" && "Build up to the top of the range on every set, then add the jump and start again at the bottom."}
+                {choice.style === "topSetBackoff" && "One heavy set at about RPE 8, then the other sets at 85% of it. The top set goes up when it feels easier."}
+              </p>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }

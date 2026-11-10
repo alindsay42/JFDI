@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   addDay, addExercises, copyWeek, group, groupOf, moveDay, moveItem, moveSlot, newProgramme, parseRange, formatRange, pruneWorkouts,
   removeDay, removeExercises, renameWorkout, setDay, setMinRestDays, setMode, setWeekCount, spreadDays, startKg, updateItem, updateSlot,
-  weekWorkouts, duplicateWorkout, slug, placesOf, setCheckStyle, amberChoices, setAmber, setLevelDescription, setCheck48h, CHECK_TEMPLATE, setWeightsMode, deloadOf, setDeload, DEFAULT_DELOAD,
+  weekWorkouts, duplicateWorkout, slug, placesOf, setCheckStyle, amberChoices, setAmber, setLevelDescription, setCheck48h, CHECK_TEMPLATE, setWeightsMode, deloadOf, setDeload, DEFAULT_DELOAD, slotProgression, setSlotProgression, progressionSummary,
 } from "../../src/build/model.ts";
 import { asFile, asProgramme, type Programme } from "../../src/formats/programme.ts";
 import { checkAgainstLibrary, validateProgramme } from "../../src/formats/validate.js";
@@ -316,5 +316,59 @@ describe("weights and deloads", () => {
     expect(deloadOf(setDeload(p, { onDemand: false, everyWeeks: null, ...DEFAULT_DELOAD }))).toBeNull();
     const none = { ...block1(), phases: [] } as unknown as Programme;
     expect(setDeload(none, null)).toBe(none);
+  });
+});
+
+describe("how each exercise progresses", () => {
+  const squat = { item: 0, slot: 0 };
+  const row = { item: 1, slot: 1 };
+
+  it("reads each exercise's progression", () => {
+    expect(slotProgression(block1(), "session-a", squat)).toEqual({ style: "linear", jumpKg: 2.5, stall: { misses: 2, reducePercent: 10 } });
+    expect(slotProgression(block1(), "session-a", row)).toMatchObject({ style: "double", jumpKg: 2.5 });
+    expect(slotProgression(block1(), "session-a", { item: 9, slot: 0 })).toEqual({ style: "none", jumpKg: 2.5, stall: null });
+  });
+
+  it("changes one exercise, reusing a matching rule or adding one, and tidies unused rules away", () => {
+    let p = setSlotProgression(block1(), "session-a", squat, { style: "linear", jumpKg: 5, stall: null });
+    const id = p.workouts[0]!.items[0]!.slots[0]!.progression;
+    expect(p.progressions.find((r) => r.id === id)).toEqual({ id, type: "linear", incrementKg: 5, holdIfRpeAtLeast: 9 });
+    expect(slotProgression(p, "session-a", squat)).toEqual({ style: "linear", jumpKg: 5, stall: null });
+    // The bench, still on the original rule, is untouched
+    expect(slotProgression(p, "session-a", { item: 1, slot: 0 })).toMatchObject({ jumpKg: 2.5 });
+    expect(problems(p)).toEqual([]);
+
+    // Back to the original: the shared rule is reused and the one-off goes
+    p = setSlotProgression(p, "session-a", squat, { style: "linear", jumpKg: 2.5, stall: { misses: 2, reducePercent: 10 } });
+    expect(p.workouts[0]!.items[0]!.slots[0]!.progression).toBe("linear-2-5");
+    expect(p.progressions.map((r) => r.id)).toEqual(block1().progressions.map((r) => r.id));
+
+    p = setSlotProgression(p, "session-a", row, { style: "topSetBackoff", jumpKg: 2.5, stall: null });
+    expect(p.progressions.at(-1)).toMatchObject({ type: "topSetBackoff", incrementKg: 2.5, topRpe: 8, backoffPercent: 85 });
+    p = setSlotProgression(p, "session-a", row, { style: "topSetBackoff", jumpKg: 5, stall: { misses: 3, reducePercent: 5 } });
+    expect(p.progressions.at(-1)).toMatchObject({ type: "topSetBackoff", incrementKg: 5, topRpe: 8, backoffPercent: 85, stall: { misses: 3, reducePercent: 5 } });
+    p = setSlotProgression(p, "session-a", row, { style: "none", jumpKg: 5, stall: null });
+    expect(p.workouts[0]!.items[1]!.slots[1]!.progression).toBe("none");
+    expect(problems(p)).toEqual([]);
+    expect(setSlotProgression(p, "nope", row, { style: "none", jumpKg: 1, stall: null })).toBe(p);
+  });
+
+  it("a per-exercise jump in the file is folded into the rule", () => {
+    const p = block1();
+    p.workouts[0]!.items[0]!.slots[0]!.incrementKg = 5;
+    expect(slotProgression(p, "session-a", squat).jumpKg).toBe(5);
+    const q = setSlotProgression(p, "session-a", squat, slotProgression(p, "session-a", squat));
+    expect(q.workouts[0]!.items[0]!.slots[0]).not.toHaveProperty("incrementKg");
+    expect(slotProgression(q, "session-a", squat).jumpKg).toBe(5);
+  });
+
+  it("says what happens next time", () => {
+    expect(progressionSummary({ style: "linear", jumpKg: 2.5, stall: { misses: 2, reducePercent: 10 } })).toBe("+2.5kg when you hit your reps. After 2 misses, drop 10%");
+    expect(progressionSummary({ style: "double", jumpKg: 1, stall: { misses: 1, reducePercent: 5 } })).toBe("Reps to the top of the range, then +1kg. After 1 miss, drop 5%");
+    expect(progressionSummary({ style: "topSetBackoff", jumpKg: 2.5, stall: null })).toBe("Top set +2.5kg, then lighter sets");
+    expect(progressionSummary({ style: "none", jumpKg: 2.5, stall: null })).toBe("Stays the same");
+    expect(progressionSummary({ style: "double", jumpKg: 1, stall: null }, "seconds")).toBe("Time to the top of the range, then +1kg");
+    expect(progressionSummary({ style: "linear", jumpKg: 5, stall: null }, "metres")).toBe("+5kg when you hit your distance");
+    expect(progressionSummary({ style: "linear", jumpKg: 5, stall: null }, "other")).toBe("+5kg when you hit your reps");
   });
 });

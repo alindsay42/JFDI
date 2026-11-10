@@ -7,6 +7,7 @@ import { plural } from "../shared/format.ts";
 import { go } from "../shared/route.ts";
 import { Screen } from "../shared/Screen.tsx";
 import { lastTime, setsText } from "../engine/progress.ts";
+import { formatDayMonth } from "../shared/format.ts";
 import { db, type SessionRecord } from "../store/db.ts";
 import { library } from "../store/household.ts";
 import {
@@ -165,11 +166,15 @@ function copyOf(last: LoggedSet, field: SetField): Partial<LoggedSet> {
 }
 const differs = (set: LoggedSet, last: LoggedSet, field: SetField) => set.kg !== last.kg || set[field] !== last[field];
 
-/** Last time's sets for an exercise, matched to this workout's sets by number. */
-function useLast(s: SessionRecord, exercise: string): LoggedSet[] {
+/** Last time for an exercise; its sets match this workout's sets by number. */
+function useLast(s: SessionRecord, exercise: string) {
   const history = useContext(History);
-  return lastTime(history, exercise, s.id)?.sets ?? [];
+  return lastTime(history, exercise, s.id);
 }
+
+/** Said once when "last" passed over a deload week, so it doesn't look like the wrong workout. */
+const BeforeDeload = ({ date }: { date: string | undefined }) =>
+  date ? <p className="hint before-deload">Last numbers are from before your deload week ({formatDayMonth(date)}).</p> : null;
 
 /** Fills every set not yet ticked with last time's numbers, for the given exercises. */
 function fillFromLast(edit: (fn: Edit) => Promise<void>, fills: Array<{ k: number; last: LoggedSet[]; field: SetField }>) {
@@ -210,7 +215,8 @@ function ExerciseCard({ s, p, k, edit, startRest }: { s: SessionRecord; p: Progr
   const e = s.exercises[k]!;
   const field = fieldOf(p, e.exercise);
   const rest = restAfter(p, s.prescribed, e.slot, e.exercise);
-  const last = useLast(s, e.exercise);
+  const lastInfo = useLast(s, e.exercise);
+  const last = lastInfo?.sets ?? [];
   const canFill = !e.removed && e.sets.some((set, j) => !set.done && last[j] && differs(set, last[j], field));
   return (
     <section className={`card ex-card${e.removed ? " is-removed" : ""}`} aria-label={e.name}>
@@ -218,6 +224,7 @@ function ExerciseCard({ s, p, k, edit, startRest }: { s: SessionRecord; p: Progr
         extra={canFill && <button type="button" className="btn btn-quiet btn-small" onClick={() => void fillFromLast(edit, [{ k, last, field }])}>Use last time</button>} />
       {!e.removed && (
         <>
+          <BeforeDeload date={lastInfo?.deloadSince} />
           <ol className="sets">
             {e.sets.map((set, j) => (
               <li key={j}>
@@ -244,7 +251,9 @@ function GroupCard({ s, p, item, entries, edit, startRest }: {
   const rest = item.restSec ?? 90;
   const [removing, setRemoving] = useState(false);
   const history = useContext(History);
-  const lasts = new Map(entries.map((k) => [k, lastTime(history, s.exercises[k]!.exercise, s.id)?.sets ?? []]));
+  const infos = new Map(entries.map((k) => [k, lastTime(history, s.exercises[k]!.exercise, s.id)]));
+  const lasts = new Map(entries.map((k) => [k, infos.get(k)?.sets ?? []]));
+  const deloadSince = live.map((k) => infos.get(k)?.deloadSince).filter(Boolean).sort().at(-1);
   const fills = live.map((k) => ({ k, last: lasts.get(k)!, field: fieldOf(p, s.exercises[k]!.exercise) }));
   const canFill = fills.some(({ k, last, field }) => s.exercises[k]!.sets.some((set, j) => !set.done && last[j] && differs(set, last[j], field)));
   return (
@@ -259,6 +268,7 @@ function GroupCard({ s, p, item, entries, edit, startRest }: {
           <button type="button" className="btn btn-quiet btn-small" onClick={() => void entries.reduce((q, k) => q.then(() => edit((x) => restoreExercise(db, x, k))), Promise.resolve())}>Undo remove</button>
         )}
       </div>
+      {live.length > 0 && <BeforeDeload date={deloadSince} />}
       <ReasonDialog open={removing} title={`Remove this ${kind.toLowerCase()}?`} reasons={REMOVE_REASONS} confirmLabel="Remove"
         note="Every exercise in it goes. Sets already done are kept, and progression isn't affected."
         onCancel={() => setRemoving(false)}

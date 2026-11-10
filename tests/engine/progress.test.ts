@@ -138,7 +138,10 @@ describe("last time", () => {
       sess("f", "2026-11-03", "done", [{ seconds: 30 }], "plank"),
       { ...sess("h", "2026-11-06", "done", [{ kg: 30, reps: 5 }]), deload: true },
     ];
-    expect(lastTime(list, "back-squat")).toEqual({ date: "2026-11-05", session: "e", sets: [{ kg: 55, reps: 5, done: true }] });
+    expect(lastTime(list, "back-squat")).toEqual({ date: "2026-11-05", session: "e", sets: [{ kg: 55, reps: 5, done: true }], deloadSince: "2026-11-06" });
+    expect(lastTime([...list, { ...sess("i", "2026-11-04", "done", [{ kg: 30, reps: 5 }]), deload: true }], "back-squat", "e")).toMatchObject({ session: "b", deloadSince: "2026-11-06" });
+    expect(lastTime([{ ...sess("j", "2026-10-01", "done", [{ kg: 30, reps: 5 }]), deload: true }, sess("k", "2026-10-08", "done", [{ kg: 50, reps: 5 }])], "back-squat"))
+      .toEqual({ date: "2026-10-08", session: "k", sets: [{ kg: 50, reps: 5, done: true }] });
     expect(lastTime(list, "back-squat", "e")).toMatchObject({ session: "b" });
     expect(lastTime([...list, sess("g", "2026-11-04", "done", [{ kg: 40, reps: 5 }]), sess("a0", "2026-11-04", "done", [{ kg: 40, reps: 5 }])], "back-squat", "e")).toMatchObject({ session: "g" });
     expect(lastTime(list.slice(0, 1), "back-squat")!.sets).toHaveLength(2);

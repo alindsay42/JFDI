@@ -185,7 +185,11 @@ export function bodyweightView(weighIns: WeighInPoint[], plan: BodyweightPlan | 
 
 // ----- Last time -----
 
-export interface LastTime { date: string; session: string; sets: LoggedSet[] }
+export interface LastTime {
+  date: string; session: string; sets: LoggedSet[];
+  /** A deload week done since, which was passed over: its date */
+  deloadSince?: string;
+}
 
 /**
  * The ticked sets from the most recent finished workout with this exercise, leaving out one workout
@@ -194,12 +198,15 @@ export interface LastTime { date: string; session: string; sets: LoggedSet[] }
  */
 export function lastTime(sessions: SessionForProgress[], exercise: string, leaveOut?: string): LastTime | null {
   let found: LastTime | null = null;
+  let deload: string | undefined;
   for (const s of sessions) {
-    if (s.status !== "done" || s.id === leaveOut || s.deload) continue;
+    if (s.status !== "done" || s.id === leaveOut) continue;
     const sets = s.exercises.filter((e) => e.exercise === exercise).flatMap((e) => e.sets).filter((x) => x.done);
     if (!sets.length) continue;
+    if (s.deload) { if (!deload || s.date > deload) deload = s.date; continue; }
     if (!found || s.date > found.date || (s.date === found.date && s.id > found.session)) found = { date: s.date, session: s.id, sets };
   }
+  if (found && deload && deload > found.date) found.deloadSince = deload;
   return found;
 }
 
