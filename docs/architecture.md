@@ -65,7 +65,8 @@ A pull request can't be merged unless every check passes. That means turning on 
 
 - `main` is what's live. Merging a pull request publishes it to GitHub Pages within a couple of minutes.
 - A test version of each pull request is published at its own address, so changes can be tried on the tablet before they go live.
-- The app shows its version number in Settings. Every release has a short note of what changed.
+- The app shows its version number at the bottom of every screen, next to Help. Every release has a short note of what changed.
+- **The Help page is kept current.** It's written in `src/help/manual.md`. Any pull request that changes what people see or do updates the manual in the same pull request, so Help never describes an older version of the app.
 - Data is never at risk from an update. New versions upgrade old data on first open, and that upgrade is tested.
 
 ## Build order for Train mode

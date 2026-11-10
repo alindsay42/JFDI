@@ -17,7 +17,7 @@ test("first run: add a person and land on their Today screen", async ({ page }) 
   await expect(bar).toContainText("Diane");
   await expect(bar).toHaveCSS("background-color", "rgb(124, 58, 237)");
   await expect(page.getByRole("heading", { name: "No programme yet" })).toBeVisible();
-  await expect(page.getByText(/^Version \d+\.\d+\.\d+/)).toBeVisible();
+  await expect(page.getByText(/Version \d+\.\d+\.\d+/)).toBeVisible();
 });
 
 test("switching between people, and it's remembered after closing", async ({ page }) => {
@@ -41,7 +41,7 @@ test("switching between people, and it's remembered after closing", async ({ pag
 test("nothing scrolls sideways", async ({ page }) => {
   await page.goto("./");
   await addPerson(page, "A name long enough to test wrapping", "Teal");
-  for (const route of ["#/today", "#/who", "#/progress", "#/programme", "#/data"]) {
+  for (const route of ["#/today", "#/who", "#/progress", "#/programme", "#/data", "#/help"]) {
     await page.goto(`./${route}`);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     expect(overflow, route).toBeLessThanOrEqual(0);
@@ -61,4 +61,20 @@ test("opens and keeps working with no network", async ({ page, context }) => {
   await expect(page.locator(".you-bar")).toContainText("Diane");
   await page.reload();
   await expect(page.locator(".you-bar")).toContainText("Diane");
+});
+
+test("help: from the bottom of any screen, with contents that jump to each section", async ({ page }) => {
+  await page.goto("./");
+  // Before anyone is added
+  await page.getByRole("link", { name: "Help" }).click();
+  await expect(page.getByRole("heading", { name: "Help", level: 1 })).toBeVisible();
+  await page.goto("./");
+  await addPerson(page, "Diane", "Purple");
+  await page.getByRole("link", { name: "Help" }).click();
+  await expect(page.locator(".you-bar")).toContainText("Diane");
+  const contents = page.getByRole("navigation", { name: "Contents" });
+  await contents.getByRole("link", { name: "Backup" }).click();
+  await expect(page).toHaveURL(/#\/help\/backup$/);
+  await expect(page.getByRole("heading", { name: "Backup", level: 2 })).toBeInViewport();
+  await expect(page.getByText("Importing the same file again doesn't double anything up.")).toBeVisible();
 });

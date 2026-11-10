@@ -647,3 +647,11 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 .field-legend { font-weight: 700; margin-bottom: 4px; } .check-list input.small { width: 4em; min-height: 40px; text-align: right; padding: 0 8px; border: 2px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--text); }
 .block-place { color: var(--muted); }
 .choice-list span.check { flex-wrap: wrap; align-items: center; }
+.help { max-width: 46rem; line-height: 1.6; }
+.help h2.help-section { margin-top: 2rem; padding-top: 0.5rem; border-top: 1px solid var(--line); scroll-margin-top: 12px; }
+.help h3 { margin-top: 1.25rem; scroll-margin-top: 12px; }
+.help ul { padding-left: 1.25rem; }
+.help li { margin: 0.35rem 0; }
+.help-contents ul { columns: 2 14rem; padding-left: 1.25rem; margin: 0; }
+.help-contents a { display: inline-block; min-height: 32px; padding: 4px 0; color: var(--text); }
+.version a { color: inherit; }

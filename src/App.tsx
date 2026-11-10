@@ -2,6 +2,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { BuildHome } from "./build/BuildHome.tsx";
 import { BuildProgramme } from "./build/BuildProgramme.tsx";
 import { Data } from "./shared/Data.tsx";
+import { Help } from "./help/Help.tsx";
 import { useRoute, useRouteParams } from "./shared/route.ts";
 import { UpdateBanner } from "./shared/UpdateBanner.tsx";
 import { WhoIsTraining } from "./shared/WhoIsTraining.tsx";
@@ -24,6 +25,7 @@ export function App() {
 
   let screen;
   if (route === "data") screen = <Data profile={current} profiles={profiles} />;
+  else if (route === "help") screen = <Help profile={current} section={params[0]} />;
   else if (route === "programme") {
     screen = params[0]
       ? <BuildProgramme key={params[0]} profile={current} profiles={profiles} id={params[0]} workout={params[1]} />
