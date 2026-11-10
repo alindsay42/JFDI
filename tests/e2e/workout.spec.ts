@@ -226,3 +226,63 @@ test("the check-in is kept for the day, Red included, and shows on the calendar"
   await page.getByRole("gridcell", { name: /Friday, 1 January 2027/ }).click();
   await expect(page.locator(".day-log")).toContainText("Red day");
 });
+
+test("last time: each set can copy its numbers from last time, or all of them at once", async ({ page }) => {
+  await page.clock.install({ time: new Date("2027-01-01T10:00:00") });
+  await dianeOnBlock1(page);
+  await page.getByRole("radio", { name: /Green/ }).check();
+  await page.getByRole("button", { name: "Start workout" }).click();
+  const squat = page.getByRole("region", { name: "Back squat" });
+  await expect(squat.locator(".last-chip")).toHaveCount(0);
+  await squat.getByLabel("Set 1 weight").fill("32.5");
+  await squat.getByLabel("Set 1 reps").fill("6");
+  await squat.getByRole("button", { name: "Set 1 done" }).click();
+  await squat.getByRole("button", { name: "Set 2 done" }).click();
+  await page.getByRole("button", { name: "Finish workout" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: /Finish/ }).click();
+
+  await page.clock.setSystemTime(new Date("2027-01-04T10:00:00"));
+  await page.reload();
+  await page.getByRole("button", { name: "Skip to next workout" }).click();
+  await page.getByRole("radio", { name: /Green/ }).check();
+  await page.getByRole("button", { name: "Start workout" }).click();
+  const again = page.getByRole("region", { name: "Back squat" });
+  // Set 3 wasn't done last time, so it has nothing to show
+  await expect(again.getByRole("button", { name: /Set 3: use last time/ })).toHaveCount(0);
+  const chip1 = again.getByRole("button", { name: "Set 1: use last time, 32.5kg × 6" });
+  await chip1.click();
+  await expect(again.getByLabel("Set 1 reps")).toHaveValue("6");
+  // Once a set matches last time, its note stays as a reminder but there's nothing to copy
+  await expect(chip1).toBeDisabled();
+  // Set 2 is untouched; Use last time fills it (and any others) in one go
+  await again.getByRole("button", { name: "Use last time", exact: true }).click();
+  await expect(again.getByLabel("Set 2 weight")).toHaveValue("30");
+  await expect(again.getByLabel("Set 2 reps")).toHaveValue("5");
+  await expect(again.getByRole("button", { name: "Use last time", exact: true })).toHaveCount(0);
+});
+
+test("deload when you choose: started from Today, lighter for 7 days, and can be ended", async ({ page }) => {
+  await page.clock.install({ time: new Date("2027-01-01T10:00:00") });
+  await dianeOnBlock1(page);
+  await page.goto("./#/programme/strength-block-1");
+  await page.getByRole("checkbox", { name: "Let me start a deload week from Today" }).check();
+  await expect(page.getByLabel("Deload weight, percent of normal")).toHaveValue("60");
+  await page.getByRole("radio", { name: /Show what I did last time/ }).check();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(page.getByRole("status")).toHaveText("Saved.");
+  await page.reload();
+  await expect(page.getByRole("radio", { name: /Show what I did last time/ })).toBeChecked();
+
+  await page.getByRole("link", { name: "Today" }).click();
+  await page.getByRole("radio", { name: /Green/ }).check();
+  const squat = page.locator(".preview-row", { hasText: "Back squat" });
+  await expect(squat.locator(".preview-target")).toContainText("30kg");
+  await page.getByRole("button", { name: "Make this a deload week" }).click();
+  await expect(page.getByText("Deload week until Thu 7 Jan.")).toBeVisible();
+  await expect(squat.locator(".preview-target")).toContainText("18kg");
+  await page.reload();
+  await expect(page.getByText("Deload week until Thu 7 Jan.")).toBeVisible();
+  await page.getByRole("button", { name: "End deload" }).click();
+  await expect(squat.locator(".preview-target")).toContainText("30kg");
+  await expect(page.getByRole("button", { name: "Make this a deload week" })).toBeVisible();
+});

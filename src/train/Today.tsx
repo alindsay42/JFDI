@@ -4,7 +4,7 @@ import { today as planToday, type LoggedSession, type Readiness, type Today as T
 import type { Next } from "../engine/progression.ts";
 import type { JFDIProfile } from "../formats/generated/profile.ts";
 import { asProgramme, type Item, type Programme } from "../formats/programme.ts";
-import { daysUntil, formatKg, formatLongDate, plural } from "../shared/format.ts";
+import { daysUntil, formatDayMonth, formatKg, formatLongDate, plural } from "../shared/format.ts";
 import { go, href } from "../shared/route.ts";
 import { Check48h } from "./Check48h.tsx";
 import { setDayReadiness } from "../store/progress.ts";
@@ -14,7 +14,9 @@ import { Screen } from "../shared/Screen.tsx";
 import { db, type DayRecord, type SessionRecord } from "../store/db.ts";
 import { localDate } from "../store/programmes.ts";
 import { placesOf } from "../build/model.ts";
-import { activeSession, fieldOf, getSkip, skipInForce, skipWorkout, startSession } from "../store/session.ts";
+import {
+  activeSession, deloadInForce, endDeloadWeek, fieldOf, getDeloadWeek, getSkip, skipInForce, skipWorkout, startDeloadWeek, startSession, type DeloadWeek,
+} from "../store/session.ts";
 
 const todayFormat = new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long" });
 const timeFormat = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit" });
@@ -38,6 +40,7 @@ export function Today({ profile, now = new Date() }: { profile: JFDIProfile; now
     inProgress: await activeSession(db, profile.id),
     skip: await getSkip(db, profile.id),
     day: await db.days.get([profile.id, localDate(now)]),
+    deloadWeek: await getDeloadWeek(db, profile.id),
   }), [profile.id, active?.programme]);
 
   return (
@@ -56,7 +59,7 @@ export function Today({ profile, now = new Date() }: { profile: JFDIProfile; now
       ) : (
         <>
           <Check48h p={asProgramme(data.programme)} sessions={data.sessions} now={now} />
-          <Plan profile={profile} p={asProgramme(data.programme)} sessions={data.sessions} skipped={data.skip} now={now} checkedIn={data.day?.readiness ?? null} />
+          <Plan profile={profile} p={asProgramme(data.programme)} sessions={data.sessions} skipped={data.skip} now={now} checkedIn={data.day?.readiness ?? null} deloadWeek={data.deloadWeek} />
         </>
       )}
       {data && !data.inProgress && <TodayWalks profile={profile} p={data.programme ? asProgramme(data.programme) : null} day={data.day} now={now} />}
@@ -91,10 +94,11 @@ function InProgress({ s }: { s: SessionRecord }) {
   );
 }
 
-function Plan({ profile, p, sessions, skipped, now, checkedIn }: {
+function Plan({ profile, p, sessions, skipped, now, checkedIn, deloadWeek }: {
   profile: JFDIProfile; p: Programme; sessions: SessionRecord[]; skipped: Awaited<ReturnType<typeof getSkip>>; now: Date;
   /** Today's check-in, if already picked */
   checkedIn: Readiness | null;
+  deloadWeek: DeloadWeek | undefined;
 }) {
   const check = p.readiness.preset !== "off" && !!p.readiness.levels;
   const [readiness, setReadinessState] = useState<Readiness | null>(checkedIn);
@@ -113,7 +117,10 @@ function Plan({ profile, p, sessions, skipped, now, checkedIn }: {
   const t = planToday({
     programme: p, assignment, sessions: logged, date, readiness: check ? readiness ?? "green" : null,
     skippedTo: skipInForce(skipped, p.id, lastDone), ignoreRest: anyway, chosen,
+    deloadWeek: deloadInForce(deloadWeek, p.id, date),
   });
+  const onDemand = !!p.phases[0]?.blocks[0]?.deload?.onDemand;
+  const inDeload = deloadInForce(deloadWeek, p.id, date);
   // Set days: any workout in the programme can be done on any day
   const other = p.plan.mode === "setDays" ? <OtherWorkout p={p} chosen={chosen} choose={setChosen} /> : null;
 
@@ -221,6 +228,17 @@ function Plan({ profile, p, sessions, skipped, now, checkedIn }: {
         </div>
       )}
       {check && !readiness && t.kind === "workout" && <p className="hint">Choose how you are today first.</p>}
+      {inDeload ? (
+        <div className="deload-note">
+          <p>Deload week until {formatDayMonth(deloadWeek!.until)}. Weights pick up from before it afterwards.</p>
+          <button type="button" className="btn btn-quiet btn-small" onClick={() => void endDeloadWeek(db, profile.id)}>End deload</button>
+        </div>
+      ) : onDemand && t.kind === "workout" && !t.deload && (
+        <div className="deload-note">
+          <p className="hint">Plateaued or worn down? A deload week makes the next 7 days lighter.</p>
+          <button type="button" className="btn btn-quiet btn-small" onClick={() => void startDeloadWeek(db, profile.id, p.id, now)}>Make this a deload week</button>
+        </div>
+      )}
       {other}
     </section>
   );

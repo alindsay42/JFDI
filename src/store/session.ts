@@ -212,3 +212,25 @@ export function skipInForce(skip: Skip | undefined, programme: string, lastDone:
 export async function getSkip(db: JfdiDatabase, profileId: string): Promise<Skip | undefined> {
   return (await db.settings.get(`skip:${profileId}`))?.value as Skip | undefined;
 }
+
+/** A deload week the person started from Today: 7 days from the day it was started. */
+export interface DeloadWeek { programme: string; from: string; until: string }
+
+export async function startDeloadWeek(db: JfdiDatabase, profileId: string, programme: string, now = new Date()): Promise<void> {
+  const from = localDate(now);
+  const end = new Date(`${from}T12:00:00`);
+  end.setDate(end.getDate() + 6);
+  await db.settings.put({ key: `deload:${profileId}`, value: { programme, from, until: localDate(end) } satisfies DeloadWeek });
+}
+
+export async function endDeloadWeek(db: JfdiDatabase, profileId: string): Promise<void> {
+  await db.settings.delete(`deload:${profileId}`);
+}
+
+export async function getDeloadWeek(db: JfdiDatabase, profileId: string): Promise<DeloadWeek | undefined> {
+  return (await db.settings.get(`deload:${profileId}`))?.value as DeloadWeek | undefined;
+}
+
+/** Whether a started deload week covers this date, for this programme. */
+export const deloadInForce = (w: DeloadWeek | undefined, programme: string, date: string): boolean =>
+  !!w && w.programme === programme && date >= w.from && date <= w.until;

@@ -334,6 +334,10 @@ export interface JFDIProgrammeFile {
    */
   phases: [Phase, ...Phase[]];
   readiness: Readiness1;
+  /**
+   * progress (the default): each exercise's progression rule suggests the next weight. repeat: the target is what was lifted last time, and the person decides when to go up
+   */
+  weights?: "progress" | "repeat";
   targets?: Target1[];
 }
 export interface Equipment {
@@ -463,7 +467,14 @@ export interface TrainingBlock {
     | {
         [k: string]: unknown;
       }
+    | {
+        [k: string]: unknown;
+      }
   ) & {
+    /**
+     * The person can start a deload week from Today
+     */
+    onDemand?: boolean;
     everyWeeks?: number;
     afterStalls?: number;
     setsPercent: number;

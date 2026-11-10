@@ -545,3 +545,33 @@ export function setLevelDescription(p: Programme, level: "green" | "amber" | "re
 }
 
 export const setCheck48h = (p: Programme, on: boolean): Programme => ({ ...p, readiness: { ...p.readiness, check48h: on } });
+
+// ----- Weights and deloads -----
+
+export type WeightsMode = "progress" | "repeat";
+export const setWeightsMode = (p: Programme, mode: WeightsMode): Programme => {
+  const { weights: _w, ...rest } = p;
+  return (mode === "repeat" ? { ...rest, weights: "repeat" } : rest) as Programme;
+};
+
+export interface DeloadChoices { onDemand: boolean; everyWeeks: number | null; loadPercent: number; setsPercent: number }
+export const DEFAULT_DELOAD = { loadPercent: 60, setsPercent: 50 };
+
+/** The deload settings, read from the programme's first block. */
+export function deloadOf(p: Programme): DeloadChoices | null {
+  const d = p.phases[0]?.blocks[0]?.deload;
+  if (!d) return null;
+  return { onDemand: !!d.onDemand, everyWeeks: d.everyWeeks ?? null, loadPercent: d.loadPercent, setsPercent: d.setsPercent };
+}
+
+/** Writes the deload settings; with neither on-demand nor a schedule, there's no deload. */
+export function setDeload(p: Programme, d: DeloadChoices | null): Programme {
+  const [first, ...phases] = p.phases;
+  if (!first) return p;
+  const [blk, ...blocks] = first.blocks;
+  const { deload: _old, ...rest } = blk!;
+  const next = d && (d.onDemand || d.everyWeeks)
+    ? { ...rest, deload: { ...(d.onDemand ? { onDemand: true } : {}), ...(d.everyWeeks ? { everyWeeks: d.everyWeeks } : {}), setsPercent: d.setsPercent, loadPercent: d.loadPercent } }
+    : rest;
+  return { ...p, phases: [{ ...first, blocks: [next, ...blocks] }, ...phases] } as Programme;
+}

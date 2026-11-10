@@ -105,6 +105,8 @@ export function today(input: {
   ignoreRest?: boolean;
   /** Set days: do this workout today instead of the day's own, or again after it's done */
   chosen?: string | null;
+  /** The person started a deload week that covers today */
+  deloadWeek?: boolean;
 }): Today {
   const { programme: p, assignment: a, sessions, date, readiness } = input;
   if (date < a.startDate) return { kind: "notStarted", startDate: a.startDate };
@@ -150,7 +152,7 @@ export function today(input: {
 
   const weekNumber = Math.floor(daysBetween(a.startDate, date) / 7) + 1;
   const deloadRule = block(p)?.deload;
-  const deload = !!deloadRule?.everyWeeks && weekNumber % deloadRule.everyWeeks === 0;
+  const deload = !!deloadRule && ((!!deloadRule.everyWeeks && weekNumber % deloadRule.everyWeeks === 0) || !!input.deloadWeek);
   let workout = unlocked(applied.workout, weekNumber);
   if (deload) workout = applyDeload(workout, deloadRule!.setsPercent);
 
@@ -159,7 +161,9 @@ export function today(input: {
   const targets: Record<string, Next> = {};
   workout.items.forEach((item, i) => item.slots.forEach((slot, j) => {
     const prog = progressions.get(slot.progression) as ProgressionRule | undefined;
-    const rule: ProgressionRule = !prog || prog.type === "none" ? { type: "none" } : { ...prog, incrementKg: slot.incrementKg ?? prog.incrementKg } as ProgressionRule;
+    // "repeat" programmes: the target is what was lifted last time
+    const rule: ProgressionRule = !prog || prog.type === "none" || p.weights === "repeat"
+      ? { type: "none" } : { ...prog, incrementKg: slot.incrementKg ?? prog.incrementKg } as ProgressionRule;
     const ex = exercises.get(slot.exercise);
     const field = ex?.measure === "time" ? "seconds" : ex?.measure === "distance" ? "metres" : ex?.measure === "calories" ? "calories" : "reps";
     const target = slot[field] ?? { min: 1, max: 1 };
