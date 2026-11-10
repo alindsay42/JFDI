@@ -24,7 +24,7 @@ export interface Next {
   /** Reps to aim for on each set */
   reps: Range;
   /** Why, in words */
-  why: "start" | "add" | "repeat" | "build reps" | "hold: hard" | "hold: readiness" | "hold: sets skipped" | "reduce: stalled" | "no change";
+  why: "start" | "add" | "repeat" | "build reps" | "hold: hard" | "hold: readiness" | "hold: sets skipped" | "reduce: stalled" | "no change" | "new block";
 }
 
 /** Rounds to the nearest 0.5kg, never below 0. */
@@ -32,7 +32,7 @@ export const roundKg = (kg: number) => Math.max(0, Math.round(kg * 2) / 2);
 /** Rounds down to a half kilo, for reductions, so a drop is never smaller than asked. */
 export const roundKgDown = (kg: number) => Math.max(0, Math.floor(kg * 2 + 1e-9) / 2);
 
-const workingKg = (p: Performance) => {
+export const workingKg = (p: Performance) => {
   const loaded = p.sets.filter((s) => s.done && s.kg !== undefined);
   return loaded.length ? Math.max(...loaded.map((s) => s.kg!)) : null;
 };

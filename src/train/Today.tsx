@@ -15,7 +15,8 @@ import { db, type DayRecord, type SessionRecord } from "../store/db.ts";
 import { localDate } from "../store/programmes.ts";
 import { placesOf } from "../build/model.ts";
 import {
-  activeSession, deloadInForce, endDeloadWeek, fieldOf, getDeloadWeek, getSkip, skipInForce, skipWorkout, startDeloadWeek, startSession, type DeloadWeek,
+  activeSession, deloadInForce, endDeloadWeek, fieldOf, getDeloadWeek, getRestartSkip, getSkip, restartSkipFor, setRestartSkip, skipInForce, skipWorkout,
+  startDeloadWeek, startSession, type DeloadWeek, type RestartSkip,
 } from "../store/session.ts";
 
 const todayFormat = new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long" });
@@ -41,6 +42,7 @@ export function Today({ profile, now = new Date() }: { profile: JFDIProfile; now
     skip: await getSkip(db, profile.id),
     day: await db.days.get([profile.id, localDate(now)]),
     deloadWeek: await getDeloadWeek(db, profile.id),
+    restartSkip: await getRestartSkip(db, profile.id),
   }), [profile.id, active?.programme]);
 
   return (
@@ -59,7 +61,7 @@ export function Today({ profile, now = new Date() }: { profile: JFDIProfile; now
       ) : (
         <>
           <Check48h p={asProgramme(data.programme)} sessions={data.sessions} now={now} />
-          <Plan profile={profile} p={asProgramme(data.programme)} sessions={data.sessions} skipped={data.skip} now={now} checkedIn={data.day?.readiness ?? null} deloadWeek={data.deloadWeek} />
+          <Plan profile={profile} p={asProgramme(data.programme)} sessions={data.sessions} skipped={data.skip} now={now} checkedIn={data.day?.readiness ?? null} deloadWeek={data.deloadWeek} restartSkip={data.restartSkip} />
         </>
       )}
       {data && !data.inProgress && <TodayWalks profile={profile} p={data.programme ? asProgramme(data.programme) : null} day={data.day} now={now} />}
@@ -94,11 +96,12 @@ function InProgress({ s }: { s: SessionRecord }) {
   );
 }
 
-function Plan({ profile, p, sessions, skipped, now, checkedIn, deloadWeek }: {
+function Plan({ profile, p, sessions, skipped, now, checkedIn, deloadWeek, restartSkip }: {
   profile: JFDIProfile; p: Programme; sessions: SessionRecord[]; skipped: Awaited<ReturnType<typeof getSkip>>; now: Date;
   /** Today's check-in, if already picked */
   checkedIn: Readiness | null;
   deloadWeek: DeloadWeek | undefined;
+  restartSkip: RestartSkip | undefined;
 }) {
   const check = p.readiness.preset !== "off" && !!p.readiness.levels;
   const [readiness, setReadinessState] = useState<Readiness | null>(checkedIn);
@@ -114,11 +117,16 @@ function Plan({ profile, p, sessions, skipped, now, checkedIn, deloadWeek }: {
   const logged = sessions.map(toLogged);
   const lastDone = sessions.filter((s) => s.status === "done" && s.programme?.id === p.id).map((s) => s.date).sort().at(-1) ?? null;
   const assignment = profile.programmes.active!;
-  const t = planToday({
+  const plan = (skip: number) => planToday({
     programme: p, assignment, sessions: logged, date, readiness: check ? readiness ?? "green" : null,
     skippedTo: skipInForce(skipped, p.id, lastDone), ignoreRest: anyway, chosen,
-    deloadWeek: deloadInForce(deloadWeek, p.id, date),
+    deloadWeek: deloadInForce(deloadWeek, p.id, date), restartSkip: skip,
   });
+  // "Use next week's numbers" only applies to the block it was chosen in
+  const first = plan(0);
+  const blockNo = first.kind === "workout" ? first.block?.number ?? 0 : 0;
+  const skip = restartSkipFor(restartSkip, p.id, blockNo);
+  const t = skip ? plan(skip) : first;
   const onDemand = !!p.phases[0]?.blocks[0]?.deload?.onDemand;
   const inDeload = deloadInForce(deloadWeek, p.id, date);
   // Set days: any workout in the programme can be done on any day
@@ -135,7 +143,14 @@ function Plan({ profile, p, sessions, skipped, now, checkedIn, deloadWeek }: {
     }
   };
 
-  const heading = <p className="programme-line"><a href={href("programme", p.id)}>{p.name}</a></p>;
+  const place = t.kind === "workout" && t.block
+    ? `Block ${t.block.number} · ${t.deload ? "Deload week" : `Week ${t.block.week}${t.block.length ? ` of ${t.block.length}` : ""}`}`
+    : null;
+  const heading = (
+    <p className="programme-line">
+      <a href={href("programme", p.id)}>{p.name}</a>{place && <span className="block-place"> · {place}</span>}
+    </p>
+  );
 
   if (t.kind === "notStarted") {
     const days = daysUntil(t.startDate, date);
@@ -228,6 +243,17 @@ function Plan({ profile, p, sessions, skipped, now, checkedIn, deloadWeek }: {
         </div>
       )}
       {check && !readiness && t.kind === "workout" && <p className="hint">Choose how you are today first.</p>}
+      {t.kind === "workout" && t.block?.restartFrom && (
+        <div className="deload-note">
+          <p>New block: starting from week {t.block.restartFrom}'s numbers of the last block. It carries on from there.</p>
+          {t.block.canSkip && (
+            <button type="button" className="btn btn-quiet btn-small"
+              onClick={() => void setRestartSkip(db, profile.id, { programme: p.id, block: t.block!.number, skip: skip + 1 })}>
+              Use week {t.block.restartFrom + 1}'s numbers
+            </button>
+          )}
+        </div>
+      )}
       {inDeload ? (
         <div className="deload-note">
           <p>Deload week until {formatDayMonth(deloadWeek!.until)}. Weights pick up from before it afterwards.</p>
@@ -246,7 +272,7 @@ function Plan({ profile, p, sessions, skipped, now, checkedIn, deloadWeek }: {
 
 const WHY: Partial<Record<Next["why"], string>> = {
   add: "up", "reduce: stalled": "down 10%", "hold: hard": "held: last time was hard", "hold: sets skipped": "held: sets skipped",
-  "hold: readiness": "held", "build reps": "build reps",
+  "hold: readiness": "held", "build reps": "build reps", "new block": "new block",
 };
 
 function targetText(p: Programme, item: Item, j: number, next: Next | undefined): string {

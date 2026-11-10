@@ -209,3 +209,15 @@ describe("deload weeks started from Today", () => {
     expect(deloadInForce(await getDeloadWeek(db, "diane"), "strength-block-1", "2026-12-30")).toBe(false);
   });
 });
+
+describe("skipping to next week's numbers in a new block", () => {
+  it("is kept per programme and block", async () => {
+    const { setRestartSkip, getRestartSkip, restartSkipFor } = await import("../../src/store/session.ts");
+    expect(restartSkipFor(await getRestartSkip(db, "diane"), "p", 2)).toBe(0);
+    await setRestartSkip(db, "diane", { programme: "p", block: 2, skip: 1 });
+    const v = await getRestartSkip(db, "diane");
+    expect(restartSkipFor(v, "p", 2)).toBe(1);
+    expect(restartSkipFor(v, "p", 3)).toBe(0);
+    expect(restartSkipFor(v, "q", 2)).toBe(0);
+  });
+});

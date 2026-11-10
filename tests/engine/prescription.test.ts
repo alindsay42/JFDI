@@ -79,9 +79,12 @@ describe("today, ad hoc (Diane's Block 1)", () => {
     expect(workoutOf(t)?.workout.id).toBe("session-b");
   });
 
-  it("every 6th week is a deload: 60% of the sets at 60% of the weight", () => {
-    const sessions = [done("2027-02-05", "session-b", { "back-squat": [40, [5, 5, 5, 5, 5]] })];
+  it("the 6th trained week is a deload: 60% of the sets at 60% of the weight", () => {
+    // Five trained weeks, with a week away in the middle that doesn't count
+    const sessions = ["2027-01-01", "2027-01-04", "2027-01-11", "2027-01-25", "2027-02-01"]
+      .map((d) => done(d, "session-b", { "back-squat": [40, [5, 5, 5, 5, 5]] }));
     const t = workoutOf(today({ programme: block1(), assignment: diane, sessions, date: "2027-02-08", readiness: "green" }))!;
+    expect(t.block).toEqual({ number: 1, week: 6, length: 6, restartFrom: null, canSkip: false });
     expect(t.deload).toBe(true);
     expect(t.workout.items[0]!.slots[0]!.sets).toBe(3);
     expect(target(t, "back-squat").kg).toBe(25.5);

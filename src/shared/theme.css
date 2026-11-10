@@ -644,3 +644,6 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 .prog-panel .hint { flex-basis: 100%; margin: 0; }
 .prog-panel select { min-height: 40px; }
 .before-deload { margin: 0 0 6px; }
+.field-legend { font-weight: 700; margin-bottom: 4px; } .check-list input.small { width: 4em; min-height: 40px; text-align: right; padding: 0 8px; border: 2px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--text); }
+.block-place { color: var(--muted); }
+.choice-list span.check { flex-wrap: wrap; align-items: center; }

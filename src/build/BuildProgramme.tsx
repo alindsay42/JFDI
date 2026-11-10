@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { JFDIProfile } from "../formats/generated/profile.ts";
 import { WEEKDAYS, type Day, type Programme, type Weekday } from "../formats/programme.ts";
 import { Confirm } from "../shared/Confirm.tsx";
@@ -453,43 +453,73 @@ function Weights({ draft }: { draft: DraftState }) {
 
 const PERCENTS = [30, 40, 50, 60, 70, 80, 90];
 
-/** Deload weeks: started from Today when you choose, every few weeks, or both; and how much lighter. */
+/** Training blocks: deload weeks started from Today, at the end of every block, or both; how much lighter; and where the next block starts. */
 function Deloads({ draft }: { draft: DraftState }) {
   const p = draft.programme!;
   const d = deloadOf(p);
   const set = (c: Partial<DeloadChoices>) => draft.update((q) => setDeload(q, { onDemand: false, everyWeeks: null, ...DEFAULT_DELOAD, ...(deloadOf(q) ?? {}), ...c }));
   return (
     <section className="card" aria-labelledby="deload-heading">
-      <h2 id="deload-heading">Deload weeks</h2>
-      <p className="hint">A lighter week to recover, usually when you've stopped making progress. Afterwards, weights pick up from where they were before it.</p>
+      <h2 id="deload-heading">Training blocks</h2>
+      <p className="hint">A block is a run of training weeks that ends with a lighter deload week to recover. Only weeks you train count, so a week away doesn't use one up.</p>
       <div className="check-list">
+        <span className="check">
+          <input type="checkbox" aria-label="Blocks of a set length" checked={!!d?.everyWeeks} onChange={(e) => set({ everyWeeks: e.target.checked ? 6 : null })} />
+          <span>Blocks of</span>
+          <BlockWeeks value={d?.everyWeeks ?? null} onCommit={(n) => set({ everyWeeks: n })} />
+          <span>weeks, the last one a deload</span>
+        </span>
         <label className="check">
           <input type="checkbox" checked={!!d?.onDemand} onChange={(e) => set({ onDemand: e.target.checked })} />
           <span>Let me start a deload week from Today</span>
         </label>
-        <span className="check">
-          <input type="checkbox" aria-label="Deload on a schedule" checked={!!d?.everyWeeks} onChange={(e) => set({ everyWeeks: e.target.checked ? 6 : null })} />
-          <span>Every</span>
-          <select aria-label="Weeks between deloads" value={d?.everyWeeks ?? 6} disabled={!d?.everyWeeks} onChange={(e) => set({ everyWeeks: Number(e.target.value) })}>
-            {[3, 4, 5, 6, 7, 8, 10, 12].map((n) => <option key={n} value={n}>{n}</option>)}
-          </select>
-          <span>weeks</span>
-        </span>
       </div>
       {d && (
-        <div className="check-list">
-          <span className="check">
-            <span>Weights at</span>
-            <select aria-label="Deload weight, percent of normal" value={d.loadPercent} onChange={(e) => set({ loadPercent: Number(e.target.value) })}>
-              {PERCENTS.map((n) => <option key={n} value={n}>{n}%</option>)}
-            </select>
-            <span>of normal, sets at</span>
-            <select aria-label="Deload sets, percent of normal" value={d.setsPercent} onChange={(e) => set({ setsPercent: Number(e.target.value) })}>
-              {PERCENTS.map((n) => <option key={n} value={n}>{n}%</option>)}
-            </select>
-          </span>
-        </div>
+        <>
+          <div className="check-list">
+            <span className="check">
+              <span>Deload weights at</span>
+              <select aria-label="Deload weight, percent of normal" value={d.loadPercent} onChange={(e) => set({ loadPercent: Number(e.target.value) })}>
+                {PERCENTS.map((n) => <option key={n} value={n}>{n}%</option>)}
+              </select>
+              <span>of normal, sets at</span>
+              <select aria-label="Deload sets, percent of normal" value={d.setsPercent} onChange={(e) => set({ setsPercent: Number(e.target.value) })}>
+                {PERCENTS.map((n) => <option key={n} value={n}>{n}%</option>)}
+              </select>
+            </span>
+          </div>
+          <fieldset className="choice-list" aria-label="After a deload">
+            <legend className="field-legend">After a deload</legend>
+            <span className="check">
+              <input type="radio" name="restart" aria-label="Start the next block from an earlier week's numbers" checked={!!d.restartWeek}
+                onChange={() => set({ restartWeek: 2 })} />
+              <span>Restart at week</span>
+              <select aria-label="Week of the last block to start from" value={d.restartWeek ?? 2} disabled={!d.restartWeek}
+                onChange={(e) => set({ restartWeek: Number(e.target.value) })}>
+                {[1, 2, 3, 4, 5, 6].map((n) => <option key={n} value={n}>{n}</option>)}
+              </select>
+              <span>of the last block</span>
+            </span>
+            <label className="check">
+              <input type="radio" name="restart" checked={!d.restartWeek} onChange={() => set({ restartWeek: null })} />
+              <span>Carry on from where I was before the deload</span>
+            </label>
+            <p className="hint">Restarting, each exercise starts from what you lifted that week, and goes up from there.</p>
+          </fieldset>
+        </>
       )}
     </section>
+  );
+}
+
+/** Weeks in a block: typed in, 2 to 16. */
+function BlockWeeks({ value, onCommit }: { value: number | null; onCommit: (n: number) => void }) {
+  const [text, setText] = useState(value === null ? "6" : String(value));
+  useEffect(() => { if (value !== null) setText(String(value)); }, [value]);
+  const n = Number(text);
+  const ok = Number.isInteger(n) && n >= 2 && n <= 16;
+  return (
+    <input className="small" aria-label="Weeks in a block" inputMode="numeric" value={text} disabled={value === null} aria-invalid={!ok || undefined}
+      title="2 to 16" onChange={(e) => { setText(e.target.value); const v = Number(e.target.value); if (Number.isInteger(v) && v >= 2 && v <= 16) onCommit(v); }} />
   );
 }
