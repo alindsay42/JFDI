@@ -575,3 +575,85 @@ export function setDeload(p: Programme, d: DeloadChoices | null): Programme {
     : rest;
   return { ...p, phases: [{ ...first, blocks: [next, ...blocks] }, ...phases] } as Programme;
 }
+
+// ----- How each exercise progresses -----
+
+type Rule0 = Programme["progressions"][number];
+export type ProgressionStyle = "linear" | "double" | "topSetBackoff" | "none";
+export interface Stall { misses: number; reducePercent: number }
+export interface ProgressionChoice { style: ProgressionStyle; jumpKg: number; stall: Stall | null }
+
+export const JUMPS = [0.5, 1, 1.25, 2, 2.5, 5, 10];
+export const STYLE_NAMES: Record<ProgressionStyle, string> = {
+  linear: "Add weight each time",
+  double: "Reps first, then weight",
+  topSetBackoff: "Heavy top set, then lighter sets",
+  none: "Keep it the same",
+};
+const DEFAULT_IDS = new Set(DEFAULT_PROGRESSIONS.map((r) => r.id!));
+
+function slotAt(p: Programme, workoutId: string, at: SlotRef): Slot | undefined {
+  return p.workouts.find((w) => w.id === workoutId)?.items[at.item]?.slots[at.slot];
+}
+
+/** How an exercise progresses, as the choices on screen. */
+export function slotProgression(p: Programme, workoutId: string, at: SlotRef): ProgressionChoice {
+  const slot = slotAt(p, workoutId, at);
+  const rule = p.progressions.find((r) => r.id === slot?.progression) as { type?: ProgressionStyle; incrementKg?: number; stall?: Stall } | undefined;
+  if (!slot || !rule || rule.type === "none" || !rule.type) return { style: "none", jumpKg: 2.5, stall: null };
+  return { style: rule.type, jumpKg: slot.incrementKg ?? rule.incrementKg!, stall: rule.stall ?? null };
+}
+
+const COUNTS: Record<string, string> = { reps: "reps", seconds: "time", metres: "distance", calories: "calories" };
+
+/** One line saying what happens next time, in terms of what the exercise counts (reps, time...). */
+export function progressionSummary(c: ProgressionChoice, field = "reps"): string {
+  const stall = c.stall ? `. After ${c.stall.misses} miss${c.stall.misses === 1 ? "" : "es"}, drop ${c.stall.reducePercent}%` : "";
+  const count = COUNTS[field] ?? "reps";
+  if (c.style === "none") return "Stays the same";
+  if (c.style === "linear") return `+${c.jumpKg}kg when you hit your ${count}${stall}`;
+  if (c.style === "double") return `${count[0]!.toUpperCase()}${count.slice(1)} to the top of the range, then +${c.jumpKg}kg${stall}`;
+  return `Top set +${c.jumpKg}kg, then lighter sets${stall}`;
+}
+
+const sameRule = (a: Rule0, b: Rule0) => {
+  const { id: _a, ...x } = a;
+  const { id: _b, ...y } = b;
+  return JSON.stringify(x, Object.keys(x).sort()) === JSON.stringify(y, Object.keys(y).sort());
+};
+
+/**
+ * Sets how one exercise progresses. Rules are shared: an existing rule that matches is reused, otherwise
+ * a new one is added. Rules nothing uses any more are tidied away, apart from the starting set.
+ */
+export function setSlotProgression(p: Programme, workoutId: string, at: SlotRef, c: ProgressionChoice): Programme {
+  const slot = slotAt(p, workoutId, at);
+  if (!slot) return p;
+  const old = p.progressions.find((r) => r.id === slot.progression);
+  const stall = c.stall ? { stall: { misses: c.stall.misses, reducePercent: c.stall.reducePercent } } : {};
+  const holdRpe = old && "holdIfRpeAtLeast" in old && old.holdIfRpeAtLeast ? old.holdIfRpeAtLeast : 9;
+  const want = (c.style === "none" ? { id: "", type: "none" }
+    : c.style === "topSetBackoff" ? {
+      id: "", type: "topSetBackoff", incrementKg: c.jumpKg,
+      topRpe: old?.type === "topSetBackoff" ? old.topRpe : 8, backoffPercent: old?.type === "topSetBackoff" ? old.backoffPercent : 85, ...stall,
+    }
+    : { id: "", type: c.style, incrementKg: c.jumpKg, holdIfRpeAtLeast: holdRpe, ...stall }) as Rule0;
+  let progressions = p.progressions;
+  let rule = progressions.find((r) => sameRule(r, want));
+  if (!rule) {
+    const name = c.style === "none" ? "none" : `${c.style}-${c.jumpKg}${c.stall ? `-stall-${c.stall.misses}-${c.stall.reducePercent}` : ""}`;
+    rule = { ...want, id: slug(name, progressions.map((r) => r.id!), "rule") };
+    progressions = [...progressions, rule];
+  }
+  const { incrementKg: _i, ...rest } = slot;
+  const next: Programme = {
+    ...p,
+    progressions,
+    workouts: p.workouts.map((w) => w.id !== workoutId ? w : {
+      ...w,
+      items: w.items.map((it, i) => i !== at.item ? it : { ...it, slots: it.slots.map((s, j) => (j === at.slot ? { ...rest, progression: rule!.id } : s)) } as Item),
+    }),
+  };
+  const used = new Set(next.workouts.flatMap((w) => w.items.flatMap((it) => it.slots.map((s) => s.progression))));
+  return { ...next, progressions: next.progressions.filter((r) => used.has(r.id!) || DEFAULT_IDS.has(r.id!)) };
+}

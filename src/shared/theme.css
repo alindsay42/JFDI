@@ -638,3 +638,8 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
   color: var(--muted); font: inherit; font-size: 0.9rem; cursor: pointer; white-space: nowrap;
 }
 .last-chip:disabled { border-color: transparent; cursor: default; }
+.prog { flex-basis: 100%; padding-left: 36px; }
+.prog-toggle { min-height: 36px; padding: 0 4px; border: 0; background: none; color: var(--muted); font: inherit; font-size: 0.9rem; text-align: left; cursor: pointer; }
+.prog-panel { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 8px 0 4px; }
+.prog-panel .hint { flex-basis: 100%; margin: 0; }
+.prog-panel select { min-height: 40px; }
