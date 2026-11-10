@@ -475,7 +475,14 @@ export interface TrainingBlock {
      * The person can start a deload week from Today
      */
     onDemand?: boolean;
+    /**
+     * Blocks of this many trained weeks, the last a deload. Weeks without a workout don't count
+     */
     everyWeeks?: number;
+    /**
+     * After a deload, each exercise starts from what was lifted in this week of the last block. Without it, weights carry on from before the deload
+     */
+    restartWeek?: number;
     afterStalls?: number;
     setsPercent: number;
     loadPercent: number;

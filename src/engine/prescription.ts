@@ -2,6 +2,7 @@
 import type { Day, Exercise, Item, Programme, Slot, Workout } from "../formats/programme.ts";
 import { nextTarget, roundKg, type Next, type Performance, type ProgressionRule, type SetDone } from "./progression.ts";
 import { applyDeload, applyRules, type Rule } from "./readiness.ts";
+import { blockInfo, restartKg } from "./blocks.ts";
 import { daysBetween, mondayOf, nextAdhoc, restDaysLeft, setDaysOn, WEEKDAYS as WEEKDAY_LIST, type Position } from "./schedule.ts";
 
 export type Readiness = "green" | "amber" | "red";
@@ -40,7 +41,20 @@ export type Today =
       addRir: number;
       deload: boolean;
       swapped: Array<[string, string]>;
+      /** Where this sits in the training blocks, for programmes with deloads */
+      block: BlockPlace | null;
     };
+
+export interface BlockPlace {
+  number: number;
+  week: number;
+  /** Weeks in a block, the last a deload; null when deloads are only when chosen */
+  length: number | null;
+  /** The last block's week whose numbers a new block's exercises start from, while any still do */
+  restartFrom: number | null;
+  /** There's a later week in the last block to skip to */
+  canSkip: boolean;
+}
 
 /** Ad hoc: where the last workout done for this programme sits in the cycle. */
 export function lastPosition(p: Programme, sessions: LoggedSession[]): Position | null {
@@ -107,6 +121,8 @@ export function today(input: {
   chosen?: string | null;
   /** The person started a deload week that covers today */
   deloadWeek?: boolean;
+  /** Weeks skipped past the restart week, from "use next week's numbers" */
+  restartSkip?: number;
 }): Today {
   const { programme: p, assignment: a, sessions, date, readiness } = input;
   if (date < a.startDate) return { kind: "notStarted", startDate: a.startDate };
@@ -152,7 +168,10 @@ export function today(input: {
 
   const weekNumber = Math.floor(daysBetween(a.startDate, date) / 7) + 1;
   const deloadRule = block(p)?.deload;
-  const deload = !!deloadRule && ((!!deloadRule.everyWeeks && weekNumber % deloadRule.everyWeeks === 0) || !!input.deloadWeek);
+  const info = blockInfo(sessions, p.id, a.startDate, date, deloadRule?.everyWeeks ?? null);
+  const deload = !!deloadRule && (info.scheduledDeload || !!input.deloadWeek);
+  const restartFrom = deloadRule?.restartWeek && !deload ? deloadRule.restartWeek + (input.restartSkip ?? 0) : null;
+  let restarted = false;
   let workout = unlocked(applied.workout, weekNumber);
   if (deload) workout = applyDeload(workout, deloadRule!.setsPercent);
 
@@ -167,10 +186,22 @@ export function today(input: {
     const ex = exercises.get(slot.exercise);
     const field = ex?.measure === "time" ? "seconds" : ex?.measure === "distance" ? "metres" : ex?.measure === "calories" ? "calories" : "reps";
     const target = slot[field] ?? { min: 1, max: 1 };
-    const next = nextTarget(rule, target, historyOf(p, a, sessions, slot.exercise), startKg(p, a, slot));
+    let next = nextTarget(rule, target, historyOf(p, a, sessions, slot.exercise), startKg(p, a, slot));
+    // A new block: start from what was lifted in the chosen week of the last one
+    const restart = restartFrom ? restartKg(info, slot.exercise, restartFrom) : null;
+    if (restart) {
+      restarted = true;
+      next = rule.type === "topSetBackoff"
+        ? { kg: restart.kg, backoffKg: roundKg((restart.kg * rule.backoffPercent) / 100), reps: target, why: "new block" }
+        : { kg: restart.kg, reps: target, why: "new block" };
+    }
     if (deload && next.kg !== null) next.kg = roundKg((next.kg * deloadRule!.loadPercent) / 100);
     targets[`${i}.${j}`] = next;
   }));
 
-  return { kind: "workout", position, workout, targets, addRir: applied.addRir, deload, swapped: applied.swapped };
+  const blockPlace: BlockPlace | null = deloadRule ? {
+    number: info.block, week: info.week, length: deloadRule.everyWeeks ?? null,
+    restartFrom: restarted ? restartFrom : null, canSkip: restarted && restartFrom! < info.previous.length,
+  } : null;
+  return { kind: "workout", position, workout, targets, addRir: applied.addRir, deload, swapped: applied.swapped, block: blockPlace };
 }

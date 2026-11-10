@@ -234,3 +234,18 @@ export async function getDeloadWeek(db: JfdiDatabase, profileId: string): Promis
 /** Whether a started deload week covers this date, for this programme. */
 export const deloadInForce = (w: DeloadWeek | undefined, programme: string, date: string): boolean =>
   !!w && w.programme === programme && date >= w.from && date <= w.until;
+
+/** "Use next week's numbers" at the start of a new block: how many weeks on from the restart week, for that block. */
+export interface RestartSkip { programme: string; block: number; skip: number }
+
+export async function setRestartSkip(db: JfdiDatabase, profileId: string, value: RestartSkip): Promise<void> {
+  await db.settings.put({ key: `restart:${profileId}`, value });
+}
+
+export async function getRestartSkip(db: JfdiDatabase, profileId: string): Promise<RestartSkip | undefined> {
+  return (await db.settings.get(`restart:${profileId}`))?.value as RestartSkip | undefined;
+}
+
+/** The skip for this programme's current block; one saved for an earlier block no longer applies. */
+export const restartSkipFor = (v: RestartSkip | undefined, programme: string, block: number): number =>
+  v && v.programme === programme && v.block === block ? v.skip : 0;

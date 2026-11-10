@@ -326,3 +326,54 @@ test("after a deload week, last time skips it and says so", async ({ page }) => 
   await expect(squat.getByText("Last numbers are from before your deload week (Mon 4 Jan).")).toBeVisible();
   await expect(squat.getByRole("button", { name: "Set 1: use last time, 30kg × 5" })).toBeVisible();
 });
+
+test("training blocks: after a deload, the next block starts from week 2's numbers and can skip to week 3's", async ({ page }) => {
+  await page.clock.install({ time: new Date("2027-01-01T10:00:00") });
+  await dianeOnBlock1(page);
+  await page.goto("./#/programme/strength-block-1");
+  const blocks = page.locator("section", { has: page.getByRole("heading", { name: "Training blocks" }) });
+  await expect(blocks.getByLabel("Weeks in a block")).toHaveValue("6");
+  await blocks.getByLabel("Weeks in a block").fill("8");
+  await blocks.getByRole("checkbox", { name: "Let me start a deload week from Today" }).check();
+  await blocks.getByRole("radio", { name: "Start the next block from an earlier week's numbers" }).check();
+  await expect(blocks.getByLabel("Week of the last block to start from")).toHaveValue("2");
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(page.getByRole("status")).toHaveText("Saved.");
+  await page.getByRole("link", { name: "Today" }).click();
+
+  // One Session A a week, squat set 1 only, at the weight given
+  const week = async (date: string, kg: string | null, deload = false) => {
+    await page.clock.setSystemTime(new Date(`${date}T10:00:00`));
+    await page.reload();
+    await page.getByRole("button", { name: "Start workout" }).waitFor();
+    if (await page.getByRole("heading", { name: "Session B" }).isVisible()) await page.getByRole("button", { name: "Skip to next workout" }).click();
+    if (deload) await page.getByRole("button", { name: "Make this a deload week" }).click();
+    await page.getByRole("radio", { name: /Green/ }).check();
+    await page.getByRole("button", { name: "Start workout" }).click();
+    const squat = page.getByRole("region", { name: "Back squat" });
+    if (kg) await squat.getByLabel("Set 1 weight").fill(kg);
+    await squat.getByRole("button", { name: "Set 1 done" }).click();
+    await page.getByRole("button", { name: "Finish workout" }).click();
+    await page.getByRole("dialog").getByRole("button", { name: /Finish/ }).click();
+    await expect(page.getByRole("heading", { name: "Rest day" })).toBeVisible();
+  };
+  await expect(page.locator(".block-place")).toHaveText(" · Block 1 · Week 1 of 8");
+  await week("2027-01-01", "30");
+  await week("2027-01-04", "32.5");
+  await week("2027-01-11", "35");
+  await week("2027-01-18", null, true);
+
+  await page.clock.setSystemTime(new Date("2027-01-25T10:00:00"));
+  await page.reload();
+  await page.getByRole("button", { name: "Skip to next workout" }).click();
+  await page.getByRole("radio", { name: /Green/ }).check();
+  await expect(page.locator(".block-place")).toHaveText(" · Block 2 · Week 1 of 8");
+  await expect(page.getByText("New block: starting from week 2's numbers of the last block.")).toBeVisible();
+  const squat = page.locator(".preview-row", { hasText: "Back squat" });
+  await expect(squat.locator(".preview-target")).toContainText("32.5kg");
+  await expect(squat).toContainText("new block");
+  await page.getByRole("button", { name: "Use week 3's numbers" }).click();
+  await expect(page.getByText("New block: starting from week 3's numbers of the last block.")).toBeVisible();
+  await expect(squat.locator(".preview-target")).toContainText("35kg");
+  await expect(page.getByRole("button", { name: /Use week 4's numbers/ })).toHaveCount(0);
+});

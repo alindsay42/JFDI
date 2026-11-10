@@ -304,11 +304,11 @@ describe("weights and deloads", () => {
   });
 
   it("reads and writes the deload", () => {
-    expect(deloadOf(block1())).toEqual({ onDemand: false, everyWeeks: 6, loadPercent: 60, setsPercent: 60 });
+    expect(deloadOf(block1())).toEqual({ onDemand: false, everyWeeks: 6, loadPercent: 60, setsPercent: 60, restartWeek: null });
     let p = setDeload(block1(), { onDemand: true, everyWeeks: null, ...DEFAULT_DELOAD });
-    expect(p.phases[0]!.blocks[0]!.deload).toEqual({ onDemand: true, setsPercent: 50, loadPercent: 60 });
+    expect(p.phases[0]!.blocks[0]!.deload).toEqual({ onDemand: true, setsPercent: 50, loadPercent: 60, restartWeek: 2 });
     expect(problems(p)).toEqual([]);
-    expect(setDeload(p, { onDemand: true, everyWeeks: 5, loadPercent: 70, setsPercent: 40 }).phases[0]!.blocks[0]!.deload)
+    expect(setDeload(p, { onDemand: true, everyWeeks: 5, loadPercent: 70, setsPercent: 40, restartWeek: null }).phases[0]!.blocks[0]!.deload)
       .toEqual({ onDemand: true, everyWeeks: 5, setsPercent: 40, loadPercent: 70 });
     p = setDeload(p, null);
     expect(p.phases[0]!.blocks[0]).not.toHaveProperty("deload");

@@ -308,7 +308,8 @@
           "anyOf": [{ "required": ["everyWeeks"] }, { "required": ["afterStalls"] }, { "required": ["onDemand"] }],
           "properties": {
             "onDemand": { "type": "boolean", "description": "The person can start a deload week from Today" },
-            "everyWeeks": { "type": "integer", "minimum": 2 },
+            "everyWeeks": { "type": "integer", "minimum": 2, "description": "Blocks of this many trained weeks, the last a deload. Weeks without a workout don't count" },
+            "restartWeek": { "type": "integer", "minimum": 1, "description": "After a deload, each exercise starts from what was lifted in this week of the last block. Without it, weights carry on from before the deload" },
             "afterStalls": { "type": "integer", "minimum": 1 },
             "setsPercent": { "$ref": "#/$defs/percent" },
             "loadPercent": { "$ref": "#/$defs/percent" }
