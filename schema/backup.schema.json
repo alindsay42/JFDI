@@ -23,7 +23,7 @@
     "profiles": { "type": "array", "items": { "$ref": "profile.schema.json" } },
     "programmes": { "type": "array", "items": { "$ref": "programme.schema.json" } },
     "gyms": {
-      "description": "The places the household trains, each with its equipment. The first is home. Older backups don't have this, and restoring one keeps the gyms already on the device",
+      "description": "The places the household trains, each with its equipment. The first is home. Older backups don't have this; restoring one gives home the kit the app came with",
       "type": "array",
       "items": {
         "type": "object",

@@ -53,7 +53,7 @@ describe("gyms", () => {
     await expect(deleteGym(db, "home")).rejects.toThrow("Home can't be removed");
   });
 
-  it("go with a backup, and an older backup without them keeps this device's", async () => {
+  it("go with a backup, and an older backup without them brings the kit the app came with", async () => {
     await addGym(db, "Hotel", "empty");
     const backup = await buildBackup(db, { version: "test" });
     expect(backup.gyms!.map((g) => g.id)).toEqual(["home", "hotel"]);
@@ -63,6 +63,6 @@ describe("gyms", () => {
     const { gyms: _g, ...older } = backup;
     const third = new JfdiDatabase(`gyms-third-${Math.random()}`);
     await restoreBackup(third, older);
-    expect((await getGyms(third)).map((g) => g.id)).toEqual(["home"]);
+    expect(await getGyms(third)).toEqual([{ id: "home", kit: equipment }]);
   });
 });

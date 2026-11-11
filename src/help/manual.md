@@ -150,7 +150,7 @@ Every workout, newest first. Tap one to open its day.
 
 Everything is kept on this device only, so back up now and then. The app reminds you if it's been a while.
 
-- **Save a backup:** one file with everyone's programmes and history. Keep it somewhere safe, such as cloud storage.
+- **Save a backup:** one file with everyone's programmes and history, and your gyms and equipment. Keep it somewhere safe, such as cloud storage.
 - **Restore a backup:** replaces everything on this device with a backup. Use it to move to a new tablet.
 - **Import from Rebuild Log:** brings in history from a Rebuild Log backup for the current person. Importing the same file again doesn't double anything up.
 

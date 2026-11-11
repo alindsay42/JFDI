@@ -90,8 +90,9 @@ export async function restoreBackup(db: JfdiDatabase, backup: JFDIBackup): Promi
       await db.days.bulkAdd(log.days.map(tag) as DayRecord[]);
       await db.weighIns.bulkAdd(log.bodyweight.map(tag) as WeighInRecord[]);
     }
-    // Gyms come with the backup; one made before gyms existed keeps the ones on this device
-    if (backup.gyms?.length) await db.settings.put({ key: "gyms", value: backup.gyms });
+    // Gyms come with the backup. One made before gyms existed came from a household using the kit the app
+    // came with, so that becomes its home gym, as it does when an existing tablet updates
+    await db.settings.put({ key: "gyms", value: backup.gyms?.length ? backup.gyms : [{ id: "home", kit: structuredClone(equipment) }] });
     const current = (await db.settings.get("currentProfile"))?.value;
     if (typeof current === "string" && !backup.profiles.some((p) => p.id === current)) {
       await db.settings.put({ key: "currentProfile", value: null });

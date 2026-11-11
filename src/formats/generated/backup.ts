@@ -253,7 +253,7 @@ export interface JFDIBackup {
   profiles: JFDIProfile[];
   programmes: JFDIProgrammeFile[];
   /**
-   * The places the household trains, each with its equipment. The first is home. Older backups don't have this, and restoring one keeps the gyms already on the device
+   * The places the household trains, each with its equipment. The first is home. Older backups don't have this; restoring one gives home the kit the app came with
    */
   gyms?: {
     id: string;
