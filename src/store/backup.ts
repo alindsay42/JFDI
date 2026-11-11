@@ -5,6 +5,7 @@ import { convertRebuildLog } from "../formats/rebuild-log.js";
 import { upgradeBackup } from "../formats/upgrade.js";
 import { validateBackup, validateLog } from "../formats/validate.js";
 import { markChanged, type DayRecord, type JfdiDatabase, type SessionRecord, type WeighInRecord } from "./db.ts";
+import { getGyms } from "./gyms.ts";
 import { equipment, library } from "./household.ts";
 import { localDate, syncBundledProgrammes } from "./programmes.ts";
 
@@ -29,7 +30,7 @@ export async function logFor(db: JfdiDatabase, profile: string): Promise<JFDITra
 
 /** Everything the app holds, as one backup file. */
 export async function buildBackup(db: JfdiDatabase, app: { version: string; commit?: string }, now = new Date()): Promise<JFDIBackup> {
-  return db.transaction("r", [db.profiles, db.programmes, db.sessions, db.days, db.weighIns], async () => {
+  return db.transaction("r", [db.profiles, db.programmes, db.sessions, db.days, db.weighIns, db.settings], async () => {
     const profiles = await db.profiles.orderBy("name").toArray();
     return {
       format: "jfdi-backup",
@@ -38,6 +39,7 @@ export async function buildBackup(db: JfdiDatabase, app: { version: string; comm
       app,
       profiles,
       programmes: await db.programmes.toArray(),
+      gyms: await getGyms(db),
       logs: await Promise.all(profiles.map((p) => logFor(db, p.id))),
     } as JFDIBackup;
   });
@@ -88,6 +90,8 @@ export async function restoreBackup(db: JfdiDatabase, backup: JFDIBackup): Promi
       await db.days.bulkAdd(log.days.map(tag) as DayRecord[]);
       await db.weighIns.bulkAdd(log.bodyweight.map(tag) as WeighInRecord[]);
     }
+    // Gyms come with the backup; one made before gyms existed keeps the ones on this device
+    if (backup.gyms?.length) await db.settings.put({ key: "gyms", value: backup.gyms });
     const current = (await db.settings.get("currentProfile"))?.value;
     if (typeof current === "string" && !backup.profiles.some((p) => p.id === current)) {
       await db.settings.put({ key: "currentProfile", value: null });

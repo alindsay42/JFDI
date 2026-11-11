@@ -7,6 +7,8 @@ import { asProgramme, type Item, type Programme } from "../formats/programme.ts"
 import { daysUntil, formatDayMonth, formatKg, formatLongDate, plural } from "../shared/format.ts";
 import { go, href } from "../shared/route.ts";
 import { Check48h } from "./Check48h.tsx";
+import { kitOf, type Kit } from "../engine/loading.ts";
+import { chooseGym, getGymChoice, getGyms, gymFor, type Gym } from "../store/gyms.ts";
 import { setDayReadiness } from "../store/progress.ts";
 import { Walks } from "./Walks.tsx";
 import { setDaysOn } from "../engine/schedule.ts";
@@ -43,11 +45,15 @@ export function Today({ profile, now = new Date() }: { profile: JFDIProfile; now
     day: await db.days.get([profile.id, localDate(now)]),
     deloadWeek: await getDeloadWeek(db, profile.id),
     restartSkip: await getRestartSkip(db, profile.id),
+    gyms: await getGyms(db),
+    gymChoice: await getGymChoice(db, profile.id),
   }), [profile.id, active?.programme]);
+  const gym = data ? gymFor(data.gyms, data.gymChoice) : undefined;
 
   return (
     <Screen profile={profile} route="today">
       <h1 className="page-title">{todayFormat.format(now)}</h1>
+      {data && !data.inProgress && <GymPicker profileId={profile.id} gyms={data.gyms} current={gym} />}
       {data === undefined ? null : data.inProgress ? (
         <InProgress s={data.inProgress} />
       ) : !active || !data.programme ? (
@@ -61,11 +67,28 @@ export function Today({ profile, now = new Date() }: { profile: JFDIProfile; now
       ) : (
         <>
           <Check48h p={asProgramme(data.programme)} sessions={data.sessions} now={now} />
-          <Plan profile={profile} p={asProgramme(data.programme)} sessions={data.sessions} skipped={data.skip} now={now} checkedIn={data.day?.readiness ?? null} deloadWeek={data.deloadWeek} restartSkip={data.restartSkip} />
+          <Plan profile={profile} p={asProgramme(data.programme)} sessions={data.sessions} skipped={data.skip} now={now} checkedIn={data.day?.readiness ?? null} deloadWeek={data.deloadWeek} restartSkip={data.restartSkip}
+            kit={gym ? kitOf(gym.kit) : undefined} />
         </>
       )}
       {data && !data.inProgress && <TodayWalks profile={profile} p={data.programme ? asProgramme(data.programme) : null} day={data.day} now={now} />}
     </Screen>
+  );
+}
+
+/** Where they're training: home unless they've picked somewhere else, such as a hotel gym. */
+function GymPicker({ profileId, gyms, current }: { profileId: string; gyms: Gym[]; current: Gym | undefined }) {
+  if (gyms.length < 2 || !current) return null;
+  return (
+    <div className="gym-picker">
+      <label className="field field-inline">
+        <span>Training at</span>
+        <select value={current.id} onChange={(e) => void chooseGym(db, profileId, e.target.value)}>
+          {gyms.map((g) => <option key={g.id} value={g.id}>{g.kit.name}</option>)}
+        </select>
+      </label>
+      <a className="btn btn-quiet btn-small" href="#/equipment">Edit gyms</a>
+    </div>
   );
 }
 
@@ -96,12 +119,14 @@ function InProgress({ s }: { s: SessionRecord }) {
   );
 }
 
-function Plan({ profile, p, sessions, skipped, now, checkedIn, deloadWeek, restartSkip }: {
+function Plan({ profile, p, sessions, skipped, now, checkedIn, deloadWeek, restartSkip, kit }: {
   profile: JFDIProfile; p: Programme; sessions: SessionRecord[]; skipped: Awaited<ReturnType<typeof getSkip>>; now: Date;
   /** Today's check-in, if already picked */
   checkedIn: Readiness | null;
   deloadWeek: DeloadWeek | undefined;
   restartSkip: RestartSkip | undefined;
+  /** The kit where they're training today: targets snap to what it can load */
+  kit: Kit | undefined;
 }) {
   const check = p.readiness.preset !== "off" && !!p.readiness.levels;
   const [readiness, setReadinessState] = useState<Readiness | null>(checkedIn);
@@ -120,7 +145,7 @@ function Plan({ profile, p, sessions, skipped, now, checkedIn, deloadWeek, resta
   const plan = (skip: number) => planToday({
     programme: p, assignment, sessions: logged, date, readiness: check ? readiness ?? "green" : null,
     skippedTo: skipInForce(skipped, p.id, lastDone), ignoreRest: anyway, chosen,
-    deloadWeek: deloadInForce(deloadWeek, p.id, date), restartSkip: skip,
+    deloadWeek: deloadInForce(deloadWeek, p.id, date), restartSkip: skip, ...(kit ? { kit } : {}),
   });
   // "Use next week's numbers" only applies to the block it was chosen in
   const first = plan(0);

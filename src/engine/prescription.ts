@@ -3,6 +3,7 @@ import type { Day, Exercise, Item, Programme, Slot, Workout } from "../formats/p
 import { nextTarget, roundKg, type Next, type Performance, type ProgressionRule, type SetDone } from "./progression.ts";
 import { applyDeload, applyRules, type Rule } from "./readiness.ts";
 import { blockInfo, restartKg } from "./blocks.ts";
+import { barFor, loadsFor, snapKg, type BarType, type Direction, type Kit } from "./loading.ts";
 import { daysBetween, mondayOf, nextAdhoc, restDaysLeft, setDaysOn, WEEKDAYS as WEEKDAY_LIST, type Position } from "./schedule.ts";
 
 export type Readiness = "green" | "amber" | "red";
@@ -80,16 +81,23 @@ export function historyOf(p: Programme, a: Assignment, sessions: LoggedSession[]
       .map((e) => ({ sets: e.sets, day: progressionDay(p, s.readiness) })));
 }
 
-function startKg(p: Programme, a: Assignment, slot: Slot): number | null {
+function startKg(p: Programme, a: Assignment, slot: Slot, kit: Kit | undefined): number | null {
   const own = a.startingLoads?.[slot.exercise]?.kg;
   if (own !== undefined) return own;
   const kg = slot.start?.kg;
   if (kg === "bar") {
     const ex = p.exercises.find((e) => e.id === slot.exercise);
-    return p.equipment.find((b) => b.id === ex?.bar)?.kg ?? null;
+    const bar = p.equipment.find((b) => b.id === ex?.bar);
+    // The gym's own bar, if it has one of that type
+    const gymBar = kit && bar ? barFor(kit, slot.exercise, bar.barType as BarType) : null;
+    return gymBar?.kg ?? bar?.kg ?? null;
   }
   return kg ?? null;
 }
+
+/** Up for an increase, down for a drop, otherwise the nearest. */
+const directionOf = (why: string, deload: boolean): Direction =>
+  deload || why.startsWith("reduce") ? "down" : why === "add" ? "up" : "nearest";
 
 /** Optional slots appear from their unlock week (counted from 1). Groups that lose slots reshape. */
 function unlocked(w: Workout, weekNumber: number): Workout {
@@ -123,6 +131,8 @@ export function today(input: {
   deloadWeek?: boolean;
   /** Weeks skipped past the restart week, from "use next week's numbers" */
   restartSkip?: number;
+  /** The kit in the gym being trained at: targets snap to weights it can make */
+  kit?: Kit;
 }): Today {
   const { programme: p, assignment: a, sessions, date, readiness } = input;
   if (date < a.startDate) return { kind: "notStarted", startDate: a.startDate };
@@ -186,7 +196,7 @@ export function today(input: {
     const ex = exercises.get(slot.exercise);
     const field = ex?.measure === "time" ? "seconds" : ex?.measure === "distance" ? "metres" : ex?.measure === "calories" ? "calories" : "reps";
     const target = slot[field] ?? { min: 1, max: 1 };
-    let next = nextTarget(rule, target, historyOf(p, a, sessions, slot.exercise), startKg(p, a, slot));
+    let next = nextTarget(rule, target, historyOf(p, a, sessions, slot.exercise), startKg(p, a, slot, input.kit));
     // A new block: start from what was lifted in the chosen week of the last one
     const restart = restartFrom ? restartKg(info, slot.exercise, restartFrom) : null;
     if (restart) {
@@ -196,6 +206,19 @@ export function today(input: {
         : { kg: restart.kg, reps: target, why: "new block" };
     }
     if (deload && next.kg !== null) next.kg = roundKg((next.kg * deloadRule!.loadPercent) / 100);
+    // Only weights the gym can make
+    const bar = p.equipment.find((b) => b.id === ex?.bar);
+    const loads = input.kit && ex
+      ? loadsFor(input.kit, { id: ex.id, implement: ex.implement, ...(bar ? { barType: bar.barType as BarType, barKg: bar.kg } : {}) })
+      : null;
+    if (loads && next.kg !== null) {
+      const dir = directionOf(next.why, deload);
+      const kg = snapKg(loads, next.kg, dir);
+      // Back-off sets follow the top set that will actually be lifted
+      next = rule.type === "topSetBackoff" && next.backoffKg !== undefined
+        ? { ...next, kg, backoffKg: snapKg(loads, roundKg((kg * rule.backoffPercent) / 100), "nearest") }
+        : { ...next, kg };
+    }
     targets[`${i}.${j}`] = next;
   }));
 

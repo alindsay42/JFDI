@@ -50,56 +50,6 @@ export type Item = {
    */
   tbc?: boolean;
   notes?: string;
-} & {
-  id: Id;
-  name: string;
-  kind:
-    | "bar"
-    | "plates"
-    | "collars"
-    | "chains"
-    | "dumbbells"
-    | "odd-object"
-    | "rack"
-    | "attachment"
-    | "handle"
-    | "cable"
-    | "bench"
-    | "station"
-    | "conditioning"
-    | "accessory";
-  barType?: "standard" | "junior" | "ez" | "ssb" | "trap" | "log" | "swiss";
-  kg?: Kg;
-  kgEach?: Kg;
-  /**
-   * How many, for chains, loadable handles and the like
-   */
-  count?: number;
-  /**
-   * Each plate size and how many single plates there are
-   */
-  plates?: {
-    kg: Kg;
-    count: number;
-  }[];
-  /**
-   * Fixed dumbbell pairs, by weight of one dumbbell
-   */
-  pairsKg?: Kg[];
-  /**
-   * Pairs owned but not available right now, such as lent out
-   */
-  unavailableKg?: Kg[];
-  /**
-   * Library exercises this bar should be used for when there's a choice
-   */
-  preferredFor?: Id[];
-  attachesTo?: Id;
-  /**
-   * Some details still to confirm
-   */
-  tbc?: boolean;
-  notes?: string;
 };
 export type Id = string;
 /**
@@ -115,8 +65,5 @@ export interface JFDIHouseholdEquipment {
   formatVersion: 1;
   name: string;
   updatedAt: string;
-  /**
-   * @minItems 1
-   */
-  items: [Item, ...Item[]];
+  items: Item[];
 }

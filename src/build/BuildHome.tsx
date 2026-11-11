@@ -1,4 +1,5 @@
 import { useLiveQuery } from "dexie-react-hooks";
+import { getGyms } from "../store/gyms.ts";
 import { useState, type FormEvent } from "react";
 import type { JFDIProfile } from "../formats/generated/profile.ts";
 import { asProgramme, type Programme } from "../formats/programme.ts";
@@ -14,6 +15,7 @@ import { Frame } from "./Frame.tsx";
 export function BuildHome({ profile, profiles }: { profile: JFDIProfile | undefined; profiles: JFDIProfile[] }) {
   const saved = useLiveQuery(() => db.programmes.toArray());
   const drafts = useLiveQuery(() => listDrafts(db));
+  const gyms = useLiveQuery(() => getGyms(db));
   const [name, setName] = useState("");
 
   if (!saved || !drafts) return null;
@@ -47,7 +49,7 @@ export function BuildHome({ profile, profiles }: { profile: JFDIProfile | undefi
                   <span className="programme-name">{p.name}</span>
                   <span className="muted">
                     {p.plan.mode === "adhoc" ? "Ad hoc" : "Set days"} · {plural(days, "workout")} a week
-                    {p.plan.weeks.length > 1 && ` · ${p.plan.weeks.length}-week cycle`}
+                    {p.plan.weeks.length > 1 && ` · repeats every ${p.plan.weeks.length} weeks`}
                     {runners.length > 0 && ` · ${runners.join(", ")}`}
                   </span>
                   {draftIds.has(p.id) && <span className="tag tag-warn">Unsaved changes</span>}
@@ -67,6 +69,13 @@ export function BuildHome({ profile, profiles }: { profile: JFDIProfile | undefi
           <button type="submit" className="btn btn-you" disabled={!name.trim()}>Create</button>
         </div>
       </form>
+      <section className="card" aria-labelledby="gyms-card-heading">
+        <h2 id="gyms-card-heading">Gyms and equipment</h2>
+        <p className="hint">
+          {gyms?.length ? gyms.map((g) => g.kit.name).join(", ") : "No gyms yet"}. Bars, plates and dumbbells decide which weights targets round to.
+        </p>
+        <div className="actions actions-start"><a className="btn btn-quiet" href="#/equipment">Edit equipment</a></div>
+      </section>
     </Frame>
   );
 }

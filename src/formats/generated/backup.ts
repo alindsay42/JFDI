@@ -171,9 +171,73 @@ export type Gate =
       reps: number;
       sets?: number;
     };
+export type Item = {
+  id: string;
+  name: string;
+  kind:
+    | "bar"
+    | "plates"
+    | "collars"
+    | "chains"
+    | "dumbbells"
+    | "odd-object"
+    | "rack"
+    | "attachment"
+    | "handle"
+    | "cable"
+    | "bench"
+    | "station"
+    | "conditioning"
+    | "accessory";
+  barType?: "standard" | "junior" | "ez" | "ssb" | "trap" | "log" | "swiss";
+  /**
+   * Measured weights can be any value, such as a 19.2kg bar or 0.28kg collars
+   */
+  kg?: number;
+  /**
+   * Measured weights can be any value, such as a 19.2kg bar or 0.28kg collars
+   */
+  kgEach?: number;
+  /**
+   * How many, for chains, loadable handles and the like
+   */
+  count?: number;
+  /**
+   * Each plate size and how many single plates there are
+   */
+  plates?: {
+    /**
+     * Measured weights can be any value, such as a 19.2kg bar or 0.28kg collars
+     */
+    kg: number;
+    count: number;
+  }[];
+  /**
+   * Fixed dumbbell pairs, by weight of one dumbbell
+   *
+   * Items: Measured weights can be any value, such as a 19.2kg bar or 0.28kg collars
+   */
+  pairsKg?: number[];
+  /**
+   * Pairs owned but not available right now, such as lent out
+   *
+   * Items: Measured weights can be any value, such as a 19.2kg bar or 0.28kg collars
+   */
+  unavailableKg?: number[];
+  /**
+   * Library exercises this bar should be used for when there's a choice
+   */
+  preferredFor?: string[];
+  attachesTo?: string;
+  /**
+   * Some details still to confirm
+   */
+  tbc?: boolean;
+  notes?: string;
+};
 
 /**
- * Everything the app holds for the household, in one file: every profile, every programme in use, and each person's training log. The equipment list and exercise library come with the app, so they aren't included. See docs/backup.md.
+ * Everything the app holds for the household, in one file: every profile, every programme in use, each person's training log, and the household's gyms and their equipment. The exercise library comes with the app, so it isn't included. See docs/backup.md.
  */
 export interface JFDIBackup {
   format: "jfdi-backup";
@@ -188,6 +252,13 @@ export interface JFDIBackup {
   };
   profiles: JFDIProfile[];
   programmes: JFDIProgrammeFile[];
+  /**
+   * The places the household trains, each with its equipment. The first is home. Older backups don't have this, and restoring one keeps the gyms already on the device
+   */
+  gyms?: {
+    id: string;
+    kit: JFDIHouseholdEquipment;
+  }[];
   /**
    * One training log per profile
    */
@@ -506,6 +577,16 @@ export interface Target1 {
   seconds?: number;
   metres?: number;
   label?: string;
+}
+/**
+ * Everything in the gym, with the details that matter for planning. See docs/equipment-and-library.md.
+ */
+export interface JFDIHouseholdEquipment {
+  format: "jfdi-equipment";
+  formatVersion: 1;
+  name: string;
+  updatedAt: string;
+  items: Item[];
 }
 /**
  * Everything one person has done: sessions as performed, daily check-ins and activities, and bodyweight. See docs/profile-and-log.md.

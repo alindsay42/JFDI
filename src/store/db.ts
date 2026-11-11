@@ -2,6 +2,8 @@
 // just these records written out, and a restore reads them back (architecture.md, "Storage").
 import Dexie, { type EntityTable, type Table } from "dexie";
 import { upgradeProgramme, upgradeSession } from "../formats/upgrade.js";
+import { TYPICAL_GYM, type Gym } from "./gym-templates.ts";
+import { equipment } from "./household.ts";
 import type { JFDIProfile } from "../formats/generated/profile.ts";
 import type { JFDIProgrammeFile } from "../formats/generated/programme.ts";
 import type { Day, Session, WeighIn } from "../formats/generated/log.ts";
@@ -41,6 +43,16 @@ export class JfdiDatabase extends Dexie {
     this.version(3).stores({}).upgrade(async (tx) => {
       await tx.table("programmes").toCollection().modify((p, ref) => { ref.value = upgradeProgramme(p); });
       await tx.table("sessions").toCollection().modify((s, ref) => { ref.value = upgradeSession(s); });
+    });
+    // Gyms: a household that already has data keeps the kit the app came with, as its home gym
+    this.version(4).stores({}).upgrade(async (tx) => {
+      const gyms: Gym[] = [{ id: "home", kit: structuredClone(equipment) }];
+      await tx.table("settings").put({ key: "gyms", value: gyms });
+    });
+    // A brand-new household starts with a typical home gym
+    this.on("populate", (tx) => {
+      const gyms: Gym[] = [{ id: "home", kit: structuredClone(TYPICAL_GYM) }];
+      void tx.table("settings").add({ key: "gyms", value: gyms });
     });
   }
 }

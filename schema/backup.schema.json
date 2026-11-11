@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://alindsay42.github.io/jfdi/schema/backup.schema.json",
   "title": "J.F.D.I backup",
-  "description": "Everything the app holds for the household, in one file: every profile, every programme in use, and each person's training log. The equipment list and exercise library come with the app, so they aren't included. See docs/backup.md.",
+  "description": "Everything the app holds for the household, in one file: every profile, every programme in use, each person's training log, and the household's gyms and their equipment. The exercise library comes with the app, so it isn't included. See docs/backup.md.",
   "type": "object",
   "additionalProperties": false,
   "required": ["format", "formatVersion", "exportedAt", "app", "profiles", "programmes", "logs"],
@@ -22,6 +22,19 @@
     },
     "profiles": { "type": "array", "items": { "$ref": "profile.schema.json" } },
     "programmes": { "type": "array", "items": { "$ref": "programme.schema.json" } },
+    "gyms": {
+      "description": "The places the household trains, each with its equipment. The first is home. Older backups don't have this, and restoring one keeps the gyms already on the device",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "kit"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 64 },
+          "kit": { "$ref": "equipment.schema.json" }
+        }
+      }
+    },
     "logs": {
       "description": "One training log per profile",
       "type": "array",

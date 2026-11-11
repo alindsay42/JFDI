@@ -9,6 +9,9 @@ import { PickLists } from "./PickLists.tsx";
 import { href } from "../shared/route.ts";
 import type { DraftState } from "./useDraft.ts";
 import { equipment, library } from "../store/household.ts";
+import { useLiveQuery } from "dexie-react-hooks";
+import { db } from "../store/db.ts";
+import { getGyms } from "../store/gyms.ts";
 import type { Tier, Workout } from "../formats/programme.ts";
 
 /** Main, Supporting or Extra: what Amber acts on. Only shown when the programme has the daily check on. */
@@ -30,6 +33,8 @@ export function WorkoutEditor({ draft, workout }: { draft: DraftState; workout: 
   const id = workout.id;
   const { update } = draft;
   const [pairing, setPairing] = useState<Set<string> | null>(null);
+  // New bar exercises take their bar's weight from the home gym
+  const home = useLiveQuery(async () => (await getGyms(db))[0], []);
   const chosen = workoutSlots(workout).map((s) => s.slot_.exercise);
   const exercises = new Map(p.exercises.map((e) => [e.id, e]));
 
@@ -57,7 +62,7 @@ export function WorkoutEditor({ draft, workout }: { draft: DraftState; workout: 
         <h2 id="choose-heading">Choose exercises</h2>
         <PickLists
           chosen={chosen}
-          onAdd={(ids) => update((q) => addExercises(q, id, ids, library, equipment))}
+          onAdd={(ids) => update((q) => addExercises(q, id, ids, library, home?.kit ?? equipment))}
           onRemove={(ids) => update((q) => removeExercises(q, id, ids))}
         />
       </section>

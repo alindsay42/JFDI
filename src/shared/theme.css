@@ -655,3 +655,20 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 .help-contents ul { columns: 2 14rem; padding-left: 1.25rem; margin: 0; }
 .help-contents a { display: inline-block; min-height: 32px; padding: 4px 0; color: var(--text); }
 .version a { color: inherit; }
+.gym-picker { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: -4px 0 12px; } .gym-picker select { min-height: 44px; }
+.gym-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+.gym-tabs [aria-current="page"] { border-color: var(--you); color: var(--text); font-weight: 700; }
+.kit-list { list-style: none; margin: 4px 0 8px; padding: 0; }
+.kit-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 6px 0; }
+.kit-list > .kit-row { border-bottom: 1px solid var(--line); }
+.kit-row .set-remove { margin-left: auto; }
+.kit-group { padding: 8px 0 12px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+.name-input { flex: 1 1 12rem; min-width: 0; min-height: 44px; padding: 0 10px; border: 2px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--text); font: inherit; }
+.kg-field { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
+.kg-input { width: 5.5em; min-height: 44px; padding: 0 8px; text-align: right; border: 2px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--text); font: inherit; }
+.kg-input[aria-invalid="true"] { border-color: #dc2626; }
+.plate-kg { min-width: 5em; font-weight: 700; }
+.pair-list { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 8px; padding: 0; }
+.pair { display: inline-flex; align-items: center; gap: 2px; border: 1px solid var(--line); border-radius: 12px; padding: 0 4px; }
+.pair .set-remove { margin-left: 0; }
+.kit-row select { min-height: 44px; padding: 0 8px; border: 2px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--text); font: inherit; }
