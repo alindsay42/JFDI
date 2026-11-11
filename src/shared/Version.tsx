@@ -6,7 +6,7 @@ export const APP = { version: __APP_VERSION__, commit: __APP_COMMIT__ };
 export function Version() {
   return (
     <footer className="version">
-      Version {APP.version} ({APP.commit})
+      <a href="#/help">Help</a> · Version {APP.version} ({APP.commit})
     </footer>
   );
 }
