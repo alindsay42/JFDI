@@ -472,3 +472,50 @@ test("equipment: bars, dumbbells and other kit can be changed, and a bad value i
   await expect(page.getByLabel("Hex trap bar: type")).toHaveValue("trap");
   await expect(page.getByRole("checkbox", { name: "7.5kg", exact: true })).not.toBeChecked();
 });
+
+test("two people on one programme, each starting from their own weights", async ({ page }) => {
+  await page.clock.install({ time: new Date("2027-01-01T10:00:00") });
+  await dianeOnBlock1(page);
+  await page.goto("./#/programme/strength-block-1");
+  await page.getByText("Diane's starting weights").click();
+  const dianeSquat = page.getByLabel("Back squat: Diane's starting weight");
+  await expect(dianeSquat).toHaveValue("30");
+  await dianeSquat.fill("25");
+  await dianeSquat.blur();
+  await expect(page.getByText("1 own weight, the rest the programme's")).toBeVisible();
+  // Changing the start date keeps it
+  await page.getByLabel("Started on").fill("2026-12-31");
+  await page.getByRole("button", { name: "Change start date" }).click();
+  await page.reload();
+  await page.getByText("Diane's starting weights").click();
+  await expect(page.getByLabel("Back squat: Diane's starting weight")).toHaveValue("25");
+
+  // Andrew joins the same programme, starting heavier
+  await page.goto("./#/who");
+  await page.getByRole("button", { name: "Add person" }).click();
+  await page.getByLabel("Name").fill("Andrew");
+  await page.getByRole("radio", { name: "Blue" }).check();
+  await page.getByRole("button", { name: "Add", exact: true }).click();
+  await expect(page.locator(".you-bar")).toContainText("Andrew");
+  await page.goto("./#/programme/strength-block-1");
+  await page.getByText("Andrew's starting weights").click();
+  await page.getByLabel("Back squat: Andrew's starting weight").fill("60");
+  await page.getByLabel("Back squat: Andrew's starting weight").blur();
+  await page.getByRole("button", { name: "Use this programme" }).click();
+  await expect(page.getByRole("heading", { name: "Andrew is on this programme" })).toBeVisible();
+
+  const squat = page.locator(".preview-row", { hasText: "Back squat" }).locator(".preview-target");
+  await page.getByRole("link", { name: "Today" }).click();
+  await page.getByRole("radio", { name: /Green/ }).check();
+  await expect(squat).toContainText("60kg");
+  await page.getByRole("button", { name: "Andrew. Change person" }).click();
+  await page.getByRole("button", { name: "Diane" }).click();
+  await page.getByRole("radio", { name: /Green/ }).check();
+  await expect(squat).toContainText("25kg");
+
+  // Back to the programme's own weight
+  await page.goto("./#/programme/strength-block-1");
+  await page.getByText("Diane's starting weights").click();
+  await page.getByRole("button", { name: "Use 30kg" }).first().click();
+  await expect(page.getByText("· the programme's")).toBeVisible();
+});

@@ -5,13 +5,13 @@ import { Confirm } from "../shared/Confirm.tsx";
 import { plural } from "../shared/format.ts";
 import { go, href } from "../shared/route.ts";
 import { deleteProgramme } from "../store/build.ts";
-import { assignProgramme, localDate, ProfileError, stopProgramme } from "../store/programmes.ts";
+import { assignProgramme, localDate, ProfileError, setStartingLoads, stopProgramme } from "../store/programmes.ts";
 import { db } from "../store/db.ts";
 import { Frame } from "./Frame.tsx";
 import {
   addDay, amberChoices, copyWeek, MAX_DAYS, MAX_WEEKS, moveDay, removeDay, setAmber, setCheck48h, setCheckStyle, setDay,
   setLevelDescription, setMinRestDays, setMode, setWeekCount, type AmberChoices, type CheckStyle,
-  DEFAULT_DELOAD, deloadOf, setDeload, setWeightsMode, type DeloadChoices,
+  DEFAULT_DELOAD, deloadOf, ownWeights, setDeload, setWeightsMode, startingWeights, type DeloadChoices,
 } from "./model.ts";
 import { useDraft, type DraftState } from "./useDraft.ts";
 import { WorkoutEditor } from "./WorkoutEditor.tsx";
@@ -211,10 +211,20 @@ function UseProgramme({ draft, profile }: { draft: DraftState; profile: JFDIProf
   const [stopping, setStopping] = useState(false);
   const unsaved = draft.dirty || draft.isNew;
 
+  // Someone's own starting weights: kept when only the start date changes
+  const [wanted, setWanted] = useState<Record<string, number>>(() =>
+    Object.fromEntries(Object.entries(onThis ? active!.startingLoads ?? {} : {}).map(([k, v]) => [k, v.kg])));
   const use = () => {
     setError("");
-    assignProgramme(db, profile.id, { programme: p.id, startDate, startingLoads: {}, unavailableEquipment: profile.unavailableEquipment ?? [] })
+    assignProgramme(db, profile.id, { programme: p.id, startDate, startingLoads: ownWeights(p, wanted), unavailableEquipment: profile.unavailableEquipment ?? [] })
       .catch((e: unknown) => setError(e instanceof ProfileError ? e.problems.join(" ") : String(e)));
+  };
+  const setWeight = (exercise: string, kg: number | undefined) => {
+    const next = { ...wanted };
+    if (kg === undefined) delete next[exercise]; else next[exercise] = kg;
+    setWanted(next);
+    // Already on it: save straight away
+    if (onThis) setStartingLoads(db, profile.id, ownWeights(p, next)).catch((e: unknown) => setError(e instanceof ProfileError ? e.problems.join(" ") : String(e)));
   };
 
   return (
@@ -236,6 +246,7 @@ function UseProgramme({ draft, profile }: { draft: DraftState; profile: JFDIProf
         )}
       </div>
       {unsaved && !onThis && <p className="hint">Save the programme first.</p>}
+      <StartingWeights p={p} name={profile.name} wanted={wanted} onChange={setWeight} saved={onThis} />
       {error && <p className="problems" role="alert">{error}</p>}
       <Confirm
         open={stopping}
@@ -523,5 +534,49 @@ function BlockWeeks({ value, onCommit }: { value: number | null; onCommit: (n: n
   return (
     <input className="small" aria-label="Weeks in a block" inputMode="numeric" value={text} disabled={value === null} aria-invalid={!ok || undefined}
       title="2 to 16" onChange={(e) => { setText(e.target.value); const v = Number(e.target.value); if (Number.isInteger(v) && v >= 2 && v <= 16) onCommit(v); }} />
+  );
+}
+
+/** Each person can start from their own weights; the programme's are used otherwise. */
+function StartingWeights({ p, name, wanted, onChange, saved }: {
+  p: Programme; name: string; wanted: Record<string, number>; onChange: (exercise: string, kg: number | undefined) => void; saved: boolean;
+}) {
+  const list = startingWeights(p);
+  if (!list.length) return null;
+  const own = Object.keys(ownWeights(p, wanted)).length;
+  return (
+    <details className="starting-weights">
+      <summary>{`${name}'s starting weights`} <span className="muted">· {own ? `${plural(own, "own weight")}, the rest the programme's` : "the programme's"}</span></summary>
+      <p className="hint">
+        Set {name}'s own weight for any exercise. Once {name} has done an exercise, it goes up from what was actually lifted.
+        {saved ? " Changes save straight away." : ""}
+      </p>
+      <ul className="kit-list">
+        {list.map((s) => {
+          const mine = wanted[s.exercise] !== undefined && Math.round(wanted[s.exercise]! * 2) / 2 !== s.kg;
+          return (
+            <li key={s.exercise} className="kit-row">
+              <span className="sw-name">{s.name}</span>
+              <span className="kg-field">
+                <WeightBox label={`${s.name}: ${name}'s starting weight`} value={wanted[s.exercise] ?? s.kg} onCommit={(kg) => onChange(s.exercise, kg)} />
+                <span aria-hidden="true">kg</span>
+              </span>
+              {mine && <button type="button" className="btn btn-quiet btn-small" onClick={() => onChange(s.exercise, undefined)}>Use {s.kg}kg</button>}
+            </li>
+          );
+        })}
+      </ul>
+    </details>
+  );
+}
+
+function WeightBox({ label, value, onCommit }: { label: string; value: number; onCommit: (kg: number) => void }) {
+  const [text, setText] = useState(String(value));
+  useEffect(() => setText(String(value)), [value]);
+  const n = Number(text.replace(",", "."));
+  const ok = text.trim() !== "" && n >= 0 && n <= 500;
+  return (
+    <input className="kg-input" aria-label={label} inputMode="decimal" value={text} aria-invalid={!ok || undefined}
+      onChange={(e) => setText(e.target.value)} onBlur={() => { if (ok && n !== value) onCommit(n); }} />
   );
 }

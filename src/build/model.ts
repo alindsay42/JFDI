@@ -667,3 +667,35 @@ export function setSlotProgression(p: Programme, workoutId: string, at: SlotRef,
   const used = new Set(next.workouts.flatMap((w) => w.items.flatMap((it) => it.slots.map((s) => s.progression))));
   return { ...next, progressions: next.progressions.filter((r) => used.has(r.id!) || DEFAULT_IDS.has(r.id!)) };
 }
+
+// ----- Each person's starting weights -----
+
+export interface StartingWeight { exercise: string; name: string; kg: number }
+
+/**
+ * The weighted exercises in a programme, in the order they first appear, with the programme's own starting
+ * weight ("just the bar" is the bar's weight). These are what each person can set for themselves.
+ */
+export function startingWeights(p: Programme): StartingWeight[] {
+  const seen = new Map<string, StartingWeight>();
+  for (const w of p.workouts) for (const item of w.items) for (const slot of item.slots) {
+    if (seen.has(slot.exercise) || slot.start?.kg === undefined) continue;
+    const ex = p.exercises.find((e) => e.id === slot.exercise);
+    const kg = slot.start.kg === "bar" ? p.equipment.find((b) => b.id === ex?.bar)?.kg : slot.start.kg;
+    if (kg === undefined || kg === null) continue;
+    seen.set(slot.exercise, { exercise: slot.exercise, name: ex?.name ?? slot.exercise, kg });
+  }
+  return [...seen.values()];
+}
+
+/** Only the weights that differ from the programme's own, rounded to 0.5kg. */
+export function ownWeights(p: Programme, wanted: Record<string, number>): Record<string, { kg: number }> {
+  const out: Record<string, { kg: number }> = {};
+  for (const s of startingWeights(p)) {
+    const kg = wanted[s.exercise];
+    if (kg === undefined || !(kg >= 0)) continue;
+    const r = Math.round(kg * 2) / 2;
+    if (r !== s.kg) out[s.exercise] = { kg: r };
+  }
+  return out;
+}
