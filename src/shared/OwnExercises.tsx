@@ -20,7 +20,7 @@ const MEASURES: Array<[ExerciseInput["measure"], string]> = [
   ["load", "Weight and reps"], ["reps", "Reps"], ["time", "Time"], ["distance", "Distance"], ["calories", "Calories"],
 ];
 export const IMPLEMENT_NAMES: Record<string, string> = {
-  barbell: "Barbell", dumbbell: "Dumbbells", kettlebell: "Kettlebell", cable: "Cable", machine: "Machine",
+  barbell: "Barbell", dumbbell: "Dumbbells", kettlebell: "Kettlebell", plate: "Plates", cable: "Cable", machine: "Machine",
   band: "Band", bodyweight: "Bodyweight", other: "Other",
 };
 /** Kit an exercise can need: anything but bars, plates and dumbbells, which go with what it's done with */
@@ -104,7 +104,7 @@ export function ExerciseForm({ gyms, exercise, done, added }: {
   const fixed = !!uses && isUsed(uses);
   const kit = kitChoices(gyms);
   const set = (patch: Partial<ExerciseInput>) => setV((x) => ({ ...x, ...patch }));
-  const twoAtOnce = (v.implement === "dumbbell" || v.implement === "kettlebell") && v.measure !== "reps";
+  const twoAtOnce = ["dumbbell", "kettlebell", "plate"].includes(v.implement) && v.measure !== "reps";
   const ready = v.name.trim() !== "" && (v.pattern as string) !== "";
 
   const submit = (e: FormEvent) => {

@@ -21,7 +21,7 @@ export interface ExerciseInput {
   implement: Implement;
   /** Barbell exercises: which bar */
   barType?: BarType;
-  /** Dumbbells or kettlebells: two at once, so the weight is for each */
+  /** Dumbbells, kettlebells or plates: two at once, so the weight is for each */
   each?: boolean;
   /** Kit it needs, by id from the gyms */
   requires: string[];
@@ -68,7 +68,7 @@ export function exerciseOf(id: string, input: ExerciseInput): OwnExercise {
     requires: [...new Set(input.requires)],
   };
   if (input.implement === "barbell") ex.barTypes = [input.barType ?? "standard"];
-  if (input.each && input.measure !== "reps" && (input.implement === "dumbbell" || input.implement === "kettlebell")) ex.loadPer = "each";
+  if (input.each && input.measure !== "reps" && ["dumbbell", "kettlebell", "plate"].includes(input.implement)) ex.loadPer = "each";
   if (input.notes?.trim()) ex.notes = input.notes.trim();
   return ex;
 }

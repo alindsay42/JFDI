@@ -64,7 +64,7 @@
         "name": { "$ref": "#/$defs/text" },
         "family": { "$ref": "#/$defs/id" },
         "measure": { "enum": ["load", "reps", "time", "distance", "calories"] },
-        "implement": { "enum": ["barbell", "dumbbell", "kettlebell", "cable", "machine", "band", "bodyweight", "other"] },
+        "implement": { "enum": ["barbell", "dumbbell", "kettlebell", "plate", "cable", "machine", "band", "bodyweight", "other"] },
         "bar": { "$ref": "#/$defs/id" },
         "loadPer": { "enum": ["total", "each"] },
         "perSide": { "type": "boolean" },

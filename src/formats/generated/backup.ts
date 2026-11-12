@@ -430,7 +430,15 @@ export interface Exercise {
   family?: string;
   measure: "load" | "reps" | "time" | "distance" | "calories";
   implement:
-    "barbell" | "dumbbell" | "kettlebell" | "cable" | "machine" | "band" | "bodyweight" | "other";
+    | "barbell"
+    | "dumbbell"
+    | "kettlebell"
+    | "plate"
+    | "cable"
+    | "machine"
+    | "band"
+    | "bodyweight"
+    | "other";
   bar?: string;
   loadPer?: "total" | "each";
   perSide?: boolean;
@@ -598,7 +606,15 @@ export interface Exercise1 {
   family: string;
   measure: "load" | "reps" | "time" | "distance" | "calories";
   implement:
-    "barbell" | "dumbbell" | "kettlebell" | "cable" | "machine" | "band" | "bodyweight" | "other";
+    | "barbell"
+    | "dumbbell"
+    | "kettlebell"
+    | "plate"
+    | "cable"
+    | "machine"
+    | "band"
+    | "bodyweight"
+    | "other";
   /**
    * Bars this exercise can be done with. The first is the default
    *

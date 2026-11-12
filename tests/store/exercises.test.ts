@@ -53,6 +53,7 @@ describe("your own exercises", () => {
     expect(exerciseOf("own-x", { ...base, measure: "load", implement: "barbell", barType: "ssb", each: true })).toMatchObject({ barTypes: ["ssb"] });
     expect(exerciseOf("own-x", { ...base, measure: "load", implement: "barbell", each: true }).loadPer).toBeUndefined();
     expect(exerciseOf("own-x", { ...base, measure: "load", implement: "kettlebell", each: true }).loadPer).toBe("each");
+    expect(exerciseOf("own-x", { ...base, measure: "load", implement: "plate", each: true }).loadPer).toBe("each");
     expect(exerciseOf("own-x", { ...base, measure: "reps", implement: "dumbbell", each: true }).loadPer).toBeUndefined();
     expect(exerciseOf("own-x", { ...base, measure: "time", implement: "dumbbell", barType: "ez" }).barTypes).toBeUndefined();
     const full = exerciseOf("own-x", { ...base, measure: "distance", implement: "dumbbell", each: true, notes: "  Tall  " });

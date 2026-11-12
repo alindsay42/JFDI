@@ -254,6 +254,10 @@ test("your own exercises: add one that needs new kit, find it by that kit, make 
   await expect(form.getByRole("button", { name: "Add exercise" })).toBeDisabled();
   await form.getByLabel("Exercise name").fill("Ab wheel rollout");
   await form.getByLabel("Movement").selectOption({ label: "Core" });
+  await form.getByLabel("What it counts").selectOption({ label: "Weight and reps" });
+  await form.getByLabel("Done with").selectOption({ label: "Plates" });
+  await expect(form.getByRole("checkbox", { name: "Two at once, so the weight is for each" })).toBeVisible();
+  await form.getByLabel("What it counts").selectOption({ label: "Reps" });
   await form.getByLabel("Done with").selectOption({ label: "Other" });
   await form.getByRole("checkbox", { name: "Ab wheel" }).check();
   await form.getByRole("button", { name: "Add exercise" }).click();

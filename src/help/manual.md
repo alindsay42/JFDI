@@ -93,7 +93,7 @@ Add exercises the app doesn't come with, such as an ab wheel rollout. Open **Edi
 - **Name:** what it's called. No two exercises can share a name.
 - **Movement:** squat, hinge, push, pull and so on, for filtering.
 - **What it counts:** weight and reps, reps, time, distance or calories.
-- **Done with:** barbell (and which bar), dumbbells, kettlebell, cable, machine, band, bodyweight or other. For dumbbells or kettlebells, tick **Two at once** if the weight is for each one.
+- **Done with:** barbell (and which bar), dumbbells, kettlebell, plates, cable, machine, band, bodyweight or other. For dumbbells, kettlebells or plates, tick **Two at once** if the weight is for each one. Plates are for holding a plate, such as a plate front raise: its target rounds to a plate size the gym has.
 - **Needs:** tick the kit it needs, from your gyms. Add new kit, such as an ab wheel, under **Other kit** in Equipment first.
 - **Notes:** how to do it.
 
