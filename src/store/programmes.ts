@@ -159,3 +159,13 @@ export async function stopProgramme(db: JfdiDatabase, profileId: string, now = n
     return next;
   });
 }
+
+/** Changes someone's own starting weights on the programme they're using; anything else stays as it is. */
+export async function setStartingLoads(db: JfdiDatabase, profileId: string, startingLoads: Record<string, { kg: number }>, now = new Date()): Promise<void> {
+  const profile = await db.profiles.get(profileId);
+  const active = profile?.programmes.active;
+  if (!profile || !active) throw new Error("Choose a programme first");
+  await assignProgramme(db, profileId, {
+    programme: active.programme, startDate: active.startDate, startingLoads, unavailableEquipment: profile.unavailableEquipment ?? [],
+  }, now);
+}

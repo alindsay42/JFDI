@@ -83,6 +83,8 @@ The wording of each level can be changed. When the daily check is on, each exerc
 
 **Use this programme** sets it as the current person's programme from a start date. **Change start date** moves it. Two people can use the same programme.
 
+**Starting weights:** open the person's starting weights below the start date to give them their own weight for any exercise. For example, you might start a squat at 60kg while someone else on the same programme starts at 25kg. Anything not changed uses the programme's weight, and **Use 30kg** (or whatever the programme's is) goes back to it. Once someone has done an exercise, it goes up from what they actually lifted.
+
 ## Gyms and equipment
 
 The app knows what kit you have, so it never asks for a weight you can't load. Open it from **Edit equipment** on the Programme tab, or **Edit gyms** on Today.

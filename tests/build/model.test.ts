@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   addDay, addExercises, copyWeek, group, groupOf, moveDay, moveItem, moveSlot, newProgramme, parseRange, formatRange, pruneWorkouts,
   removeDay, removeExercises, renameWorkout, setDay, setMinRestDays, setMode, setWeekCount, spreadDays, startKg, updateItem, updateSlot,
-  weekWorkouts, duplicateWorkout, slug, placesOf, setCheckStyle, amberChoices, setAmber, setLevelDescription, setCheck48h, CHECK_TEMPLATE, setWeightsMode, deloadOf, setDeload, DEFAULT_DELOAD, slotProgression, setSlotProgression, progressionSummary,
+  weekWorkouts, duplicateWorkout, slug, placesOf, setCheckStyle, amberChoices, setAmber, setLevelDescription, setCheck48h, CHECK_TEMPLATE, setWeightsMode, deloadOf, setDeload, DEFAULT_DELOAD, slotProgression, setSlotProgression, progressionSummary, startingWeights, ownWeights,
 } from "../../src/build/model.ts";
 import { asFile, asProgramme, type Programme } from "../../src/formats/programme.ts";
 import { checkAgainstLibrary, validateProgramme } from "../../src/formats/validate.js";
@@ -370,5 +370,24 @@ describe("how each exercise progresses", () => {
     expect(progressionSummary({ style: "double", jumpKg: 1, stall: null }, "seconds")).toBe("Time to the top of the range, then +1kg");
     expect(progressionSummary({ style: "linear", jumpKg: 5, stall: null }, "metres")).toBe("+5kg when you hit your distance");
     expect(progressionSummary({ style: "linear", jumpKg: 5, stall: null }, "other")).toBe("+5kg when you hit your reps");
+  });
+});
+
+describe("each person's starting weights", () => {
+  it("lists weighted exercises once, in order, with the programme's weight; just the bar is the bar", () => {
+    const p = block1();
+    const list = startingWeights(p);
+    expect(list[0]).toEqual({ exercise: "back-squat", name: "Back squat", kg: 30 });
+    expect(new Set(list.map((s) => s.exercise)).size).toBe(list.length);
+    expect(list.every((s) => typeof s.kg === "number")).toBe(true);
+    p.workouts[0]!.items[0]!.slots[0]!.start = { kg: "bar" };
+    expect(startingWeights(p)[0]!.kg).toBe(20);
+    p.workouts[0]!.items[0]!.slots[0]!.start = {};
+    expect(startingWeights(p).some((s) => s.exercise === "back-squat")).toBe(false);
+  });
+
+  it("keeps only weights that differ, rounded to 0.5kg", () => {
+    const p = block1();
+    expect(ownWeights(p, { "back-squat": 30, "bench-press": 27.3, deadlift: -1, nope: 10 })).toEqual({ "bench-press": { kg: 27.5 } });
   });
 });

@@ -672,3 +672,7 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 .pair { display: inline-flex; align-items: center; gap: 2px; border: 1px solid var(--line); border-radius: 12px; padding: 0 4px; }
 .pair .set-remove { margin-left: 0; }
 .kit-row select { min-height: 44px; padding: 0 8px; border: 2px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--text); font: inherit; }
+.starting-weights { margin-top: 12px; }
+.starting-weights summary { min-height: 44px; padding: 10px 0; cursor: pointer; font-weight: 700; }
+.starting-weights summary .muted { font-weight: 400; }
+.sw-name { flex: 1 1 10rem; }

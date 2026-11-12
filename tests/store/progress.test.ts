@@ -175,3 +175,15 @@ describe("the day's check-in", () => {
     expect((await db.days.get(["diane", "2027-01-03"]))?.readiness).toBe("amber");
   });
 });
+
+describe("each person's starting weights", () => {
+  it("changes them on the programme they're using, keeping the start date", async () => {
+    const { setStartingLoads } = await import("../../src/store/programmes.ts");
+    await setStartingLoads(db, "diane", { "back-squat": { kg: 25 } });
+    const active = (await db.profiles.get("diane"))!.programmes.active!;
+    expect(active).toMatchObject({ programme: p.id, startDate: "2027-01-01", startingLoads: { "back-squat": { kg: 25 } } });
+    await addProfile(db, "Nobody", "#0d9488");
+    await expect(setStartingLoads(db, "nobody", {})).rejects.toThrow("Choose a programme first");
+    await expect(setStartingLoads(db, "gone", {})).rejects.toThrow("Choose a programme first");
+  });
+});
