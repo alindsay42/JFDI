@@ -1,5 +1,6 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { getGyms } from "../store/gyms.ts";
+import { getOwnExercises } from "../store/exercises.ts";
 import { useState, type FormEvent } from "react";
 import type { JFDIProfile } from "../formats/generated/profile.ts";
 import { asProgramme, type Programme } from "../formats/programme.ts";
@@ -16,6 +17,7 @@ export function BuildHome({ profile, profiles }: { profile: JFDIProfile | undefi
   const saved = useLiveQuery(() => db.programmes.toArray());
   const drafts = useLiveQuery(() => listDrafts(db));
   const gyms = useLiveQuery(() => getGyms(db));
+  const own = useLiveQuery(() => getOwnExercises(db));
   const [name, setName] = useState("");
 
   if (!saved || !drafts) return null;
@@ -75,6 +77,13 @@ export function BuildHome({ profile, profiles }: { profile: JFDIProfile | undefi
           {gyms?.length ? gyms.map((g) => g.kit.name).join(", ") : "No gyms yet"}. Bars, plates and dumbbells decide which weights targets round to.
         </p>
         <div className="actions actions-start"><a className="btn btn-quiet" href="#/equipment">Edit equipment</a></div>
+      </section>
+      <section className="card" aria-labelledby="own-card-heading">
+        <h2 id="own-card-heading">Your exercises</h2>
+        <p className="hint">
+          {own?.length ? own.map((e) => e.name).join(", ") : "None added yet"}. Add exercises the app doesn't have, with the kit each one needs.
+        </p>
+        <div className="actions actions-start"><a className="btn btn-quiet" href="#/exercises">Edit exercises</a></div>
       </section>
     </Frame>
   );

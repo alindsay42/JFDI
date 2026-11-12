@@ -7,6 +7,8 @@ import type { JFDIProfile } from "./generated/profile.ts";
 export function validateEquipment(eq: unknown): string[];
 export function validateLibrary(lib: unknown, eq: JFDIEquipment): string[];
 export function checkAgainstLibrary(p: JFDIProgramme, lib: JFDIExerciseLibrary, eq: JFDIEquipment): string[];
+export function validateOwnExercises(list: unknown[], lib: JFDIExerciseLibrary): string[];
+export function withOwnExercises(lib: JFDIExerciseLibrary, own: JFDIExerciseLibrary["exercises"][number][] | undefined): JFDIExerciseLibrary;
 export function validateProgramme(p: unknown): string[];
 export function validateProfile(
   profile: unknown,

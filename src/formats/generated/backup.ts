@@ -237,7 +237,7 @@ export type Item = {
 };
 
 /**
- * Everything the app holds for the household, in one file: every profile, every programme in use, each person's training log, and the household's gyms and their equipment. The exercise library comes with the app, so it isn't included. See docs/backup.md.
+ * Everything the app holds for the household, in one file: every profile, every programme in use, each person's training log, the household's gyms and their equipment, and any exercises the household added. The exercise library comes with the app, so it isn't included. See docs/backup.md.
  */
 export interface JFDIBackup {
   format: "jfdi-backup";
@@ -259,6 +259,10 @@ export interface JFDIBackup {
     id: string;
     kit: JFDIHouseholdEquipment;
   }[];
+  /**
+   * Exercises the household added to the library, such as an ab wheel rollout. Their ids start own-
+   */
+  exercises?: Exercise1[];
   /**
    * One training log per profile
    */
@@ -587,6 +591,44 @@ export interface JFDIHouseholdEquipment {
   name: string;
   updatedAt: string;
   items: Item[];
+}
+export interface Exercise1 {
+  id: string;
+  name: string;
+  family: string;
+  measure: "load" | "reps" | "time" | "distance" | "calories";
+  implement:
+    "barbell" | "dumbbell" | "kettlebell" | "cable" | "machine" | "band" | "bodyweight" | "other";
+  /**
+   * Bars this exercise can be done with. The first is the default
+   *
+   * @minItems 1
+   */
+  barTypes?: [
+    "standard" | "junior" | "ez" | "ssb" | "trap" | "log" | "swiss",
+    ...("standard" | "junior" | "ez" | "ssb" | "trap" | "log" | "swiss")[]
+  ];
+  loadPer?: "total" | "each";
+  perSide?: boolean;
+  pattern:
+    | "squat"
+    | "hinge"
+    | "push"
+    | "pull"
+    | "lunge"
+    | "carry"
+    | "core"
+    | "isolation"
+    | "conditioning"
+    | "mobility";
+  /**
+   * Equipment ids needed, apart from the bar itself
+   */
+  requires: string[];
+  muscles?: string[];
+  flags?: ("spineLoading" | "rotation" | "overhead" | "impact")[];
+  restSec?: number;
+  notes?: string;
 }
 /**
  * Everything one person has done: sessions as performed, daily check-ins and activities, and bodyweight. See docs/profile-and-log.md.

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://alindsay42.github.io/jfdi/schema/backup.schema.json",
   "title": "J.F.D.I backup",
-  "description": "Everything the app holds for the household, in one file: every profile, every programme in use, each person's training log, and the household's gyms and their equipment. The exercise library comes with the app, so it isn't included. See docs/backup.md.",
+  "description": "Everything the app holds for the household, in one file: every profile, every programme in use, each person's training log, the household's gyms and their equipment, and any exercises the household added. The exercise library comes with the app, so it isn't included. See docs/backup.md.",
   "type": "object",
   "additionalProperties": false,
   "required": ["format", "formatVersion", "exportedAt", "app", "profiles", "programmes", "logs"],
@@ -34,6 +34,11 @@
           "kit": { "$ref": "equipment.schema.json" }
         }
       }
+    },
+    "exercises": {
+      "description": "Exercises the household added to the library, such as an ab wheel rollout. Their ids start own-",
+      "type": "array",
+      "items": { "$ref": "library.schema.json#/$defs/exercise" }
     },
     "logs": {
       "description": "One training log per profile",

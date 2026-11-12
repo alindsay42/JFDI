@@ -58,6 +58,29 @@ export function validateLibrary(lib, eq) {
   return errors;
 }
 
+// Exercises a household adds itself. They sit alongside the library, so their ids start "own-" and can't
+// clash with one the app brings later, and they can need any kit, since each gym's kit is the household's own.
+const checkExerciseSchema = ajv.getSchema(`${librarySchema.$id}#/$defs/exercise`);
+export function validateOwnExercises(list, lib) {
+  const errors = [];
+  uniqueIds(list, "exercise", errors);
+  const names = new Set(lib.exercises.map(e => e.name.toLowerCase()));
+  for (const ex of list) {
+    if (!checkExerciseSchema(ex)) { errors.push(...schemaErrors(checkExerciseSchema, `exercise "${ex?.id}"`)); continue; }
+    const where = `exercise "${ex.id}"`;
+    if (!ex.id.startsWith("own-")) errors.push(`${where}: an added exercise's id starts own-`);
+    if (ex.family !== "own") errors.push(`${where}: an added exercise's family is "own"`);
+    if (ex.barTypes && ex.implement !== "barbell") errors.push(`${where}: only barbell exercises take bar types`);
+    if (names.has(ex.name.toLowerCase())) errors.push(`${where}: there's already an exercise called "${ex.name}"`);
+  }
+  return errors;
+}
+
+/** The library with a household's own exercises added. */
+export function withOwnExercises(lib, own) {
+  return own?.length ? { ...lib, exercises: [...lib.exercises, ...own] } : lib;
+}
+
 // A programme carries its own copy of each exercise. When it uses a library exercise, the copy must agree.
 export function checkAgainstLibrary(p, lib, eq) {
   const errors = [];
@@ -252,9 +275,11 @@ export function validateLog(log, { profiles, programmes, library }) {
 const checkBackupSchema = ajv.compile(backupSchema);
 
 // A whole-household backup. Everything is checked before anything is restored.
-export function validateBackup(backup, { equipment, library }) {
+export function validateBackup(backup, { equipment, library: bundled }) {
   if (!checkBackupSchema(backup)) return schemaErrors(checkBackupSchema, "backup");
   const errors = [];
+  errors.push(...validateOwnExercises(backup.exercises || [], bundled));
+  const library = withOwnExercises(bundled, backup.exercises);
   uniqueIds(backup.profiles, "profile", errors);
   uniqueIds(backup.programmes, "programme", errors);
   uniqueIds(backup.gyms || [], "gym", errors);

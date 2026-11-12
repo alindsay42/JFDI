@@ -13,9 +13,11 @@ One JSON file holds everything the app keeps for the household. It's checked by 
 | `app` | The app version and commit that made it |
 | `profiles` | Every person, in the [profile format](profile-and-log.md) |
 | `programmes` | Every programme on the device, in the [programme format](programme-format.md) |
+| `gyms` | Each gym and its equipment. Optional: restoring an older backup without it gives home the kit the app came with |
+| `exercises` | The household's own exercises, if any (see [equipment-and-library.md](equipment-and-library.md#the-households-own-exercises)) |
 | `logs` | One [training log](profile-and-log.md) per person |
 
-The equipment list and the exercise library come with the app, so they aren't in the backup.
+The exercise library comes with the app, so it isn't in the backup; only exercises the household added are. Restoring a backup without `exercises` leaves the device with none.
 
 The file is named `jfdi-backup-YYYY-MM-DD.json` and saved to the device's Downloads folder.
 

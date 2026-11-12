@@ -108,7 +108,15 @@ The full list is in [`catalogue.md`](catalogue.md).
 3. List what it `requires`, and its `barTypes` if it uses a bar.
 4. Run `npm run catalogue` and `npm test`.
 
-In the app, Build mode will do the same through a form.
+### The household's own exercises
+
+In the app, **Your exercises** on the Programme tab adds exercises the library doesn't have, such as an ab wheel rollout. Each is stored on the device (settings key `exercises`) in the same exercise format, with:
+
+- an id starting `own-`, so it never clashes with one the app brings later, and the family `own`;
+- `requires` taken from any gym's kit, so the exercise picker can filter by kit;
+- a name that no other exercise has.
+
+They join the library when the app opens, so programmes, workouts and the checks treat them like any other. Once one is in a programme or anyone's history or goals, its `measure`, `implement`, bar and `loadPer` are fixed and it can't be removed; its name, movement, kit and notes can still change, and programmes' copies take the new name, movement and notes.
 
 ## Checks
 

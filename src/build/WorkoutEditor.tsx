@@ -12,6 +12,7 @@ import { equipment, library } from "../store/household.ts";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "../store/db.ts";
 import { getGyms } from "../store/gyms.ts";
+import { ExerciseForm } from "../shared/OwnExercises.tsx";
 import type { Tier, Workout } from "../formats/programme.ts";
 
 /** Main, Supporting or Extra: what Amber acts on. Only shown when the programme has the daily check on. */
@@ -34,7 +35,9 @@ export function WorkoutEditor({ draft, workout }: { draft: DraftState; workout: 
   const { update } = draft;
   const [pairing, setPairing] = useState<Set<string> | null>(null);
   // New bar exercises take their bar's weight from the home gym
-  const home = useLiveQuery(async () => (await getGyms(db))[0], []);
+  const gyms = useLiveQuery(() => getGyms(db), []);
+  const home = gyms?.[0];
+  const [creating, setCreating] = useState(false);
   const chosen = workoutSlots(workout).map((s) => s.slot_.exercise);
   const exercises = new Map(p.exercises.map((e) => [e.id, e]));
 
@@ -62,9 +65,21 @@ export function WorkoutEditor({ draft, workout }: { draft: DraftState; workout: 
         <h2 id="choose-heading">Choose exercises</h2>
         <PickLists
           chosen={chosen}
+          gyms={gyms ?? []}
           onAdd={(ids) => update((q) => addExercises(q, id, ids, library, home?.kit ?? equipment))}
           onRemove={(ids) => update((q) => removeExercises(q, id, ids))}
         />
+        {creating ? (
+          <div className="own-new">
+            <h3>New exercise</h3>
+            <ExerciseForm gyms={gyms ?? []} done={() => setCreating(false)}
+              added={(ex) => update((q) => addExercises(q, id, [ex.id], library, home?.kit ?? equipment))} />
+          </div>
+        ) : (
+          <p className="hint own-prompt">
+            Not in the list? <button type="button" className="btn btn-quiet btn-small" onClick={() => setCreating(true)}>+ New exercise</button>
+          </p>
+        )}
       </section>
 
       <section className="card" aria-labelledby="workout-heading">

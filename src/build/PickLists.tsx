@@ -1,36 +1,41 @@
 import { useMemo, useState } from "react";
+import { IMPLEMENT_NAMES, kitChoices, PATTERN_NAMES } from "../shared/OwnExercises.tsx";
+import type { Gym } from "../store/gyms.ts";
 import { library } from "../store/household.ts";
-
-const PATTERNS = ["squat", "hinge", "push", "pull", "lunge", "carry", "core", "isolation", "conditioning", "mobility"] as const;
-const PATTERN_NAMES: Record<string, string> = {
-  squat: "Squat", hinge: "Hinge", push: "Push", pull: "Pull", lunge: "Lunge", carry: "Carry", core: "Core",
-  isolation: "Isolation", conditioning: "Conditioning", mobility: "Mobility",
-};
-const names = new Map(library.exercises.map((e) => [e.id, e.name]));
 
 /**
  * Choosing exercises: every exercise on the left, this workout's on the right. Tap to highlight, then
  * > moves the highlighted ones in, >> moves in everything the search and filter show, < and << take them out.
  */
-export function PickLists({ chosen, onAdd, onRemove }: {
+export function PickLists({ chosen, gyms, onAdd, onRemove }: {
   chosen: string[];
+  gyms: Gym[];
   onAdd: (ids: string[]) => void;
   onRemove: (ids: string[]) => void;
 }) {
   const [search, setSearch] = useState("");
   const [pattern, setPattern] = useState("");
+  const [kit, setKit] = useState("");
   const [left, setLeft] = useState<Set<string>>(new Set());
   const [right, setRight] = useState<Set<string>>(new Set());
 
+  // The library gains the household's own exercises as they're added, so it's read afresh each time
+  const exercises = library.exercises;
+  const names = useMemo(() => new Map(exercises.map((e) => [e.id, e.name])), [exercises]);
   const inWorkout = useMemo(() => new Set(chosen), [chosen]);
+  // Kit to filter by: what exercises are done with, and anything in the gyms that an exercise needs
+  const doneWith = useMemo(() => Object.keys(IMPLEMENT_NAMES).filter((i) => exercises.some((e) => e.implement === i)), [exercises]);
+  const needs = useMemo(() => kitChoices(gyms).filter((k) => exercises.some((e) => e.requires.includes(k.id))), [gyms, exercises]);
   const shown = useMemo(() => {
     const words = search.toLowerCase().split(/\s+/).filter(Boolean);
-    return library.exercises
+    const [by, what] = kit.split(":");
+    return exercises
       .filter((e) => !inWorkout.has(e.id))
       .filter((e) => !pattern || e.pattern === pattern)
+      .filter((e) => !kit || (by === "with" ? e.implement === what : e.requires.includes(what!)))
       .filter((e) => words.every((w) => e.name.toLowerCase().includes(w)))
       .sort((a, b) => a.name.localeCompare(b.name));
-  }, [search, pattern, inWorkout]);
+  }, [search, pattern, kit, inWorkout, exercises]);
 
   const toggle = (set: Set<string>, id: string, put: (s: Set<string>) => void) => {
     const next = new Set(set);
@@ -53,7 +58,18 @@ export function PickLists({ chosen, onAdd, onRemove }: {
             <input type="search" placeholder="Search" aria-label="Search exercises" value={search} onChange={(e) => setSearch(e.target.value)} />
             <select aria-label="Movement" value={pattern} onChange={(e) => setPattern(e.target.value)}>
               <option value="">All movements</option>
-              {PATTERNS.map((p) => <option key={p} value={p}>{PATTERN_NAMES[p]}</option>)}
+              {Object.entries(PATTERN_NAMES).map(([p, name]) => <option key={p} value={p}>{name}</option>)}
+            </select>
+            <select aria-label="Kit" value={kit} onChange={(e) => setKit(e.target.value)}>
+              <option value="">Any kit</option>
+              <optgroup label="Done with">
+                {doneWith.map((i) => <option key={i} value={`with:${i}`}>{IMPLEMENT_NAMES[i]}</option>)}
+              </optgroup>
+              {needs.length > 0 && (
+                <optgroup label="Needs">
+                  {needs.map((k) => <option key={k.id} value={`needs:${k.id}`}>{k.name}</option>)}
+                </optgroup>
+              )}
             </select>
           </div>
         </div>
