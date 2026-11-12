@@ -257,6 +257,8 @@ export function validateBackup(backup, { equipment, library }) {
   const errors = [];
   uniqueIds(backup.profiles, "profile", errors);
   uniqueIds(backup.programmes, "programme", errors);
+  uniqueIds(backup.gyms || [], "gym", errors);
+  for (const g of backup.gyms || []) errors.push(...validateEquipment(g.kit).map(e => `gym "${g.id}": ${e}`));
   const programmes = new Map(backup.programmes.map(p => [p.id, p]));
   const profiles = new Map(backup.profiles.map(p => [p.id, p]));
   for (const p of backup.programmes) {

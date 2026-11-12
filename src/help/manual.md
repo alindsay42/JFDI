@@ -83,9 +83,25 @@ The wording of each level can be changed. When the daily check is on, each exerc
 
 **Use this programme** sets it as the current person's programme from a start date. **Change start date** moves it. Two people can use the same programme.
 
+## Gyms and equipment
+
+The app knows what kit you have, so it never asks for a weight you can't load. Open it from **Edit equipment** on the Programme tab, or **Edit gyms** on Today.
+
+- **Gyms:** home is the first. Add others, such as a hotel gym, with **+ Add a gym**, starting from a copy of one you have, a typical home gym, or nothing. Home can't be removed.
+- **Bars:** each bar's name, type and weight, such as a 25kg trap bar. An exercise that starts at "just the bar" starts at that bar's weight.
+- **Plates:** how many of each size, counting every plate (a pair is 2). Plates from every set are used together, and only matching pairs go on a bar.
+- **Dumbbells:** fixed pairs, with a tick for each pair that's there to use (untick one that's lent out), and loadable handles once you've entered a handle's weight.
+- **Other kit:** racks, benches, stations and anything else, for your own reference.
+
+Changes save as you go.
+
+**How targets round:** a target going up rounds up to the next weight the gym can make, a drop (after a stall, or a deload) rounds down, and anything else goes to the nearest. Below the empty bar is the bar. So with no 1.25kg plates, a barbell goes up in 5kg steps.
+
 ## Today
 
 Today shows what's next, with the targets for each exercise.
+
+- **Training at:** with more than one gym, pick where you're training. Targets round to that gym's kit, and the app remembers your pick until you change it.
 
 - **Block and week:** next to the programme name, such as "Block 2 · Week 3 of 6", or "Deload week".
 - **How are you today?** If the daily check is on, pick Green, Amber or Red first. The workout below changes to match, and the pick is saved straight away, so Red days are recorded too.
@@ -134,7 +150,7 @@ Every workout, newest first. Tap one to open its day.
 
 Everything is kept on this device only, so back up now and then. The app reminds you if it's been a while.
 
-- **Save a backup:** one file with everyone's programmes and history. Keep it somewhere safe, such as cloud storage.
+- **Save a backup:** one file with everyone's programmes and history, and your gyms and equipment. Keep it somewhere safe, such as cloud storage.
 - **Restore a backup:** replaces everything on this device with a backup. Use it to move to a new tablet.
 - **Import from Rebuild Log:** brings in history from a Rebuild Log backup for the current person. Importing the same file again doesn't double anything up.
 
@@ -148,6 +164,7 @@ The app works without a connection once it's been opened. When a new version is 
 - **Deload:** a lighter week to recover, at a percentage of your normal weights and sets.
 - **e1RM, estimated max:** an estimate of the most you could lift once, worked out from a set of several reps.
 - **Giant set:** three or more exercises done one after another, in rounds.
+- **Gym:** a place you train, with its own equipment. Home is the first.
 - **RPE:** rate of perceived exertion, how hard a set felt out of 10. 10 is nothing left; 8 is two reps left in the tank.
 - **Round:** one set of each exercise in a superset or giant set.
 - **Superset:** two exercises done one after the other, in rounds.

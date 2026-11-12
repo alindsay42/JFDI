@@ -36,6 +36,22 @@ Turns a set into an estimated one-rep max, so sets of different reps can share o
 | No reps, no estimate | 100 | 0 | no estimate |
 | No weight (bodyweight only), no estimate | 0 | 5 | no estimate |
 
+## Weights the gym can make
+
+Targets snap to what the gym can actually load. A barbell is its bar plus matching plates on each side, using pairs of each plate size. A target going up rounds up to the next loadable weight, one going down (a drop after a stall, or a deload) rounds down, and anything else goes to the nearest, the lower on a tie. Below the bar is the bar.
+
+| Case | Bar (kg) | Plates (kg × how many) | Target (kg) | Going | Loaded (kg) |
+| --- | --- | --- | --- | --- | --- |
+| Already loadable | 20 | 20×2, 10×2, 2.5×2, 1.25×2 | 42.5 | up | 42.5kg |
+| No 1.25s: adding goes up to the next 5kg | 20 | 20×2, 10×2, 5×2, 2.5×2 | 42.5 | up | 45kg |
+| A drop goes down | 20 | 20×2, 10×2, 5×2, 2.5×2 | 42.5 | down | 40kg |
+| Otherwise the nearest, lower on a tie | 20 | 20×2, 10×2, 5×2, 2.5×2 | 42.5 | nearest | 40kg |
+| Nearest | 20 | 20×2, 10×2, 5×2, 2.5×2 | 44 | nearest | 45kg |
+| A deload below the bar is the bar | 20 | 10×2, 5×2 | 18 | down | 20kg |
+| Odd plates: only pairs count, so 60kg is the most here | 20 | 20×3, 2.5×1 | 62.5 | up | 60kg |
+| More than the plates can make is the most it can | 20 | 20×2 | 100 | up | 60kg |
+| A trap bar at its own weight | 25 | 20×2, 10×2, 1.25×2 | 47 | nearest | 47.5kg |
+
 ## Next weight and reps
 
 What each exercise asks for next time, from its last sessions in this programme. Linear adds weight when every set hits the reps; double builds reps to the top of the range first. Two misses in a row at the same weight drop it 10%. A hard set (RPE at or above the hold level), skipped sets, or a readiness hold keep the weight where it is.

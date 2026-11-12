@@ -285,7 +285,8 @@ test("deload when you choose: started from Today, lighter for 7 days, and can be
   await expect(squat.locator(".preview-target")).toContainText("30kg");
   await page.getByRole("button", { name: "Make this a deload week" }).click();
   await expect(page.getByText("Deload week until Thu 7 Jan.")).toBeVisible();
-  await expect(squat.locator(".preview-target")).toContainText("18kg");
+  // 60% of 30kg is 18kg, less than the empty bar, so the bar it is
+  await expect(squat.locator(".preview-target")).toContainText("20kg");
   await page.reload();
   await expect(page.getByText("Deload week until Thu 7 Jan.")).toBeVisible();
   await page.getByRole("button", { name: "End deload" }).click();
@@ -376,4 +377,98 @@ test("training blocks: after a deload, the next block starts from week 2's numbe
   await expect(page.getByText("New block: starting from week 3's numbers of the last block.")).toBeVisible();
   await expect(squat.locator(".preview-target")).toContainText("35kg");
   await expect(page.getByRole("button", { name: /Use week 4's numbers/ })).toHaveCount(0);
+});
+
+test("gyms: a hotel gym with its own kit, picked on Today, and targets round to what it can load", async ({ page }) => {
+  await page.clock.install({ time: new Date("2027-01-01T10:00:00") });
+  await dianeOnBlock1(page);
+  await page.getByRole("radio", { name: /Green/ }).check();
+  const squat = page.locator(".preview-row", { hasText: "Back squat" });
+  await expect(squat.locator(".preview-target")).toContainText("30kg");
+  // One gym, so no choice to make
+  await expect(page.getByLabel("Training at")).toHaveCount(0);
+
+  await page.getByRole("link", { name: "Programme", exact: true }).click();
+  await page.getByRole("link", { name: "Edit equipment" }).click();
+  await page.getByRole("button", { name: "+ Add a gym" }).click();
+  await page.getByLabel("New gym name").fill("Hotel");
+  await page.getByLabel("Start the new gym from").selectOption({ label: "Nothing" });
+  await page.getByRole("button", { name: "Add gym" }).click();
+  await expect(page.getByRole("link", { name: "Hotel" })).toHaveAttribute("aria-current", "page");
+  // A 15kg hotel bar, and only 10kg plates
+  await page.getByRole("button", { name: "+ Add a bar" }).click();
+  await page.getByLabel("Barbell: weight").fill("15");
+  await page.getByLabel("Barbell: weight").blur();
+  await page.getByRole("button", { name: "+ Add a plate set" }).click();
+  await page.getByLabel("Plates: new plate size").fill("10");
+  await page.getByRole("button", { name: "Add a pair" }).click();
+  await page.getByRole("button", { name: "Remove 20kg plates from Plates" }).click();
+  await expect(page.getByLabel("Plates: how many 10kg")).toHaveValue("2");
+  await page.getByLabel("Plates: how many 10kg").fill("4");
+  await page.getByLabel("Plates: how many 10kg").blur();
+
+  await page.getByRole("link", { name: "Today" }).click();
+  await page.getByLabel("Training at").selectOption({ label: "Hotel" });
+  await page.getByRole("radio", { name: /Green/ }).check();
+  // 30kg can't be made from a 15kg bar and 10kg plates: 15, 35, 55. Nearest is 35
+  await expect(squat.locator(".preview-target")).toContainText("35kg");
+  await page.reload();
+  await expect(page.getByLabel("Training at")).toHaveValue("hotel");
+
+  await page.getByLabel("Training at").selectOption({ label: "Home gym" });
+  await expect(squat.locator(".preview-target")).toContainText("30kg");
+
+  // Removing the hotel sends anyone there back home
+  await page.getByLabel("Training at").selectOption({ label: "Hotel" });
+  await page.getByRole("link", { name: "Edit gyms" }).click();
+  await page.getByRole("link", { name: "Hotel" }).click();
+  await page.getByRole("button", { name: "Remove this gym" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Remove" }).click();
+  await expect(page.getByRole("link", { name: "Hotel" })).toHaveCount(0);
+  await page.getByRole("link", { name: "Today" }).click();
+  await expect(page.getByLabel("Training at")).toHaveCount(0);
+});
+
+test("equipment: bars, dumbbells and other kit can be changed, and a bad value is explained", async ({ page }) => {
+  await page.goto("./");
+  await page.getByLabel("Name").fill("Andrew");
+  await page.getByRole("radio", { name: "Blue" }).check();
+  await page.getByRole("button", { name: "Add", exact: true }).click();
+  await expect(page.locator(".you-bar")).toContainText("Andrew");
+  await page.goto("./#/equipment");
+  await expect(page.getByRole("link", { name: "Home gym (home)" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Remove this gym" })).toHaveCount(0);
+  await page.getByLabel("Barbell: type").selectOption({ label: "Trap bar" });
+  await page.getByLabel("Barbell: weight").fill("25");
+  await page.getByLabel("Barbell: weight").blur();
+  await page.getByLabel("Barbell: name").fill("Hex trap bar");
+  await page.getByLabel("Barbell: name").blur();
+  await expect(page.getByLabel("Hex trap bar: weight")).toHaveValue("25");
+
+  // Saved as you go, so the box changes once the save is done
+  await page.getByRole("checkbox", { name: "7.5kg", exact: true }).click();
+  await expect(page.getByRole("checkbox", { name: "7.5kg", exact: true })).not.toBeChecked();
+  await page.getByLabel("Dumbbells: new pair").fill("32.5");
+  await page.getByRole("button", { name: "Add a pair" }).last().click();
+  await expect(page.getByRole("checkbox", { name: "32.5kg", exact: true })).toBeChecked();
+  await page.getByRole("button", { name: "+ Add loadable handles" }).click();
+  await expect(page.getByText("Weigh a handle and enter it here")).toBeVisible();
+  await page.getByLabel("Loadable handles: handle weight").fill("2.5");
+  await page.getByLabel("Loadable handles: handle weight").blur();
+  await expect(page.getByText("Weigh a handle and enter it here")).toBeHidden();
+
+  await page.getByLabel("New kit name").fill("Cable machine");
+  await page.getByLabel("New kit type").selectOption({ label: "Cable" });
+  await page.getByRole("button", { name: "Add", exact: true }).click();
+  await expect(page.getByText("Cable machine")).toBeVisible();
+  await page.getByRole("button", { name: "Remove Squat rack" }).click();
+  await expect(page.getByText("Squat rack")).toHaveCount(0);
+
+  await page.getByLabel("Gym name").fill("Garage");
+  await page.getByLabel("Gym name").blur();
+  await expect(page.getByRole("link", { name: "Garage (home)" })).toBeVisible();
+
+  await page.reload();
+  await expect(page.getByLabel("Hex trap bar: type")).toHaveValue("trap");
+  await expect(page.getByRole("checkbox", { name: "7.5kg", exact: true })).not.toBeChecked();
 });
