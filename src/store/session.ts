@@ -150,6 +150,59 @@ export const addExercise = (db: JfdiDatabase, s: SessionRecord, exerciseId: stri
     });
   });
 
+const SWAPPED = "Swapped for ";
+
+/** The entry a stand-in replaced, if it is one: same place in the workout, set aside when it was swapped. */
+function replacedBy(exercises: ExerciseEntry[], k: number): number {
+  const e = exercises[k]!;
+  if (!e.swappedFrom) return -1;
+  return exercises.findIndex((o) => o.exercise === e.swappedFrom && o.slot === e.slot && o.removed?.reason?.startsWith(SWAPPED));
+}
+
+/** Whether an entry was swapped out for a stand-in: it's kept in the log, but not shown. */
+export function swappedOut(exercises: ExerciseEntry[], k: number): boolean {
+  return exercises.some((_, j) => replacedBy(exercises, j) === k);
+}
+
+/** The name of the exercise a stand-in replaced. */
+export function insteadOf(exercises: ExerciseEntry[], k: number): string | null {
+  const e = exercises[k]!;
+  if (!e.swappedFrom) return null;
+  const was = replacedBy(exercises, k);
+  return was >= 0 ? exercises[was]!.name : library.exercises.find((x) => x.id === e.swappedFrom)?.name ?? e.swappedFrom;
+}
+
+/**
+ * Swaps an exercise for a stand-in, for this workout only. The planned one is set aside, its progression
+ * untouched, and the stand-in takes its place with the same number of sets and, if it counts the same
+ * thing, the same reps; its weight is left for you, since it's a different lift. Swapping a stand-in for
+ * the planned exercise brings that back as it was. Only for planned exercises, before any of their sets are done.
+ */
+export const swapExercise = (db: JfdiDatabase, s: SessionRecord, entry: number, exerciseId: string) =>
+  change(db, s, (x) => {
+    const e = x.exercises[entry]!;
+    if (e.sets.some((set) => set.done)) throw new Error("Some sets are already done");
+    const was = replacedBy(x.exercises, entry);
+    if (was >= 0 && x.exercises[was]!.exercise === exerciseId) {
+      delete x.exercises[was]!.removed;
+      x.exercises.splice(entry, 1);
+      return;
+    }
+    const lib = library.exercises.find((l) => l.id === exerciseId);
+    if (!lib) throw new Error(`"${exerciseId}" isn't in the library`);
+    const from = fieldOf(null, e.exercise);
+    const to = FIELD[lib.measure];
+    const standIn: ExerciseEntry = {
+      exercise: lib.id, name: lib.name, slot: e.slot ?? null, swappedFrom: e.swappedFrom ?? e.exercise,
+      ...(lib.loadPer ? { loadPer: lib.loadPer } : {}),
+      sets: e.sets.map((set) => ({ done: false, ...(from === to && set[from] !== undefined ? { [to]: set[from] } : {}) } as LoggedSet)),
+    };
+    if (e.added) throw new Error("An added exercise can be removed instead");
+    if (e.swappedFrom) { x.exercises[entry] = standIn; return; }
+    e.removed = { reason: `${SWAPPED}${lib.name}` };
+    x.exercises.splice(entry + 1, 0, standIn);
+  });
+
 /**
  * Removes an exercise for the rest of the session. Progression isn't affected. Its sets not done are kept
  * until the session finishes, so Undo brings them back; finishing drops them.

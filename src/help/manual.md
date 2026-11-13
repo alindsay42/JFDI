@@ -91,7 +91,8 @@ The wording of each level can be changed. When the daily check is on, each exerc
 Add exercises the app doesn't come with, such as an ab wheel rollout. Open **Edit exercises** on the Programme tab, or **+ New exercise** while choosing exercises for a workout.
 
 - **Name:** what it's called. No two exercises can share a name.
-- **Movement:** squat, hinge, push, pull and so on, for filtering.
+- **Movement:** squat, hinge, push, pull and so on, for filtering and swaps.
+- **Like:** an exercise family it's like, such as Flexion core for an ab wheel rollout, so it's offered as a swap for those exercises and they for it.
 - **What it counts:** weight and reps, reps, time, distance or calories.
 - **Done with:** barbell (and which bar), dumbbells, kettlebell, plates, cable, machine, band, bodyweight or other, or any of your **weighted kit**, such as Kettlebells. For dumbbells, kettlebells, plates or weighted kit, tick **Two at once** if the weight is for each one. Plates are for holding a plate, such as a plate front raise: its target rounds to a plate size the gym has. Weighted kit rounds to the weights you have; two at once, only to weights you have two of.
 - **Needs:** tick the kit it needs, from your gyms. Add new kit, such as an ab wheel, under **Other kit** in Equipment first.
@@ -136,6 +137,7 @@ Today shows what's next, with the targets for each exercise.
 - **Change the weight, reps or RPE** on any set before or after ticking it. RPE is how hard it felt, out of 10.
 - **Last time:** each set shows a faint note such as "last 45kg × 5". Tap it to copy just that set's numbers in. **Use last time** at the top of an exercise (or group) fills every set not yet ticked. If your last workout was a deload, it shows the one before and says so.
 - **+ Set** adds a set, and **×** removes one. In supersets and giant sets, **+ Round** adds a round and **×** removes a single line.
+- **Swap** an exercise for a stand-in, for this workout only, such as DB bench when the bench is taken. Close variations are listed first; **Show more** adds other exercises with the same movement. Only what the gym you're training at can do is offered. The stand-in keeps the sets and reps; its weight is up to you, and **last time** shows what you did on it before. The planned exercise's progression isn't affected, and the log shows "instead of". Swap again for **Back to** the planned exercise. In a superset or giant set, **Swap** asks which exercise first. An exercise can be swapped until one of its sets is ticked.
 - **Remove** takes out a whole exercise or group, with an optional reason. Sets already done are kept. **Undo remove** brings it back.
 - **+ Add an exercise** adds one that wasn't planned.
 - **Notes** are saved with the workout.

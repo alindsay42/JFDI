@@ -1,7 +1,7 @@
 // The household's own exercises: anything the library doesn't have, such as an ab wheel rollout, with the
 // kit it needs. They're chosen like any other exercise. Once one has been used (in a programme or a
 // workout) what it counts and what it's done with are fixed, since history depends on them, and it can't
-// be removed; its name, movement, kit and notes can still change.
+// be removed; its name, movement, what it's like, kit and notes can still change.
 import type { Exercise } from "../formats/generated/library.ts";
 import type { JFDIProgrammeFile } from "../formats/generated/programme.ts";
 import { validateOwnExercises } from "../formats/validate.js";
@@ -25,6 +25,8 @@ export interface ExerciseInput {
   weights?: string;
   /** Dumbbells, kettlebells, plates or weighted kit: two at once, so the weight is for each */
   each?: boolean;
+  /** A library family it's like, so it's offered as a swap for those exercises and they for it */
+  like?: string;
   /** Kit it needs, by id from the gyms */
   requires: string[];
   notes?: string;
@@ -66,7 +68,7 @@ export function exerciseOf(id: string, input: ExerciseInput): OwnExercise {
   const name = input.name.trim().replace(/\s+/g, " ");
   if (!name) throw new Error("Give the exercise a name");
   const ex: OwnExercise = {
-    id, name, family: "own", measure: input.measure, implement: input.weights ? "other" : input.implement, pattern: input.pattern,
+    id, name, family: input.like ?? "own", measure: input.measure, implement: input.weights ? "other" : input.implement, pattern: input.pattern,
     requires: [...new Set(input.requires)],
   };
   if (input.weights) ex.weights = input.weights;
@@ -80,6 +82,7 @@ export function exerciseOf(id: string, input: ExerciseInput): OwnExercise {
 export function inputOf(ex: OwnExercise): ExerciseInput {
   return {
     name: ex.name, pattern: ex.pattern, measure: ex.measure, implement: ex.implement, requires: [...ex.requires],
+    ...(ex.family !== "own" ? { like: ex.family } : {}),
     ...(ex.barTypes ? { barType: ex.barTypes[0] } : {}), ...(ex.weights ? { weights: ex.weights } : {}), ...(ex.loadPer === "each" ? { each: true } : {}), ...(ex.notes ? { notes: ex.notes } : {}),
   };
 }
@@ -141,6 +144,7 @@ export async function updateOwnExercise(db: JfdiDatabase, id: string, input: Exe
       if (!copy) return false;
       copy.name = next.name;
       copy.pattern = next.pattern;
+      copy.family = next.family;
       if (next.notes) copy.notes = next.notes;
       else delete copy.notes;
       return true;

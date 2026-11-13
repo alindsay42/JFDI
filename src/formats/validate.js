@@ -69,7 +69,7 @@ export function validateOwnExercises(list, lib) {
     if (!checkExerciseSchema(ex)) { errors.push(...schemaErrors(checkExerciseSchema, `exercise "${ex?.id}"`)); continue; }
     const where = `exercise "${ex.id}"`;
     if (!ex.id.startsWith("own-")) errors.push(`${where}: an added exercise's id starts own-`);
-    if (ex.family !== "own") errors.push(`${where}: an added exercise's family is "own"`);
+    if (ex.family !== "own" && !lib.families.some(f => f.id === ex.family)) errors.push(`${where}: an added exercise's family is "own" or one of the library's`);
     if (ex.barTypes && ex.implement !== "barbell") errors.push(`${where}: only barbell exercises take bar types`);
     if (names.has(ex.name.toLowerCase())) errors.push(`${where}: there's already an exercise called "${ex.name}"`);
   }

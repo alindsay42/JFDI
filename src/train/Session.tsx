@@ -7,12 +7,15 @@ import { plural } from "../shared/format.ts";
 import { go } from "../shared/route.ts";
 import { Screen } from "../shared/Screen.tsx";
 import { lastTime, setsText } from "../engine/progress.ts";
+import { swapOptions } from "../engine/swaps.ts";
+import type { JFDIHouseholdEquipment } from "../formats/generated/equipment.ts";
+import { getGymChoice, getGyms, gymFor } from "../store/gyms.ts";
 import { formatDayMonth } from "../shared/format.ts";
 import { db, type SessionRecord } from "../store/db.ts";
 import { library } from "../store/household.ts";
 import {
-  activeSession, addExercise, addRound, addSet, discardSession, fieldOf, finishSession, removeExercise, removeSet, restAfter, restoreExercise,
-  setNotes, updateSet, type LoggedSet, type SetField,
+  activeSession, addExercise, addRound, addSet, discardSession, fieldOf, finishSession, insteadOf, removeExercise, removeSet, restAfter, restoreExercise,
+  setNotes, swapExercise, swappedOut, updateSet, type LoggedSet, type SetField,
 } from "../store/session.ts";
 
 const UNITS: Record<SetField, string> = { reps: "reps", seconds: "sec", metres: "m", calories: "cal" };
@@ -31,6 +34,16 @@ export function Session({ profile }: { profile: JFDIProfile }) {
   }, [profile.id]);
   // Earlier workouts, for "last time" under each exercise
   const history = useLiveQuery(() => db.sessions.where("profile").equals(profile.id).filter((x) => x.status === "done").toArray(), [profile.id]);
+  // Where they're training, for what a swap can be
+  const swapping = useLiveQuery(async () => {
+    const gyms = await getGyms(db);
+    const gym = gymFor(gyms, await getGymChoice(db, profile.id));
+    return {
+      gym: gym?.kit ?? null,
+      known: new Set(gyms.flatMap((g) => g.kit.items.map((i) => i.id))),
+      excluded: new Set(profile.excludedExercises ?? []),
+    };
+  }, [profile.id, profile.excludedExercises]);
   const [s, setS] = useState<SessionRecord | null>(null);
   const latest = useRef<SessionRecord | null>(null);
   const queue = useRef(Promise.resolve());
@@ -77,7 +90,9 @@ export function Session({ profile }: { profile: JFDIProfile }) {
   return (
     <Screen profile={profile} route="today">
       <History.Provider value={history ?? []}>
-        <Workout s={s} p={loaded.p} edit={edit} startRest={(sec) => setRest(sec > 0 ? { until: Date.now() + sec * 1000, total: sec } : null)} />
+        <Swapping.Provider value={swapping ?? NO_SWAPS}>
+          <Workout s={s} p={loaded.p} edit={edit} startRest={(sec) => setRest(sec > 0 ? { until: Date.now() + sec * 1000, total: sec } : null)} />
+        </Swapping.Provider>
       </History.Provider>
       {rest && <RestTimer rest={rest} change={(d) => setRest({ ...rest, until: rest.until + d * 1000 })} stop={() => setRest(null)} />}
     </Screen>
@@ -90,6 +105,8 @@ function layout(s: SessionRecord): Array<{ item: Item | null; entries: number[] 
   const out = items.map((item) => ({ item: item as Item | null, entries: [] as number[] }));
   const extra: number[] = [];
   s.exercises.forEach((e, k) => {
+    // An exercise swapped for a stand-in is kept in the log, but the stand-in shows in its place
+    if (swappedOut(s.exercises, k)) return;
     const i = e.slot ? Number(e.slot.split(".")[0]) : -1;
     if (out[i]) out[i]!.entries.push(k);
     else extra.push(k);
@@ -160,6 +177,49 @@ function Workout({ s, p, edit, startRest }: { s: SessionRecord; p: Programme | n
 /** Finished workouts, for "last time" on each set */
 const History = createContext<SessionRecord[]>([]);
 
+/** The gym being trained at, every piece of kit the gyms know of, and exercises this person doesn't do */
+interface SwapContext { gym: JFDIHouseholdEquipment | null; known: Set<string>; excluded: Set<string> }
+const NO_SWAPS: SwapContext = { gym: null, known: new Set(), excluded: new Set() };
+const Swapping = createContext<SwapContext>(NO_SWAPS);
+
+/** Whether an exercise can be swapped: a planned one (or a stand-in) with nothing done yet. */
+const swappable = (s: SessionRecord, k: number) => {
+  const e = s.exercises[k]!;
+  return !e.removed && !e.added && !e.sets.some((set) => set.done);
+};
+
+/** Stand-ins for one exercise: its family, then (on request) the same movement. For this workout only. */
+function SwapPanel({ s, k, edit, onClose }: { s: SessionRecord; k: number; edit: (fn: Edit) => Promise<void>; onClose: () => void }) {
+  const { gym, known, excluded } = useContext(Swapping);
+  const [more, setMore] = useState(false);
+  const e = s.exercises[k]!;
+  const planned = e.swappedFrom ?? e.exercise;
+  const inWorkout = new Set(s.exercises.filter((x) => !x.removed).map((x) => x.exercise));
+  const leaveOut = new Set([...inWorkout, ...excluded, planned]);
+  const options = gym ? swapOptions(planned, library.exercises, gym, known, leaveOut) : { family: [], movement: [] };
+  const pick = (id: string) => { onClose(); void edit((x) => swapExercise(db, x, k, id)); };
+  const button = (id: string, name: string) => (
+    <li key={id}><button type="button" onClick={() => pick(id)}>{name}</button></li>
+  );
+  return (
+    <div className="swap-panel" role="group" aria-label={`Swap ${e.name}`}>
+      <p className="hint">For this workout only. The planned exercise's progression isn't affected.</p>
+      <ul className="add-list">
+        {e.swappedFrom && button(planned, `Back to ${insteadOf(s.exercises, k)}`)}
+        {options.family.filter((x) => x.id !== e.exercise).map((x) => button(x.id, x.name))}
+        {more && options.movement.filter((x) => x.id !== e.exercise).map((x) => button(x.id, x.name))}
+      </ul>
+      {!options.family.length && !more && <p className="muted">No close variations{gym ? " this gym can do" : ""}.</p>}
+      <div className="actions actions-start">
+        {!more && options.movement.length > 0 && (
+          <button type="button" className="btn btn-quiet btn-small" onClick={() => setMore(true)}>Show more</button>
+        )}
+        <button type="button" className="btn btn-quiet btn-small" onClick={onClose}>Cancel</button>
+      </div>
+    </div>
+  );
+}
+
 /** The values a set copies from last time: the weight and whatever the exercise counts */
 function copyOf(last: LoggedSet, field: SetField): Partial<LoggedSet> {
   return { ...(last.kg !== undefined ? { kg: last.kg } : {}), ...(last[field] !== undefined ? { [field]: last[field] } : {}) };
@@ -194,11 +254,14 @@ function fillFromLast(edit: (fn: Edit) => Promise<void>, fills: Array<{ k: numbe
 function ExerciseHead({ s, k, edit, sub, extra }: { s: SessionRecord; k: number; edit: (fn: Edit) => Promise<void>; sub?: string; extra?: React.ReactNode }) {
   const e = s.exercises[k]!;
   const [removing, setRemoving] = useState(false);
+  const [swapping, setSwapping] = useState(false);
+  const instead = insteadOf(s.exercises, k);
   return (
     <div className="ex-head">
       <span className="ex-title">{e.name}{e.added && <span className="tag">Added</span>}</span>
-      {sub && <span className="muted">{sub}</span>}
+      {sub ? <span className="muted">{sub}</span> : instead && <span className="muted">Instead of {instead}</span>}
       {extra}
+      {swappable(s, k) && !swapping && <button type="button" className="btn btn-quiet btn-small" onClick={() => setSwapping(true)}>Swap</button>}
       {e.removed ? (
         <button type="button" className="btn btn-quiet btn-small" onClick={() => void edit((x) => restoreExercise(db, x, k))}>Undo remove</button>
       ) : (
@@ -207,6 +270,7 @@ function ExerciseHead({ s, k, edit, sub, extra }: { s: SessionRecord; k: number;
       <ReasonDialog open={removing} title={`Remove ${e.name}?`} reasons={REMOVE_REASONS} confirmLabel="Remove"
         note="Sets already done are kept. Removing an exercise doesn't affect its progression."
         onCancel={() => setRemoving(false)} onPick={(r) => { setRemoving(false); void edit((x) => removeExercise(db, x, k, r)); }} />
+      {swapping && <SwapPanel s={s} k={k} edit={edit} onClose={() => setSwapping(false)} />}
     </div>
   );
 }
@@ -250,6 +314,8 @@ function GroupCard({ s, p, item, entries, edit, startRest }: {
   const kind = item.type === "superset" ? "Superset" : item.type === "giant" ? "Giant set" : "Finisher";
   const rest = item.restSec ?? 90;
   const [removing, setRemoving] = useState(false);
+  const [swapping, setSwapping] = useState<number | "which" | null>(null);
+  const canSwap = live.filter((k) => swappable(s, k));
   const history = useContext(History);
   const infos = new Map(entries.map((k) => [k, lastTime(history, s.exercises[k]!.exercise, s.id)]));
   const lasts = new Map(entries.map((k) => [k, infos.get(k)?.sets ?? []]));
@@ -262,12 +328,26 @@ function GroupCard({ s, p, item, entries, edit, startRest }: {
         <span className="tag tag-you">{kind}</span>
         <span className="muted group-meta">{live.length ? `${plural(rounds, "round")}, ${rest}s rest after each` : `${kind} removed`}</span>
         {canFill && <button type="button" className="btn btn-quiet btn-small" onClick={() => void fillFromLast(edit, fills)}>Use last time</button>}
+        {canSwap.length > 0 && swapping === null && (
+          <button type="button" className="btn btn-quiet btn-small" onClick={() => setSwapping(canSwap.length === 1 ? canSwap[0]! : "which")}>Swap</button>
+        )}
         {live.length > 0 ? (
           <button type="button" className="btn btn-quiet btn-small" onClick={() => setRemoving(true)}>Remove</button>
         ) : (
           <button type="button" className="btn btn-quiet btn-small" onClick={() => void entries.reduce((q, k) => q.then(() => edit((x) => restoreExercise(db, x, k))), Promise.resolve())}>Undo remove</button>
         )}
       </div>
+      {swapping === "which" && (
+        <div className="swap-panel" role="group" aria-label="Swap which exercise?">
+          <p className="hint">Swap which?</p>
+          <div className="actions actions-start">
+            {canSwap.map((k) => <button key={k} type="button" className="btn btn-quiet btn-small" onClick={() => setSwapping(k)}>{s.exercises[k]!.name}</button>)}
+            <button type="button" className="btn btn-quiet btn-small" onClick={() => setSwapping(null)}>Cancel</button>
+          </div>
+        </div>
+      )}
+      {typeof swapping === "number" && <SwapPanel s={s} k={swapping} edit={edit} onClose={() => setSwapping(null)} />}
+      {live.map((k) => insteadOf(s.exercises, k) && <p key={k} className="hint">{s.exercises[k]!.name} instead of {insteadOf(s.exercises, k)}</p>)}
       {live.length > 0 && <BeforeDeload date={deloadSince} />}
       <ReasonDialog open={removing} title={`Remove this ${kind.toLowerCase()}?`} reasons={REMOVE_REASONS} confirmLabel="Remove"
         note="Every exercise in it goes. Sets already done are kept, and progression isn't affected."
