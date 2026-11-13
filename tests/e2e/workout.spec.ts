@@ -519,3 +519,54 @@ test("two people on one programme, each starting from their own weights", async 
   await page.getByRole("button", { name: "Use 30kg" }).first().click();
   await expect(page.getByText("· the programme's")).toBeVisible();
 });
+
+test("swaps: an exercise for a close variation, just for this workout, and back again", async ({ page }) => {
+  await dianeOnBlock1(page);
+  await page.getByRole("radio", { name: /Green/ }).check();
+  await page.getByRole("button", { name: "Start workout" }).click();
+
+  // The RDL for a DB RDL: only its family at first, then the same movement on request
+  const rdl = page.getByRole("region", { name: "Romanian deadlift" });
+  await expect(rdl.getByLabel("Set 1 weight")).toHaveValue(/\d/);
+  await rdl.getByRole("button", { name: "Swap" }).click();
+  const panel = rdl.getByRole("group", { name: "Swap Romanian deadlift" });
+  await expect(panel.locator(".add-list button")).toHaveText(["DB Romanian deadlift", "Single-leg DB Romanian deadlift", "Landmine Romanian deadlift"]);
+  await panel.getByRole("button", { name: "Show more" }).click();
+  expect(await panel.locator(".add-list button").count()).toBeGreaterThan(3);
+  await expect(panel.locator(".add-list")).not.toContainText("Bench press");
+  await panel.getByRole("button", { name: "DB Romanian deadlift", exact: true }).click();
+  const swapped = page.getByRole("region", { name: "DB Romanian deadlift", exact: true });
+  await expect(swapped).toContainText("Instead of Romanian deadlift");
+  await expect(swapped.locator(".set-row")).toHaveCount(3);
+  await expect(swapped.getByLabel("Set 1 weight")).toHaveValue("");
+  await expect(page.getByRole("region", { name: "Romanian deadlift", exact: true })).toHaveCount(0);
+
+  // Changed mind: back to the RDL as planned
+  await swapped.getByRole("button", { name: "Swap" }).click();
+  await swapped.getByRole("button", { name: "Back to Romanian deadlift" }).click();
+  await expect(rdl.getByLabel("Set 1 weight")).toHaveValue(/\d/);
+  await expect(rdl).not.toContainText("Instead of");
+
+  // In a superset: say which one first
+  const superset = page.getByRole("region", { name: "Superset" });
+  await superset.getByRole("button", { name: "Swap" }).click();
+  await superset.getByRole("group", { name: "Swap which exercise?" }).getByRole("button", { name: "Bench press" }).click();
+  await superset.getByRole("group", { name: "Swap Bench press" }).getByRole("button", { name: "DB bench press", exact: true }).click();
+  await expect(superset).toContainText("DB bench press instead of Bench press");
+  await expect(superset.getByLabel("DB bench press weight")).toHaveCount(5);
+  // Never done before, so its weight is blank: not the row's that sat in that place
+  for (const input of await superset.getByLabel("DB bench press weight").all()) await expect(input).toHaveValue("");
+  await superset.locator(".round").first().getByLabel("DB bench press weight").fill("12");
+  await superset.locator(".round").first().getByRole("button", { name: "DB bench press done" }).click();
+  // DB bench has a set done, so only the row can still be swapped
+  await superset.getByRole("button", { name: "Swap" }).click();
+  await expect(superset.getByRole("group", { name: "Swap Barbell row" })).toBeVisible();
+  await superset.getByRole("group", { name: "Swap Barbell row" }).getByRole("button", { name: "Cancel" }).click();
+
+  await page.getByRole("button", { name: "Finish workout" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Finish" }).click();
+  await page.getByRole("link", { name: "Progress" }).click();
+  await page.locator(".history-row").first().click();
+  await expect(page.locator(".log-lines")).toContainText("DB bench press (instead of Bench press)");
+  await expect(page.locator(".log-lines .log-name", { hasText: /^Bench press$/ })).toHaveCount(0);
+});

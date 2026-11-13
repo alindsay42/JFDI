@@ -89,6 +89,10 @@ describe("your own exercises", () => {
     expect(draftCopy).toMatchObject({ name: "Rollout" });
     await updateOwnExercise(db, ex.id, { ...ROLLOUT, name: "Rollout" });
     expect((await db.programmes.get(p.id))!.exercises.find((e) => e.id === ex.id)!.notes).toBeUndefined();
+    const liked = await updateOwnExercise(db, ex.id, { ...ROLLOUT, name: "Rollout", like: "flexion-core" });
+    expect(liked.family).toBe("flexion-core");
+    expect(inputOf(liked).like).toBe("flexion-core");
+    expect((await db.programmes.get(p.id))!.exercises.find((e) => e.id === ex.id)!.family).toBe("flexion-core");
 
     await expect(removeOwnExercise(db, ex.id)).rejects.toThrow("It's in Draft one and Strength Programme, Block 1. Take it out of those programmes first.");
     await db.settings.delete("draft:draft-one");
@@ -136,9 +140,10 @@ describe("your own exercises", () => {
     const ex = exerciseOf("own-x", { name: "X", pattern: "core", measure: "reps", implement: "other", requires: [] });
     const check = (exercises: unknown[]) => validateBackup({ ...backup, exercises }, { equipment, library: bundledLibrary });
     expect(check([ex])).toEqual([]);
+    expect(check([{ ...ex, family: "flexion-core" }])).toEqual([]);
     expect(check([{ ...ex, id: "x", family: "core", name: "Plank" }])).toEqual([
       `exercise "x": an added exercise's id starts own-`,
-      `exercise "x": an added exercise's family is "own"`,
+      `exercise "x": an added exercise's family is "own" or one of the library's`,
       `exercise "x": there's already an exercise called "Plank"`,
     ]);
     expect(check([ex, { ...ex, barTypes: ["standard"] }])).toEqual([`duplicate exercise id "own-x"`, `exercise "own-x": only barbell exercises take bar types`]);
