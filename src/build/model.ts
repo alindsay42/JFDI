@@ -264,7 +264,7 @@ function ensureExercise(q: Programme, lib: LibraryExercise, equipment: JFDIHouse
   const have = q.exercises.find((e) => e.id === lib.id);
   if (have) return have;
   const ex: Exercise = { id: lib.id, name: lib.name, family: lib.family, measure: lib.measure, implement: lib.implement, pattern: lib.pattern } as Exercise;
-  for (const f of ["loadPer", "perSide", "muscles", "flags", "restSec", "notes"] as const) {
+  for (const f of ["loadPer", "weights", "perSide", "muscles", "flags", "restSec", "notes"] as const) {
     const v = (lib as unknown as Record<string, unknown>)[f];
     if (v !== undefined) (ex as unknown as Record<string, unknown>)[f] = clone(v);
   }
@@ -287,11 +287,16 @@ const DEFAULT_TARGET: Record<string, Range> = { reps: { min: 8, max: 8 }, second
 
 export const targetField = (ex: Pick<Exercise, "measure">) => MEASURE_FIELD[ex.measure];
 
-/** A new slot for an exercise: 3 sets of 8 (or 30 seconds, 20 metres...), starting at the empty bar for barbell lifts. */
+/**
+ * A new slot for an exercise: 3 sets of 8 (or 30 seconds, 20 metres...), starting at the empty bar for barbell
+ * lifts. Weighted kit, such as kettlebells, goes up in big steps, so it builds reps before moving up a weight.
+ */
 export function newSlot(ex: Exercise, p: Programme): Slot {
   const field = targetField(ex);
-  const progression = ex.measure === "load" ? (p.progressions.find((x) => x.type === "linear") ?? p.progressions[0]!) : (p.progressions.find((x) => x.id === "accessory") ?? p.progressions.find((x) => x.type === "none") ?? p.progressions[0]!);
+  const loaded = ex.weights ? (p.progressions.find((x) => x.type === "double" && x.id !== "accessory") ?? p.progressions.find((x) => x.type === "linear")) : p.progressions.find((x) => x.type === "linear");
+  const progression = ex.measure === "load" ? (loaded ?? p.progressions[0]!) : (p.progressions.find((x) => x.id === "accessory") ?? p.progressions.find((x) => x.type === "none") ?? p.progressions[0]!);
   const slot = { exercise: ex.id, sets: 3, progression: progression.id, [field]: { ...DEFAULT_TARGET[field]! } } as Slot;
+  if (ex.weights && ex.measure === "load") slot.reps = { min: 8, max: 12 };
   if (ex.bar) slot.start = { kg: "bar" };
   return slot;
 }

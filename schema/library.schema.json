@@ -39,6 +39,7 @@
         "implement": { "enum": ["barbell", "dumbbell", "kettlebell", "plate", "cable", "machine", "band", "bodyweight", "other"] },
         "barTypes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "enum": ["standard", "junior", "ez", "ssb", "trap", "log", "swiss"] }, "description": "Bars this exercise can be done with. The first is the default" },
         "loadPer": { "enum": ["total", "each"] },
+        "weights": { "$ref": "#/$defs/id", "description": "The household's weighted kit it's done with, such as kettlebells, by equipment id. Its targets round to the weights in that kit" },
         "perSide": { "type": "boolean" },
         "pattern": { "$ref": "#/$defs/pattern" },
         "requires": { "type": "array", "items": { "$ref": "#/$defs/id" }, "uniqueItems": true, "description": "Equipment ids needed, apart from the bar itself" },

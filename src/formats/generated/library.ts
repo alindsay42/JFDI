@@ -63,6 +63,10 @@ export interface Exercise {
     ...("standard" | "junior" | "ez" | "ssb" | "trap" | "log" | "swiss")[]
   ];
   loadPer?: "total" | "each";
+  /**
+   * The household's weighted kit it's done with, such as kettlebells, by equipment id. Its targets round to the weights in that kit
+   */
+  weights?: string;
   perSide?: boolean;
   pattern: Pattern;
   /**

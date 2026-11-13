@@ -24,9 +24,21 @@ export const IMPLEMENT_NAMES: Record<string, string> = {
   band: "Band", bodyweight: "Bodyweight", other: "Other",
 };
 /** Kit an exercise can need: anything but bars, plates and dumbbells, which go with what it's done with */
-const NOT_NEEDED = new Set(["bar", "plates", "dumbbells"]);
+const NOT_NEEDED = new Set(["bar", "plates", "dumbbells", "weights"]);
 
 /** Every piece of kit in any gym, once each, by name. */
+/** Every set of weighted kit (kettlebells, sandbags...) in any gym, once each, by name. */
+export function weightedKit(gyms: Gym[]): Array<{ id: string; name: string }> {
+  const seen = new Map<string, string>();
+  for (const g of gyms) for (const i of g.kit.items) if (i.kind === "weights" && !seen.has(i.id)) seen.set(i.id, i.name);
+  return [...seen].map(([id, name]) => ({ id, name })).sort((a, b) => a.name.localeCompare(b.name));
+}
+
+/** What an exercise is done with, in words: its weighted kit's name, or the kind of thing. */
+export function doneWithName(e: Pick<OwnExercise, "implement" | "weights">, gyms: Gym[]): string {
+  return (e.weights && weightedKit(gyms).find((w) => w.id === e.weights)?.name) || IMPLEMENT_NAMES[e.implement]!;
+}
+
 export function kitChoices(gyms: Gym[]): Array<{ id: string; name: string }> {
   const seen = new Map<string, string>();
   for (const g of gyms) for (const i of g.kit.items) if (!NOT_NEEDED.has(i.kind) && !seen.has(i.id)) seen.set(i.id, i.name);
@@ -52,7 +64,7 @@ export function OwnExercises({ profile }: { profile: JFDIProfile | undefined }) 
             <span>
               <strong>{e.name}</strong>{" "}
               <span className="muted">
-                · {PATTERN_NAMES[e.pattern]} · {IMPLEMENT_NAMES[e.implement]}
+                · {PATTERN_NAMES[e.pattern]} · {doneWithName(e, gyms)}
                 {e.requires.length ? ` · needs ${e.requires.map((r) => kit.get(r) ?? r).join(", ")}` : ""}
               </span>
             </span>
@@ -103,8 +115,9 @@ export function ExerciseForm({ gyms, exercise, done, added }: {
   const uses = useLiveQuery(async () => (exercise ? usesOf(db, exercise.id) : null), [exercise?.id]);
   const fixed = !!uses && isUsed(uses);
   const kit = kitChoices(gyms);
+  const sets = weightedKit(gyms);
   const set = (patch: Partial<ExerciseInput>) => setV((x) => ({ ...x, ...patch }));
-  const twoAtOnce = ["dumbbell", "kettlebell", "plate"].includes(v.implement) && v.measure !== "reps";
+  const twoAtOnce = (!!v.weights || ["dumbbell", "kettlebell", "plate"].includes(v.implement)) && v.measure !== "reps";
   const ready = v.name.trim() !== "" && (v.pattern as string) !== "";
 
   const submit = (e: FormEvent) => {
@@ -132,11 +145,21 @@ export function ExerciseForm({ gyms, exercise, done, added }: {
           </select>
         </label>
         <label className="field"><span>Done with</span>
-          <select value={v.implement} disabled={fixed} onChange={(e) => set({ implement: e.target.value as ExerciseInput["implement"] })}>
+          <select value={v.weights ? `kit:${v.weights}` : v.implement} disabled={fixed} onChange={(e) => {
+            const value = e.target.value;
+            if (value.startsWith("kit:")) set({ weights: value.slice(4), implement: "other" });
+            else set({ implement: value as ExerciseInput["implement"], weights: undefined });
+          }}>
             {Object.entries(IMPLEMENT_NAMES).map(([id, name]) => <option key={id} value={id}>{name}</option>)}
+            {sets.length > 0 && (
+              <optgroup label="Your weighted kit">
+                {sets.map((s) => <option key={s.id} value={`kit:${s.id}`}>{s.name}</option>)}
+              </optgroup>
+            )}
+            {v.weights && !sets.some((s) => s.id === v.weights) && <option value={`kit:${v.weights}`}>Removed kit</option>}
           </select>
         </label>
-        {v.implement === "barbell" && (
+        {v.implement === "barbell" && !v.weights && (
           <label className="field"><span>Bar</span>
             <select value={v.barType ?? "standard"} disabled={fixed} onChange={(e) => set({ barType: e.target.value as ExerciseInput["barType"] })}>
               {BAR_TYPES.map(([id, name]) => <option key={id} value={id}>{name}</option>)}

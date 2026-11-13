@@ -59,6 +59,11 @@ describe("your own exercises", () => {
     const full = exerciseOf("own-x", { ...base, measure: "distance", implement: "dumbbell", each: true, notes: "  Tall  " });
     expect(inputOf(full)).toEqual({ ...base, measure: "distance", implement: "dumbbell", each: true, notes: "Tall", requires: [] });
     expect(inputOf(exerciseOf("own-x", { ...base, measure: "load", implement: "barbell", barType: "trap" })).barType).toBe("trap");
+    // Weighted kit: done with "other", the kit's id, no bar, and two at once when ticked
+    const bells = exerciseOf("own-x", { ...base, measure: "load", implement: "barbell", barType: "ssb", weights: "weights-kettlebells", each: true });
+    expect(bells).toMatchObject({ implement: "other", weights: "weights-kettlebells", loadPer: "each" });
+    expect(bells.barTypes).toBeUndefined();
+    expect(inputOf(bells)).toMatchObject({ implement: "other", weights: "weights-kettlebells", each: true });
   });
 
   it("can change freely until used; then what it counts and what it's done with stay, and programmes take the new name", async () => {
@@ -74,7 +79,8 @@ describe("your own exercises", () => {
     await putDraft(db, { programme: draft, basedOn: null });
     expect(await usesOf(db, ex.id)).toEqual({ programmes: ["Draft one", "Strength Programme, Block 1"], history: false });
 
-    const renamed = await updateOwnExercise(db, ex.id, { ...ROLLOUT, name: "Rollout", pattern: "isolation", measure: "load", implement: "barbell", notes: "Knees" });
+    const renamed = await updateOwnExercise(db, ex.id, { ...ROLLOUT, name: "Rollout", pattern: "isolation", measure: "load", implement: "barbell", weights: "weights-kettlebells", notes: "Knees" });
+    expect(renamed.weights).toBeUndefined();
     expect(renamed).toMatchObject({ name: "Rollout", pattern: "isolation", measure: "time", implement: "bodyweight", notes: "Knees" });
     expect(renamed.barTypes).toBeUndefined();
     const copy = (await db.programmes.get(p.id))!.exercises.find((e) => e.id === ex.id);

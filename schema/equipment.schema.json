@@ -23,13 +23,18 @@
       "properties": {
         "id": { "$ref": "#/$defs/id" },
         "name": { "type": "string", "minLength": 1 },
-        "kind": { "enum": ["bar", "plates", "collars", "chains", "dumbbells", "odd-object", "rack", "attachment", "handle", "cable", "bench", "station", "conditioning", "accessory"] },
+        "kind": { "enum": ["bar", "plates", "collars", "chains", "dumbbells", "odd-object", "rack", "attachment", "handle", "cable", "bench", "station", "conditioning", "accessory", "weights"] },
         "barType": { "enum": ["standard", "junior", "ez", "ssb", "trap", "log", "swiss"] },
         "kg": { "$ref": "#/$defs/kg" },
         "kgEach": { "$ref": "#/$defs/kg" },
         "count": { "type": "integer", "minimum": 1, "description": "How many, for chains, loadable handles and the like" },
         "plates": {
           "description": "Each plate size and how many single plates there are",
+          "type": "array",
+          "items": { "type": "object", "additionalProperties": false, "required": ["kg", "count"], "properties": { "kg": { "$ref": "#/$defs/kg" }, "count": { "type": "integer", "minimum": 1 } } }
+        },
+        "weights": {
+          "description": "Weighted kit that comes in fixed weights, such as kettlebells or sandbags: each weight and how many there are",
           "type": "array",
           "items": { "type": "object", "additionalProperties": false, "required": ["kg", "count"], "properties": { "kg": { "$ref": "#/$defs/kg" }, "count": { "type": "integer", "minimum": 1 } } }
         },
@@ -43,7 +48,8 @@
       "allOf": [
         { "if": { "properties": { "kind": { "const": "bar" } } }, "then": { "required": ["barType", "kg"] } },
         { "if": { "properties": { "kind": { "const": "attachment" } } }, "then": { "required": ["attachesTo"] } },
-        { "if": { "properties": { "kind": { "const": "plates" } } }, "then": { "required": ["plates"] } }
+        { "if": { "properties": { "kind": { "const": "plates" } } }, "then": { "required": ["plates"] } },
+        { "if": { "properties": { "kind": { "const": "weights" } } }, "then": { "required": ["weights"] } }
       ]
     }
   }

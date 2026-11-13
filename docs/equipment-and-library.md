@@ -116,6 +116,8 @@ In the app, **Your exercises** on the Programme tab adds exercises the library d
 - `requires` taken from any gym's kit, so the exercise picker can filter by kit;
 - a name that no other exercise has.
 
+An exercise can be done with the household's **weighted kit** (an equipment item of kind `weights`, such as kettlebells, listing each weight and how many): it has `implement: "other"` and `weights` set to that item's id, and programmes copy `weights`. Its targets round to those weights, or with `loadPer: "each"` to weights there are two of. A new slot for one gets an 8-12 rep range and the programme's reps-first rule.
+
 They join the library when the app opens, so programmes, workouts and the checks treat them like any other. Once one is in a programme or anyone's history or goals, its `measure`, `implement`, bar and `loadPer` are fixed and it can't be removed; its name, movement, kit and notes can still change, and programmes' copies take the new name, movement and notes.
 
 ## Checks

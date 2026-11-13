@@ -1,7 +1,8 @@
 // What weights a gym can actually make, and snapping targets to them.
 // A barbell is its bar plus matching plates on each side; dumbbells are fixed pairs, or loadable handles
-// with plates on both ends of both dumbbells; a plate exercise is one of the gym's plate sizes. Anything else
-// (machines, cables, kettlebells) isn't snapped.
+// with plates on both ends of both dumbbells; a plate exercise is one of the gym's plate sizes; an exercise done
+// with weighted kit (kettlebells, sandbags...) is one of that kit's weights. Anything else (machines, cables)
+// isn't snapped.
 import type { JFDIHouseholdEquipment } from "../formats/generated/equipment.ts";
 
 export type BarType = "standard" | "junior" | "ez" | "ssb" | "trap" | "log" | "swiss";
@@ -14,6 +15,8 @@ export interface Kit {
   dumbbellPairs: number[];
   /** Loadable dumbbell handles: the weight of one handle, when known */
   handleKg: number | null;
+  /** Weighted kit that comes in fixed weights, such as kettlebells: each weight and how many there are */
+  weights: Array<{ id: string; loads: Array<{ kg: number; count: number }> }>;
 }
 
 /** The gym's kit, as the engine needs it. Plates from every plate set are pooled. */
@@ -22,7 +25,9 @@ export function kitOf(gym: JFDIHouseholdEquipment): Kit {
   const bars: Kit["bars"] = [];
   const dumbbellPairs = new Set<number>();
   let handleKg: number | null = null;
+  const weights: Kit["weights"] = [];
   for (const i of gym.items) {
+    if (i.kind === "weights") weights.push({ id: i.id, loads: i.weights!.map((w) => ({ ...w })) });
     if (i.kind === "bar" && i.barType && i.kg !== undefined) bars.push({ id: i.id, barType: i.barType as BarType, kg: i.kg, preferredFor: i.preferredFor ?? [] });
     if (i.kind === "plates") for (const p of i.plates!) plates.set(p.kg, (plates.get(p.kg) ?? 0) + p.count);
     if (i.kind === "dumbbells") {
@@ -36,6 +41,7 @@ export function kitOf(gym: JFDIHouseholdEquipment): Kit {
     plates: [...plates].map(([kg, count]) => ({ kg, count })).sort((a, b) => b.kg - a.kg),
     dumbbellPairs: [...dumbbellPairs].sort((a, b) => a - b),
     handleKg,
+    weights,
   };
 }
 
@@ -92,11 +98,17 @@ export function barFor(kit: Kit, exercise: string, barType: BarType) {
 }
 
 /**
- * The weights an exercise can be done at in this gym, or null when it isn't snapped (not a barbell, dumbbell
- * or plate exercise, or the gym has nothing to make it with). A plate exercise, such as a plate front raise,
- * is held as one plate, so it's one of the plate sizes.
+ * The weights an exercise can be done at in this gym, or null when it isn't snapped (not a barbell, dumbbell,
+ * plate or weighted kit exercise, or the gym has nothing to make it with). A plate exercise, such as a plate
+ * front raise, is held as one plate, so it's one of the plate sizes. Weighted kit, such as kettlebells, is one
+ * of its weights; done with two at once (`each`), only weights there are two of.
  */
-export function loadsFor(kit: Kit, exercise: { id: string; implement: string; barType?: BarType; barKg?: number }): number[] | null {
+export function loadsFor(kit: Kit, exercise: { id: string; implement: string; barType?: BarType; barKg?: number; weights?: string; each?: boolean }): number[] | null {
+  if (exercise.weights) {
+    const need = exercise.each ? 2 : 1;
+    const loads = (kit.weights.find((w) => w.id === exercise.weights)?.loads ?? []).filter((l) => l.count >= need).map((l) => l.kg);
+    return loads.length ? [...new Set(loads)].sort((a, b) => a - b) : null;
+  }
   if (exercise.implement === "barbell" && exercise.barType) {
     const bar = barFor(kit, exercise.id, exercise.barType);
     const barKg = bar?.kg ?? exercise.barKg;

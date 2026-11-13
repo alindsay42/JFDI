@@ -93,7 +93,7 @@ Add exercises the app doesn't come with, such as an ab wheel rollout. Open **Edi
 - **Name:** what it's called. No two exercises can share a name.
 - **Movement:** squat, hinge, push, pull and so on, for filtering.
 - **What it counts:** weight and reps, reps, time, distance or calories.
-- **Done with:** barbell (and which bar), dumbbells, kettlebell, plates, cable, machine, band, bodyweight or other. For dumbbells, kettlebells or plates, tick **Two at once** if the weight is for each one. Plates are for holding a plate, such as a plate front raise: its target rounds to a plate size the gym has.
+- **Done with:** barbell (and which bar), dumbbells, kettlebell, plates, cable, machine, band, bodyweight or other, or any of your **weighted kit**, such as Kettlebells. For dumbbells, kettlebells, plates or weighted kit, tick **Two at once** if the weight is for each one. Plates are for holding a plate, such as a plate front raise: its target rounds to a plate size the gym has. Weighted kit rounds to the weights you have; two at once, only to weights you have two of.
 - **Needs:** tick the kit it needs, from your gyms. Add new kit, such as an ab wheel, under **Other kit** in Equipment first.
 - **Notes:** how to do it.
 
@@ -107,6 +107,7 @@ The app knows what kit you have, so it never asks for a weight you can't load. O
 - **Bars:** each bar's name, type and weight, such as a 25kg trap bar. An exercise that starts at "just the bar" starts at that bar's weight.
 - **Plates:** how many of each size, counting every plate (a pair is 2). Plates from every set are used together, and only matching pairs go on a bar.
 - **Dumbbells:** fixed pairs, with a tick for each pair that's there to use (untick one that's lent out), and loadable handles once you've entered a handle's weight.
+- **Weighted kit:** anything that comes in fixed weights, such as kettlebells, sandbags or medicine balls. Name it with **+ Add weighted kit**, then add each weight and how many you have. Exercises done with it (see **Your exercises**) round to those weights. They go up in big steps, so a new one builds reps to the top of the range before moving up to the next weight.
 - **Other kit:** racks, benches, stations and anything else. To train with something new, such as an ab wheel, add it here, then add an exercise that needs it under **Your exercises**.
 
 Changes save as you go.
