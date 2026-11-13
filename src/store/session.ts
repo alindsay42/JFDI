@@ -175,10 +175,11 @@ export function insteadOf(exercises: ExerciseEntry[], k: number): string | null 
 /**
  * Swaps an exercise for a stand-in, for this workout only. The planned one is set aside, its progression
  * untouched, and the stand-in takes its place with the same number of sets and, if it counts the same
- * thing, the same reps; its weight is left for you, since it's a different lift. Swapping a stand-in for
- * the planned exercise brings that back as it was. Only for planned exercises, before any of their sets are done.
+ * thing, the same reps. Its weight is what was lifted on it last time (`last`), set by set, or left for you
+ * if it hasn't been done before, since it's a different lift. Swapping a stand-in for the planned exercise
+ * brings that back as it was. Only for planned exercises, before any of their sets are done.
  */
-export const swapExercise = (db: JfdiDatabase, s: SessionRecord, entry: number, exerciseId: string) =>
+export const swapExercise = (db: JfdiDatabase, s: SessionRecord, entry: number, exerciseId: string, last: LoggedSet[] = []) =>
   change(db, s, (x) => {
     const e = x.exercises[entry]!;
     if (e.sets.some((set) => set.done)) throw new Error("Some sets are already done");
@@ -195,7 +196,10 @@ export const swapExercise = (db: JfdiDatabase, s: SessionRecord, entry: number, 
     const standIn: ExerciseEntry = {
       exercise: lib.id, name: lib.name, slot: e.slot ?? null, swappedFrom: e.swappedFrom ?? e.exercise,
       ...(lib.loadPer ? { loadPer: lib.loadPer } : {}),
-      sets: e.sets.map((set) => ({ done: false, ...(from === to && set[from] !== undefined ? { [to]: set[from] } : {}) } as LoggedSet)),
+      sets: e.sets.map((set, j) => {
+        const kg = (last[j] ?? last.at(-1))?.kg;
+        return { done: false, ...(kg !== undefined ? { kg } : {}), ...(from === to && set[from] !== undefined ? { [to]: set[from] } : {}) } as LoggedSet;
+      }),
     };
     if (e.added) throw new Error("An added exercise can be removed instead");
     if (e.swappedFrom) { x.exercises[entry] = standIn; return; }

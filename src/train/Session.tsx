@@ -197,7 +197,9 @@ function SwapPanel({ s, k, edit, onClose }: { s: SessionRecord; k: number; edit:
   const inWorkout = new Set(s.exercises.filter((x) => !x.removed).map((x) => x.exercise));
   const leaveOut = new Set([...inWorkout, ...excluded, planned]);
   const options = gym ? swapOptions(planned, library.exercises, gym, known, leaveOut) : { family: [], movement: [] };
-  const pick = (id: string) => { onClose(); void edit((x) => swapExercise(db, x, k, id)); };
+  const history = useContext(History);
+  // The stand-in starts from what was lifted on it last time, if it's been done before
+  const pick = (id: string) => { onClose(); void edit((x) => swapExercise(db, x, k, id, lastTime(history, id, x.id)?.sets ?? [])); };
   const button = (id: string, name: string) => (
     <li key={id}><button type="button" onClick={() => pick(id)}>{name}</button></li>
   );
@@ -291,7 +293,7 @@ function ExerciseCard({ s, p, k, edit, startRest }: { s: SessionRecord; p: Progr
           <BeforeDeload date={lastInfo?.deloadSince} />
           <ol className="sets">
             {e.sets.map((set, j) => (
-              <li key={j}>
+              <li key={`${e.exercise}-${j}`}>
                 <SetRow label={`Set ${j + 1}`} name={e.name} set={set} field={field} each={e.loadPer === "each"} last={last[j]}
                   update={(v) => edit((x) => updateSet(db, x, k, j, v))}
                   onDone={() => startRest(rest)}
@@ -363,7 +365,7 @@ function GroupCard({ s, p, item, entries, edit, startRest }: {
               if (!set) return null;
               const last = n === live.length - 1;
               return (
-                <SetRow key={k} label={e.name} name={e.name} set={set} field={fieldOf(p, e.exercise)} each={e.loadPer === "each"} last={lasts.get(k)![r]}
+                <SetRow key={`${k}-${e.exercise}`} label={e.name} name={e.name} set={set} field={fieldOf(p, e.exercise)} each={e.loadPer === "each"} last={lasts.get(k)![r]}
                   update={(v) => edit((x) => updateSet(db, x, k, r, v))}
                   onDone={() => { if (last || live.every((o) => o === k || s.exercises[o]!.sets[r]?.done)) startRest(rest); }}
                   remove={!set.done ? () => void edit((x) => removeSet(db, x, k, r)) : undefined} />

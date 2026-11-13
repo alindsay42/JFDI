@@ -145,6 +145,13 @@ describe("swapping an exercise for this workout", () => {
     expect(insteadOf([{ exercise: "push-up", name: "Push-up", slot: "1.0", swappedFrom: "gone", sets: [] }], 0)).toBe("gone");
   });
 
+  it("starts the stand-in from what was lifted on it last time, set by set", async () => {
+    let s = await startSession(db, await profile(), p, await plan("2027-01-01"), "green", at("2027-01-01"));
+    s = await swapExercise(db, s, 1, "pause-bench-press", [{ kg: 20, reps: 5, done: true }, { kg: 22.5, reps: 5, done: true }]);
+    expect(s.exercises[2]!.sets.map((x) => x.kg)).toEqual([20, 22.5, 22.5, 22.5, 22.5]);
+    expect(s.exercises[2]!.sets[0]).toEqual({ done: false, kg: 20, reps: 5 });
+  });
+
   it("isn't for added exercises or ones not in the library", async () => {
     let s = await startSession(db, await profile(), p, await plan("2027-01-01"), "green", at("2027-01-01"));
     await expect(swapExercise(db, s, 0, "nope")).rejects.toThrow(`"nope" isn't in the library`);

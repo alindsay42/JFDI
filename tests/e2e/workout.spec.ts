@@ -554,6 +554,8 @@ test("swaps: an exercise for a close variation, just for this workout, and back 
   await superset.getByRole("group", { name: "Swap Bench press" }).getByRole("button", { name: "DB bench press", exact: true }).click();
   await expect(superset).toContainText("DB bench press instead of Bench press");
   await expect(superset.getByLabel("DB bench press weight")).toHaveCount(5);
+  // Never done before, so its weight is blank: not the row's that sat in that place
+  for (const input of await superset.getByLabel("DB bench press weight").all()) await expect(input).toHaveValue("");
   await superset.locator(".round").first().getByLabel("DB bench press weight").fill("12");
   await superset.locator(".round").first().getByRole("button", { name: "DB bench press done" }).click();
   // DB bench has a set done, so only the row can still be swapped
