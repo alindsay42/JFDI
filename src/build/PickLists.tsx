@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { IMPLEMENT_NAMES, kitChoices, PATTERN_NAMES } from "../shared/OwnExercises.tsx";
+import { IMPLEMENT_NAMES, kitChoices, PATTERN_NAMES, weightedKit } from "../shared/OwnExercises.tsx";
 import type { Gym } from "../store/gyms.ts";
 import { library } from "../store/household.ts";
 
@@ -24,7 +24,8 @@ export function PickLists({ chosen, gyms, onAdd, onRemove }: {
   const names = useMemo(() => new Map(exercises.map((e) => [e.id, e.name])), [exercises]);
   const inWorkout = useMemo(() => new Set(chosen), [chosen]);
   // Kit to filter by: what exercises are done with, and anything in the gyms that an exercise needs
-  const doneWith = useMemo(() => Object.keys(IMPLEMENT_NAMES).filter((i) => exercises.some((e) => e.implement === i)), [exercises]);
+  const doneWith = useMemo(() => Object.keys(IMPLEMENT_NAMES).filter((i) => exercises.some((e) => e.implement === i && !e.weights)), [exercises]);
+  const sets = useMemo(() => weightedKit(gyms).filter((k) => exercises.some((e) => e.weights === k.id)), [gyms, exercises]);
   const needs = useMemo(() => kitChoices(gyms).filter((k) => exercises.some((e) => e.requires.includes(k.id))), [gyms, exercises]);
   const shown = useMemo(() => {
     const words = search.toLowerCase().split(/\s+/).filter(Boolean);
@@ -32,7 +33,7 @@ export function PickLists({ chosen, gyms, onAdd, onRemove }: {
     return exercises
       .filter((e) => !inWorkout.has(e.id))
       .filter((e) => !pattern || e.pattern === pattern)
-      .filter((e) => !kit || (by === "with" ? e.implement === what : e.requires.includes(what!)))
+      .filter((e) => !kit || (by === "with" ? e.implement === what && !e.weights : by === "kit" ? e.weights === what : e.requires.includes(what!)))
       .filter((e) => words.every((w) => e.name.toLowerCase().includes(w)))
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [search, pattern, kit, inWorkout, exercises]);
@@ -64,6 +65,7 @@ export function PickLists({ chosen, gyms, onAdd, onRemove }: {
               <option value="">Any kit</option>
               <optgroup label="Done with">
                 {doneWith.map((i) => <option key={i} value={`with:${i}`}>{IMPLEMENT_NAMES[i]}</option>)}
+                {sets.map((s) => <option key={s.id} value={`kit:${s.id}`}>{s.name}</option>)}
               </optgroup>
               {needs.length > 0 && (
                 <optgroup label="Needs">

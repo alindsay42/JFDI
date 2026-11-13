@@ -209,7 +209,10 @@ export function today(input: {
     // Only weights the gym can make
     const bar = p.equipment.find((b) => b.id === ex?.bar);
     const loads = input.kit && ex
-      ? loadsFor(input.kit, { id: ex.id, implement: ex.implement, ...(bar ? { barType: bar.barType as BarType, barKg: bar.kg } : {}) })
+      ? loadsFor(input.kit, {
+        id: ex.id, implement: ex.implement, ...(bar ? { barType: bar.barType as BarType, barKg: bar.kg } : {}),
+        ...(ex.weights ? { weights: ex.weights, each: ex.loadPer === "each" } : {}),
+      })
       : null;
     if (loads && next.kg !== null) {
       const dir = directionOf(next.why, deload);

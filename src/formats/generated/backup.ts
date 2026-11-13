@@ -188,7 +188,8 @@ export type Item = {
     | "bench"
     | "station"
     | "conditioning"
-    | "accessory";
+    | "accessory"
+    | "weights";
   barType?: "standard" | "junior" | "ez" | "ssb" | "trap" | "log" | "swiss";
   /**
    * Measured weights can be any value, such as a 19.2kg bar or 0.28kg collars
@@ -206,6 +207,16 @@ export type Item = {
    * Each plate size and how many single plates there are
    */
   plates?: {
+    /**
+     * Measured weights can be any value, such as a 19.2kg bar or 0.28kg collars
+     */
+    kg: number;
+    count: number;
+  }[];
+  /**
+   * Weighted kit that comes in fixed weights, such as kettlebells or sandbags: each weight and how many there are
+   */
+  weights?: {
     /**
      * Measured weights can be any value, such as a 19.2kg bar or 0.28kg collars
      */
@@ -441,6 +452,10 @@ export interface Exercise {
     | "other";
   bar?: string;
   loadPer?: "total" | "each";
+  /**
+   * The household's weighted kit it's done with, such as kettlebells, by equipment id. Its targets round to the weights in that kit
+   */
+  weights?: string;
   perSide?: boolean;
   pattern:
     | "squat"
@@ -625,6 +640,10 @@ export interface Exercise1 {
     ...("standard" | "junior" | "ez" | "ssb" | "trap" | "log" | "swiss")[]
   ];
   loadPer?: "total" | "each";
+  /**
+   * The household's weighted kit it's done with, such as kettlebells, by equipment id. Its targets round to the weights in that kit
+   */
+  weights?: string;
   perSide?: boolean;
   pattern:
     | "squat"

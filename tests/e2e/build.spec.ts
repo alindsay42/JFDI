@@ -316,3 +316,49 @@ test("your own exercises: add one that needs new kit, find it by that kit, make 
   await page.getByRole("link", { name: /Day 1/ }).click();
   await expect(page.getByRole("listbox", { name: "In this workout" }).getByRole("option")).toHaveText(["Ab wheel rollout", "Russian swing"]);
 });
+
+test("weighted kit: kettlebells in the gym, an exercise done with them builds reps first", async ({ page }) => {
+  await start(page);
+  await page.getByRole("link", { name: "Edit equipment" }).click();
+  const kit = page.getByRole("region", { name: "Weighted kit" });
+  await kit.getByLabel("New weighted kit name").fill("Kettlebells");
+  await kit.getByRole("button", { name: "+ Add weighted kit" }).click();
+  await expect(kit.getByText("No weights yet.")).toBeVisible();
+  for (const kg of ["16", "12", "24"]) {
+    await kit.getByLabel("Kettlebells: new weight").fill(kg);
+    await kit.getByRole("button", { name: "Add a weight" }).click();
+  }
+  await expect(kit.locator(".plate-kg")).toHaveText(["12kg", "16kg", "24kg"]);
+  await kit.getByLabel("Kettlebells: how many 16kg").fill("2");
+  await kit.getByLabel("Kettlebells: how many 16kg").blur();
+  await expect(kit.getByLabel("Kettlebells: how many 16kg")).toHaveValue("2");
+  await kit.getByRole("button", { name: "Remove 24kg from Kettlebells" }).click();
+  await expect(kit.locator(".plate-kg")).toHaveText(["12kg", "16kg"]);
+  // It isn't other kit an exercise needs; it's what one is done with
+  await expect(page.getByRole("region", { name: "Other kit" })).not.toContainText("Kettlebells");
+
+  await page.getByRole("link", { name: "Your exercises" }).click();
+  await page.getByRole("button", { name: "+ New exercise" }).click();
+  const form = page.getByRole("form", { name: "New exercise" });
+  await form.getByLabel("Exercise name").fill("Double kettlebell front squat");
+  await form.getByLabel("Movement").selectOption({ label: "Squat" });
+  await form.getByLabel("What it counts").selectOption({ label: "Weight and reps" });
+  await form.getByLabel("Done with").selectOption({ label: "Kettlebells" });
+  await expect(form.getByRole("checkbox", { name: "Ab wheel" })).toHaveCount(0);
+  await expect(form.getByRole("checkbox", { name: "Kettlebells" })).toHaveCount(0);
+  await form.getByRole("checkbox", { name: "Two at once, so the weight is for each" }).check();
+  await form.getByRole("button", { name: "Add exercise" }).click();
+  await expect(page.locator(".kit-row", { hasText: "Double kettlebell front squat" })).toContainText("Squat · Kettlebells");
+
+  await page.getByRole("link", { name: "Programme", exact: true }).click();
+  await page.getByLabel("Name").fill("Bells");
+  await page.getByRole("button", { name: "Create" }).click();
+  await page.getByRole("link", { name: /Day 1/ }).click();
+  await page.getByLabel("Kit").selectOption({ label: "Kettlebells" });
+  const all = page.getByRole("listbox", { name: "All exercises" });
+  await expect(all.getByRole("option")).toHaveText(["Double kettlebell front squat"]);
+  await all.getByRole("option").first().click();
+  await page.getByRole("button", { name: "Add highlighted" }).click();
+  await expect(page.getByLabel("Double kettlebell front squat reps")).toHaveValue("8-12");
+  await expect(page.getByRole("button", { name: /^Double kettlebell front squat progression: Reps to the top of the range, then \+2\.5kg/ })).toBeVisible();
+});

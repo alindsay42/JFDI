@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { barbellLoads, barFor, dumbbellLoads, kitOf, loadsFor, snapKg, type Kit } from "../../src/engine/loading.ts";
 import type { JFDIHouseholdEquipment } from "../../src/formats/generated/equipment.ts";
-import { loadingRules } from "./loading.rules.ts";
+import { loadingRules, weightedKitRules } from "./loading.rules.ts";
 
 const platesOf = (s: string) => s.split(", ").map((x) => { const [kg, count] = x.split("×").map(Number); return { kg: kg!, count: count! }; });
 
@@ -9,6 +9,16 @@ describe(loadingRules.title, () => {
   for (const r of loadingRules.rows) {
     it(r.case, () => {
       const loads = barbellLoads(r.given.bar, platesOf(r.given.plates).sort((a, b) => b.kg - a.kg));
+      expect(snapKg(loads, r.given.target, r.given.going as "up" | "down" | "nearest")).toBe(r.expected);
+    });
+  }
+});
+
+describe(weightedKitRules.title, () => {
+  for (const r of weightedKitRules.rows) {
+    it(r.case, () => {
+      const kit: Kit = { bars: [], plates: [], dumbbellPairs: [], handleKg: null, weights: [{ id: "kb", loads: platesOf(r.given.weights) }] };
+      const loads = loadsFor(kit, { id: "swing", implement: "other", weights: "kb", each: r.given.twoAtOnce === "Yes" })!;
       expect(snapKg(loads, r.given.target, r.given.going as "up" | "down" | "nearest")).toBe(r.expected);
     });
   }
@@ -27,6 +37,7 @@ describe("a gym's kit", () => {
     { id: "h", name: "Handles", kind: "dumbbells", kg: 2, count: 2 },
     { id: "h2", name: "Handles to weigh", kind: "dumbbells", count: 2 },
     { id: "rack", name: "Rack", kind: "rack" },
+    { id: "kb", name: "Kettlebells", kind: "weights", weights: [{ kg: 16, count: 1 }, { kg: 8, count: 2 }] },
   ]);
   const kit = kitOf(home);
 
@@ -35,6 +46,7 @@ describe("a gym's kit", () => {
     expect(kit.dumbbellPairs).toEqual([5, 10, 12.5]);
     expect(kit.handleKg).toBe(2);
     expect(kit.bars.map((b) => b.id)).toEqual(["bar-a", "bar-b", "trap"]);
+    expect(kit.weights).toEqual([{ id: "kb", loads: [{ kg: 16, count: 1 }, { kg: 8, count: 2 }] }]);
   });
 
   it("picks the bar preferred for an exercise, else the first of its type", () => {
@@ -56,7 +68,10 @@ describe("a gym's kit", () => {
     expect(loadsFor(kit, { id: "curl", implement: "dumbbell" })).toEqual(dumbbellLoads(kit));
     expect(loadsFor(kit, { id: "pulldown", implement: "cable" })).toBeNull();
     expect(loadsFor(kit, { id: "plate-raise", implement: "plate" })).toEqual(kit.plates.map((p) => p.kg).sort((a, b) => a - b));
-    const bare: Kit = { bars: [], plates: [], dumbbellPairs: [], handleKg: null };
+    expect(loadsFor(kit, { id: "swing", implement: "other", weights: "kb" })).toEqual([8, 16]);
+    expect(loadsFor(kit, { id: "swing", implement: "other", weights: "kb", each: true })).toEqual([8]);
+    expect(loadsFor(kit, { id: "swing", implement: "other", weights: "sandbags" })).toBeNull();
+    const bare: Kit = { bars: [], plates: [], dumbbellPairs: [], handleKg: null, weights: [] };
     expect(loadsFor(bare, { id: "back-squat", implement: "barbell", barType: "standard", barKg: 20 })).toBeNull();
     expect(loadsFor(bare, { id: "curl", implement: "dumbbell" })).toBeNull();
     expect(loadsFor(bare, { id: "plate-raise", implement: "plate" })).toBeNull();
@@ -102,6 +117,18 @@ describe("targets snap to the gym's kit", async () => {
     p.workouts[0]!.items[0]!.slots[0]!.start = { kg: "bar" };
     expect(squat(today({ programme: p, assignment, sessions: [], date: "2027-01-01", readiness: "green", kit: fives }))).toMatchObject({ kg: 15 });
     expect(squat(today({ programme: p, assignment, sessions: [], date: "2027-01-01", readiness: "green" }))).toMatchObject({ kg: 20 });
+  });
+
+  it("weighted kit rounds to its weights, and to pairs when done two at once", () => {
+    const bells = kitOf(gym([{ id: "kb", name: "Kettlebells", kind: "weights", weights: [{ kg: 12, count: 2 }, { kg: 16, count: 1 }, { kg: 20, count: 2 }] }]));
+    const p = block1();
+    const ex = p.exercises.find((e) => e.id === "back-squat")!;
+    Object.assign(ex, { implement: "other", weights: "kb", loadPer: "each" });
+    delete ex.bar;
+    const sessions = [squatAt(12, [5, 5, 5, 5, 5], "2027-01-01"), b("2027-01-04")];
+    expect(squat(today({ programme: p, assignment, sessions, date: "2027-01-07", readiness: "green", kit: bells }))).toMatchObject({ kg: 20, why: "add" });
+    delete ex.loadPer;
+    expect(squat(today({ programme: p, assignment, sessions, date: "2027-01-07", readiness: "green", kit: bells }))).toMatchObject({ kg: 16, why: "add" });
   });
 
   it("a top set's back-off sets snap too", () => {

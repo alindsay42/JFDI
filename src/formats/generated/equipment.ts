@@ -17,7 +17,8 @@ export type Item = {
     | "bench"
     | "station"
     | "conditioning"
-    | "accessory";
+    | "accessory"
+    | "weights";
   barType?: "standard" | "junior" | "ez" | "ssb" | "trap" | "log" | "swiss";
   kg?: Kg;
   kgEach?: Kg;
@@ -29,6 +30,13 @@ export type Item = {
    * Each plate size and how many single plates there are
    */
   plates?: {
+    kg: Kg;
+    count: number;
+  }[];
+  /**
+   * Weighted kit that comes in fixed weights, such as kettlebells or sandbags: each weight and how many there are
+   */
+  weights?: {
     kg: Kg;
     count: number;
   }[];

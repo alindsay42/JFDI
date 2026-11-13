@@ -67,6 +67,7 @@
         "implement": { "enum": ["barbell", "dumbbell", "kettlebell", "plate", "cable", "machine", "band", "bodyweight", "other"] },
         "bar": { "$ref": "#/$defs/id" },
         "loadPer": { "enum": ["total", "each"] },
+        "weights": { "$ref": "#/$defs/id", "description": "The household's weighted kit it's done with, such as kettlebells, by equipment id. Its targets round to the weights in that kit" },
         "perSide": { "type": "boolean" },
         "pattern": { "enum": ["squat", "hinge", "push", "pull", "lunge", "carry", "core", "isolation", "conditioning", "mobility"] },
         "muscles": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },

@@ -52,6 +52,18 @@ Targets snap to what the gym can actually load. A barbell is its bar plus matchi
 | More than the plates can make is the most it can | 20 | 20×2 | 100 | up | 60kg |
 | A trap bar at its own weight | 25 | 20×2, 10×2, 1.25×2 | 47 | nearest | 47.5kg |
 
+## Weighted kit: kettlebells, sandbags and the like
+
+Kit that comes in fixed weights rounds to the weights there are, the same way as a barbell: up for an increase, down for a drop, otherwise the nearest. Done with two at once, only weights there are two of count.
+
+| Case | Weights (kg × how many) | Two at once | Target (kg) | Going | Used (kg) |
+| --- | --- | --- | --- | --- | --- |
+| Going up moves to the next bell | 8×1, 12×2, 16×2, 24×1 | No | 14 | up | 16kg |
+| A drop moves down a bell | 8×1, 12×2, 16×2, 24×1 | No | 14 | down | 12kg |
+| Otherwise the nearest | 8×1, 12×2, 16×2, 24×1 | No | 21 | nearest | 24kg |
+| Two at once: only weights there are two of | 8×1, 12×2, 16×2, 24×1 | Yes | 20 | up | 16kg |
+| Two at once, and below the lightest pair | 8×1, 12×2, 16×2, 24×1 | Yes | 8 | down | 12kg |
+
 ## Next weight and reps
 
 What each exercise asks for next time, from its last sessions in this programme. Linear adds weight when every set hits the reps; double builds reps to the top of the range first. Two misses in a row at the same weight drop it 10%. A hard set (RPE at or above the hold level), skipped sets, or a readiness hold keep the weight where it is.

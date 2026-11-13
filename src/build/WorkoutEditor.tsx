@@ -203,7 +203,7 @@ function ExerciseRow({ p, workoutId, item, at, ex, handle, pairing, setPairing, 
           onCommit={(r) => set({ [field]: r } as Partial<Slot>)} />
       </span>
       {ex && !NO_KG.has(ex.implement) && p.weights !== "repeat" && (
-        <Progression name={name} field={field} choice={slotProgression(p, workoutId, at)}
+        <Progression name={name} field={field} choice={slotProgression(p, workoutId, at)} steps={!!ex.weights}
           onChange={(c) => update((q) => setSlotProgression(q, workoutId, at, c))} />
       )}
     </div>
@@ -211,7 +211,7 @@ function ExerciseRow({ p, workoutId, item, at, ex, handle, pairing, setPairing, 
 }
 
 /** How an exercise goes up: a one-line summary that opens to the choices. */
-function Progression({ name, field, choice, onChange }: { name: string; field: string; choice: ProgressionChoice; onChange: (c: ProgressionChoice) => void }) {
+function Progression({ name, field, choice, steps, onChange }: { name: string; field: string; choice: ProgressionChoice; steps?: boolean; onChange: (c: ProgressionChoice) => void }) {
   const [open, setOpen] = useState(false);
   const set = (c: Partial<ProgressionChoice>) => onChange({ ...choice, ...c });
   return (
@@ -228,6 +228,7 @@ function Progression({ name, field, choice, onChange }: { name: string; field: s
           </label>
           {choice.style !== "none" && (
             <>
+              {steps && <p className="hint">Done with weighted kit, so a jump goes to the next weight you have.</p>}
               <label className="field field-inline"><span>Jump</span>
                 <select aria-label={`${name}: jump`} value={choice.jumpKg} onChange={(e) => set({ jumpKg: Number(e.target.value) })}>
                   {[...new Set([...JUMPS, choice.jumpKg])].sort((a, b) => a - b).map((n) => <option key={n} value={n}>{n}kg</option>)}

@@ -20,3 +20,19 @@ export const loadingRules: RuleTable<{ bar: number; plates: string; target: numb
     { case: "A trap bar at its own weight", given: { bar: 25, plates: "20×2, 10×2, 1.25×2", target: 47, going: "nearest" }, expected: 47.5 },
   ],
 };
+
+export const weightedKitRules: RuleTable<{ weights: string; twoAtOnce: string; target: number; going: string }, number> = {
+  title: "Weighted kit: kettlebells, sandbags and the like",
+  summary:
+    "Kit that comes in fixed weights rounds to the weights there are, the same way as a barbell: up for an increase, " +
+    "down for a drop, otherwise the nearest. Done with two at once, only weights there are two of count.",
+  columns: { given: { weights: "Weights (kg × how many)", twoAtOnce: "Two at once", target: "Target (kg)", going: "Going" }, expected: "Used (kg)" },
+  show: (kg) => `${kg}kg`,
+  rows: [
+    { case: "Going up moves to the next bell", given: { weights: "8×1, 12×2, 16×2, 24×1", twoAtOnce: "No", target: 14, going: "up" }, expected: 16 },
+    { case: "A drop moves down a bell", given: { weights: "8×1, 12×2, 16×2, 24×1", twoAtOnce: "No", target: 14, going: "down" }, expected: 12 },
+    { case: "Otherwise the nearest", given: { weights: "8×1, 12×2, 16×2, 24×1", twoAtOnce: "No", target: 21, going: "nearest" }, expected: 24 },
+    { case: "Two at once: only weights there are two of", given: { weights: "8×1, 12×2, 16×2, 24×1", twoAtOnce: "Yes", target: 20, going: "up" }, expected: 16 },
+    { case: "Two at once, and below the lightest pair", given: { weights: "8×1, 12×2, 16×2, 24×1", twoAtOnce: "Yes", target: 8, going: "down" }, expected: 12 },
+  ],
+};

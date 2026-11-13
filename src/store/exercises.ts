@@ -21,7 +21,9 @@ export interface ExerciseInput {
   implement: Implement;
   /** Barbell exercises: which bar */
   barType?: BarType;
-  /** Dumbbells, kettlebells or plates: two at once, so the weight is for each */
+  /** Done with the household's weighted kit, such as kettlebells: its equipment id. It's then done with "other" */
+  weights?: string;
+  /** Dumbbells, kettlebells, plates or weighted kit: two at once, so the weight is for each */
   each?: boolean;
   /** Kit it needs, by id from the gyms */
   requires: string[];
@@ -64,11 +66,12 @@ export function exerciseOf(id: string, input: ExerciseInput): OwnExercise {
   const name = input.name.trim().replace(/\s+/g, " ");
   if (!name) throw new Error("Give the exercise a name");
   const ex: OwnExercise = {
-    id, name, family: "own", measure: input.measure, implement: input.implement, pattern: input.pattern,
+    id, name, family: "own", measure: input.measure, implement: input.weights ? "other" : input.implement, pattern: input.pattern,
     requires: [...new Set(input.requires)],
   };
-  if (input.implement === "barbell") ex.barTypes = [input.barType ?? "standard"];
-  if (input.each && input.measure !== "reps" && ["dumbbell", "kettlebell", "plate"].includes(input.implement)) ex.loadPer = "each";
+  if (input.weights) ex.weights = input.weights;
+  else if (input.implement === "barbell") ex.barTypes = [input.barType ?? "standard"];
+  if (input.each && input.measure !== "reps" && (input.weights || ["dumbbell", "kettlebell", "plate"].includes(input.implement))) ex.loadPer = "each";
   if (input.notes?.trim()) ex.notes = input.notes.trim();
   return ex;
 }
@@ -77,7 +80,7 @@ export function exerciseOf(id: string, input: ExerciseInput): OwnExercise {
 export function inputOf(ex: OwnExercise): ExerciseInput {
   return {
     name: ex.name, pattern: ex.pattern, measure: ex.measure, implement: ex.implement, requires: [...ex.requires],
-    ...(ex.barTypes ? { barType: ex.barTypes[0] } : {}), ...(ex.loadPer === "each" ? { each: true } : {}), ...(ex.notes ? { notes: ex.notes } : {}),
+    ...(ex.barTypes ? { barType: ex.barTypes[0] } : {}), ...(ex.weights ? { weights: ex.weights } : {}), ...(ex.loadPer === "each" ? { each: true } : {}), ...(ex.notes ? { notes: ex.notes } : {}),
   };
 }
 
@@ -127,7 +130,7 @@ export async function updateOwnExercise(db: JfdiDatabase, id: string, input: Exe
     let next = exerciseOf(id, input);
     if (isUsed(await usesOf(db, id))) {
       const fixed = inputOf(before);
-      next = exerciseOf(id, { ...input, measure: fixed.measure, implement: fixed.implement, barType: fixed.barType, each: fixed.each });
+      next = exerciseOf(id, { ...input, measure: fixed.measure, implement: fixed.implement, barType: fixed.barType, weights: fixed.weights, each: fixed.each });
     }
     if (own.some((e) => e.id !== id && e.name.toLowerCase() === next.name.toLowerCase())) throw new Error(`There's already an exercise called "${next.name}"`);
     await write(db, own.map((e) => (e.id === id ? next : e)));

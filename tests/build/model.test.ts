@@ -37,6 +37,20 @@ describe("a new programme", () => {
     expect(startKg(p, squat!.slots[0])).toBe(20);
   });
 
+  it("weighted kit, such as kettlebells, builds reps before moving up a weight", () => {
+    const swing = { id: "own-swing", name: "Swing", family: "own", measure: "load" as const, implement: "other" as const, pattern: "hinge" as const, requires: [] as string[], weights: "weights-kettlebells", loadPer: "each" as const };
+    const lib = { ...library, exercises: [...library.exercises, swing] } as typeof library;
+    const p = addExercises(newProgramme("P", [], now), "day-1", ["own-swing", "back-squat"], lib, equipment);
+    expect(p.exercises.find((e) => e.id === "own-swing")).toMatchObject({ weights: "weights-kettlebells", loadPer: "each" });
+    const [kb, squat] = p.workouts[0]!.items.map((i) => i.slots[0]!);
+    expect(kb).toMatchObject({ progression: "double-2-5", reps: { min: 8, max: 12 } });
+    expect(squat).toMatchObject({ progression: "linear-2-5", reps: { min: 8, max: 8 } });
+    // Without a reps-first rule, it goes up like any other
+    const q = newProgramme("Q", [], now);
+    q.progressions = q.progressions.filter((x) => x.id !== "double-2-5");
+    expect(addExercises(q, "day-1", ["own-swing"], lib, equipment).workouts[0]!.items[0]!.slots[0]!.progression).toBe("linear-2-5");
+  });
+
   it("refuses exercises that aren't in the library", () => {
     expect(() => add(newProgramme("P", [], now), "day-1", ["moon-squat"])).toThrow("isn't in the library");
   });

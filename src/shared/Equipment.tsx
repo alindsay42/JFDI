@@ -19,7 +19,7 @@ const OTHER_KINDS: Array<[string, string]> = [
   ["rack", "Rack"], ["bench", "Bench"], ["station", "Station"], ["cable", "Cable"], ["handle", "Handle"],
   ["conditioning", "Conditioning"], ["odd-object", "Odd object"], ["collars", "Collars"], ["chains", "Chains"], ["accessory", "Accessory"],
 ];
-const SHOWN = new Set(["bar", "plates", "dumbbells"]);
+const SHOWN = new Set(["bar", "plates", "dumbbells", "weights"]);
 
 const idFor = (name: string, items: Item[]) => {
   const base = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "item";
@@ -93,6 +93,7 @@ export function Equipment({ profile }: { profile: JFDIProfile | undefined }) {
       <Bars items={gym.kit.items} change={change} remove={remove} add={add} />
       <Plates items={gym.kit.items} change={change} remove={remove} add={add} />
       <Dumbbells items={gym.kit.items} change={change} remove={remove} add={add} />
+      <WeightedKit items={gym.kit.items} change={change} remove={remove} add={add} />
       <Other items={gym.kit.items} remove={remove} add={add} />
 
       <Confirm danger open={removing} title={`Remove ${gym.kit.name}?`} confirmLabel="Remove" onCancel={() => setRemoving(false)}
@@ -212,6 +213,61 @@ function Plates({ items, change, remove, add }: Editing) {
         );
       })}
       <button type="button" className="btn btn-quiet btn-small" onClick={() => add({ name: "Plates", kind: "plates", plates: [{ kg: 20, count: 2 }] })}>+ Add a plate set</button>
+    </section>
+  );
+}
+
+function WeightedKit({ items, change, remove, add }: Editing) {
+  const sets = items.filter((i) => i.kind === "weights");
+  const [size, setSize] = useState<Record<string, string>>({});
+  const [name, setName] = useState("");
+  return (
+    <section className="card" aria-labelledby="weights-heading">
+      <h2 id="weights-heading">Weighted kit</h2>
+      <p className="hint">Anything that comes in fixed weights, such as kettlebells, sandbags or medicine balls. An exercise done with it rounds to the weights here.</p>
+      {sets.map((s) => {
+        const weights = [...s.weights!].sort((a, b) => a.kg - b.kg);
+        const setWeights = (next: typeof weights) => change(s.id, { weights: next });
+        const newKg = num(size[s.id] ?? "");
+        const canAdd = newKg > 0 && newKg <= 1000 && !weights.some((w) => w.kg === newKg);
+        return (
+          <div key={s.id} className="kit-group">
+            <div className="kit-row">
+              <Name item={s} change={change} label={`${s.name}: name`} />
+              <button type="button" className="icon-btn set-remove" aria-label={`Remove ${s.name}`} onClick={() => remove(s.id)}>×</button>
+            </div>
+            {weights.length === 0 && <p className="muted">No weights yet.</p>}
+            <ul className="kit-list">
+              {weights.map((w) => (
+                <li key={w.kg} className="kit-row plate-row">
+                  <span className="plate-kg">{w.kg}kg</span>
+                  <span className="kg-field">
+                    <input className="kg-input" aria-label={`${s.name}: how many ${w.kg}kg`} inputMode="numeric" defaultValue={w.count} key={`${w.kg}-${w.count}`}
+                      onBlur={(e) => { const n = Number(e.target.value); if (Number.isInteger(n) && n >= 1 && n !== w.count) setWeights(weights.map((x) => (x.kg === w.kg ? { ...x, count: n } : x))); }} />
+                    <span>of them</span>
+                  </span>
+                  <button type="button" className="icon-btn set-remove" aria-label={`Remove ${w.kg}kg from ${s.name}`}
+                    onClick={() => setWeights(weights.filter((x) => x.kg !== w.kg))}>×</button>
+                </li>
+              ))}
+            </ul>
+            <form className="kit-row" onSubmit={(e) => {
+              e.preventDefault();
+              if (!canAdd) return;
+              setWeights([...weights, { kg: newKg, count: 1 }]);
+              setSize({ ...size, [s.id]: "" });
+            }}>
+              <span className="kg-field"><input className="kg-input" aria-label={`${s.name}: new weight`} inputMode="decimal" placeholder="weight"
+                value={size[s.id] ?? ""} onChange={(e) => setSize({ ...size, [s.id]: e.target.value })} /><span aria-hidden="true">kg</span></span>
+              <button type="submit" className="btn btn-quiet btn-small" disabled={!canAdd}>Add a weight</button>
+            </form>
+          </div>
+        );
+      })}
+      <form className="kit-row" onSubmit={(e) => { e.preventDefault(); if (name.trim()) { add({ name: name.trim(), kind: "weights", weights: [] }); setName(""); } }}>
+        <input className="name-input" aria-label="New weighted kit name" placeholder="Kettlebells" value={name} maxLength={60} onChange={(e) => setName(e.target.value)} />
+        <button type="submit" className="btn btn-quiet btn-small" disabled={!name.trim()}>+ Add weighted kit</button>
+      </form>
     </section>
   );
 }
