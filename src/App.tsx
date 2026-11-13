@@ -4,10 +4,12 @@ import { BuildProgramme } from "./build/BuildProgramme.tsx";
 import { Data } from "./shared/Data.tsx";
 import { Help } from "./help/Help.tsx";
 import { Equipment } from "./shared/Equipment.tsx";
+import { OwnExercises } from "./shared/OwnExercises.tsx";
 import { useRoute, useRouteParams } from "./shared/route.ts";
 import { UpdateBanner } from "./shared/UpdateBanner.tsx";
 import { WhoIsTraining } from "./shared/WhoIsTraining.tsx";
 import { db, testVersion } from "./store/db.ts";
+import { loadOwnExercises } from "./store/exercises.ts";
 import { getCurrentProfileId } from "./store/profiles.ts";
 import { Progress } from "./train/Progress.tsx";
 import { Session } from "./train/Session.tsx";
@@ -18,8 +20,10 @@ export function App() {
   const params = useRouteParams();
   const profiles = useLiveQuery(() => db.profiles.orderBy("name").toArray());
   const currentId = useLiveQuery(() => getCurrentProfileId(db));
+  // The household's own exercises join the library before anything is shown, and whenever they change
+  const own = useLiveQuery(() => loadOwnExercises(db));
 
-  if (profiles === undefined || currentId === undefined) return <div className="loading" aria-busy="true" />;
+  if (profiles === undefined || currentId === undefined || own === undefined) return <div className="loading" aria-busy="true" />;
 
   const current = profiles.find((p) => p.id === currentId);
   const pr = testVersion(location.pathname);
@@ -28,6 +32,7 @@ export function App() {
   if (route === "data") screen = <Data profile={current} profiles={profiles} />;
   else if (route === "help") screen = <Help profile={current} section={params[0]} />;
   else if (route === "equipment") screen = <Equipment profile={current} />;
+  else if (route === "exercises") screen = <OwnExercises profile={current} />;
   else if (route === "programme") {
     screen = params[0]
       ? <BuildProgramme key={params[0]} profile={current} profiles={profiles} id={params[0]} workout={params[1]} />

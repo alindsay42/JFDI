@@ -36,7 +36,7 @@
         "name": { "type": "string", "minLength": 1 },
         "family": { "$ref": "#/$defs/id" },
         "measure": { "enum": ["load", "reps", "time", "distance", "calories"] },
-        "implement": { "enum": ["barbell", "dumbbell", "kettlebell", "cable", "machine", "band", "bodyweight", "other"] },
+        "implement": { "enum": ["barbell", "dumbbell", "kettlebell", "plate", "cable", "machine", "band", "bodyweight", "other"] },
         "barTypes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "enum": ["standard", "junior", "ez", "ssb", "trap", "log", "swiss"] }, "description": "Bars this exercise can be done with. The first is the default" },
         "loadPer": { "enum": ["total", "each"] },
         "perSide": { "type": "boolean" },

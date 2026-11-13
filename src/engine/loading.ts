@@ -1,6 +1,7 @@
 // What weights a gym can actually make, and snapping targets to them.
 // A barbell is its bar plus matching plates on each side; dumbbells are fixed pairs, or loadable handles
-// with plates on both ends of both dumbbells. Anything else (machines, cables, kettlebells) isn't snapped.
+// with plates on both ends of both dumbbells; a plate exercise is one of the gym's plate sizes. Anything else
+// (machines, cables, kettlebells) isn't snapped.
 import type { JFDIHouseholdEquipment } from "../formats/generated/equipment.ts";
 
 export type BarType = "standard" | "junior" | "ez" | "ssb" | "trap" | "log" | "swiss";
@@ -91,8 +92,9 @@ export function barFor(kit: Kit, exercise: string, barType: BarType) {
 }
 
 /**
- * The weights an exercise can be done at in this gym, or null when it isn't snapped (not a barbell or
- * dumbbell exercise, or the gym has nothing to make it with).
+ * The weights an exercise can be done at in this gym, or null when it isn't snapped (not a barbell, dumbbell
+ * or plate exercise, or the gym has nothing to make it with). A plate exercise, such as a plate front raise,
+ * is held as one plate, so it's one of the plate sizes.
  */
 export function loadsFor(kit: Kit, exercise: { id: string; implement: string; barType?: BarType; barKg?: number }): number[] | null {
   if (exercise.implement === "barbell" && exercise.barType) {
@@ -101,6 +103,7 @@ export function loadsFor(kit: Kit, exercise: { id: string; implement: string; ba
     if (barKg === undefined || !kit.plates.length) return null;
     return barbellLoads(barKg, kit.plates);
   }
+  if (exercise.implement === "plate") return kit.plates.length ? kit.plates.map((p) => p.kg).sort((a, b) => a - b) : null;
   if (exercise.implement === "dumbbell") {
     const loads = dumbbellLoads(kit);
     return loads.length ? loads : null;

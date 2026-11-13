@@ -232,7 +232,15 @@ export interface Exercise {
   family?: Id;
   measure: "load" | "reps" | "time" | "distance" | "calories";
   implement:
-    "barbell" | "dumbbell" | "kettlebell" | "cable" | "machine" | "band" | "bodyweight" | "other";
+    | "barbell"
+    | "dumbbell"
+    | "kettlebell"
+    | "plate"
+    | "cable"
+    | "machine"
+    | "band"
+    | "bodyweight"
+    | "other";
   bar?: Id;
   loadPer?: "total" | "each";
   perSide?: boolean;

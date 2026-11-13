@@ -55,9 +55,11 @@ describe("a gym's kit", () => {
     expect(loadsFor(kit, { id: "x", implement: "barbell" })).toBeNull();
     expect(loadsFor(kit, { id: "curl", implement: "dumbbell" })).toEqual(dumbbellLoads(kit));
     expect(loadsFor(kit, { id: "pulldown", implement: "cable" })).toBeNull();
+    expect(loadsFor(kit, { id: "plate-raise", implement: "plate" })).toEqual(kit.plates.map((p) => p.kg).sort((a, b) => a - b));
     const bare: Kit = { bars: [], plates: [], dumbbellPairs: [], handleKg: null };
     expect(loadsFor(bare, { id: "back-squat", implement: "barbell", barType: "standard", barKg: 20 })).toBeNull();
     expect(loadsFor(bare, { id: "curl", implement: "dumbbell" })).toBeNull();
+    expect(loadsFor(bare, { id: "plate-raise", implement: "plate" })).toBeNull();
   });
 
   it("snaps up past the top or down below the bottom to what there is", () => {

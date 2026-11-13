@@ -31,7 +31,8 @@ Inside a workout, **Choose exercises** shows two lists: every exercise on the le
 
 - Highlight exercises on the left and press **>** to add them, or **>>** to add everything shown.
 - Highlight exercises on the right and press **<** to take them out, or **<<** to clear the workout.
-- Search, or pick a movement, to narrow the left-hand list.
+- Search, or pick a movement or kit, to narrow the left-hand list. **Any kit** can be changed to what an exercise is done with, such as Dumbbells, or kit it needs, such as Rings.
+- **Not in the list?** Tap **+ New exercise** below the lists to add your own. It goes straight into the workout.
 
 ### The workout list
 
@@ -85,6 +86,19 @@ The wording of each level can be changed. When the daily check is on, each exerc
 
 **Starting weights:** open the person's starting weights below the start date to give them their own weight for any exercise. For example, you might start a squat at 60kg while someone else on the same programme starts at 25kg. Anything not changed uses the programme's weight, and **Use 30kg** (or whatever the programme's is) goes back to it. Once someone has done an exercise, it goes up from what they actually lifted.
 
+## Your exercises
+
+Add exercises the app doesn't come with, such as an ab wheel rollout. Open **Edit exercises** on the Programme tab, or **+ New exercise** while choosing exercises for a workout.
+
+- **Name:** what it's called. No two exercises can share a name.
+- **Movement:** squat, hinge, push, pull and so on, for filtering.
+- **What it counts:** weight and reps, reps, time, distance or calories.
+- **Done with:** barbell (and which bar), dumbbells, kettlebell, plates, cable, machine, band, bodyweight or other. For dumbbells, kettlebells or plates, tick **Two at once** if the weight is for each one. Plates are for holding a plate, such as a plate front raise: its target rounds to a plate size the gym has.
+- **Needs:** tick the kit it needs, from your gyms. Add new kit, such as an ab wheel, under **Other kit** in Equipment first.
+- **Notes:** how to do it.
+
+Once an exercise is in a programme, or someone has done it, what it counts and what it's done with can't change, and it can't be removed. Its name, movement, kit and notes still can, and programmes using it take the new name.
+
 ## Gyms and equipment
 
 The app knows what kit you have, so it never asks for a weight you can't load. Open it from **Edit equipment** on the Programme tab, or **Edit gyms** on Today.
@@ -93,7 +107,7 @@ The app knows what kit you have, so it never asks for a weight you can't load. O
 - **Bars:** each bar's name, type and weight, such as a 25kg trap bar. An exercise that starts at "just the bar" starts at that bar's weight.
 - **Plates:** how many of each size, counting every plate (a pair is 2). Plates from every set are used together, and only matching pairs go on a bar.
 - **Dumbbells:** fixed pairs, with a tick for each pair that's there to use (untick one that's lent out), and loadable handles once you've entered a handle's weight.
-- **Other kit:** racks, benches, stations and anything else, for your own reference.
+- **Other kit:** racks, benches, stations and anything else. To train with something new, such as an ab wheel, add it here, then add an exercise that needs it under **Your exercises**.
 
 Changes save as you go.
 
@@ -152,7 +166,7 @@ Every workout, newest first. Tap one to open its day.
 
 Everything is kept on this device only, so back up now and then. The app reminds you if it's been a while.
 
-- **Save a backup:** one file with everyone's programmes and history, and your gyms and equipment. Keep it somewhere safe, such as cloud storage.
+- **Save a backup:** one file with everyone's programmes and history, your gyms and equipment, and your own exercises. Keep it somewhere safe, such as cloud storage.
 - **Restore a backup:** replaces everything on this device with a backup. Use it to move to a new tablet.
 - **Import from Rebuild Log:** brings in history from a Rebuild Log backup for the current person. Importing the same file again doesn't double anything up.
 

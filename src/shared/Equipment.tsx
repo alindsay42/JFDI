@@ -11,7 +11,7 @@ import { PlainScreen, Screen } from "./Screen.tsx";
 
 type Item = JFDIHouseholdEquipment["items"][number];
 
-const BAR_TYPES: Array<[string, string]> = [
+export const BAR_TYPES: Array<[string, string]> = [
   ["standard", "Barbell"], ["junior", "Junior bar"], ["ez", "EZ curl bar"], ["ssb", "Safety squat bar"],
   ["trap", "Trap bar"], ["log", "Log"], ["swiss", "Swiss bar"],
 ];
@@ -290,6 +290,7 @@ function Other({ items, remove, add }: Omit<Editing, "change">) {
   return (
     <section className="card" aria-labelledby="other-heading">
       <h2 id="other-heading">Other kit</h2>
+      <p className="hint">To train with something here, such as an ab wheel, give an exercise the kit it needs under <a href="#/exercises">Your exercises</a>.</p>
       {others.length === 0 && <p className="muted">Nothing else yet.</p>}
       <ul className="kit-list">
         {others.map((o) => (

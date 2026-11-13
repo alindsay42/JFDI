@@ -238,3 +238,81 @@ test("each exercise's progression: how it goes up, by how much, and what a stall
   await page.getByRole("link", { name: /Day 1/ }).click();
   await expect(page.getByRole("button", { name: /progression:/ })).toHaveCount(0);
 });
+
+test("your own exercises: add one that needs new kit, find it by that kit, make one while building, and it stays once used", async ({ page }) => {
+  await start(page);
+  // An ab wheel in the gym, then an exercise that needs it
+  await page.getByRole("link", { name: "Edit equipment" }).click();
+  await page.getByLabel("New kit name").fill("Ab wheel");
+  await page.getByLabel("New kit type").selectOption({ label: "Accessory" });
+  await page.getByRole("region", { name: "Other kit" }).getByRole("button", { name: "Add" }).click();
+  await expect(page.getByRole("region", { name: "Other kit" })).toContainText("Ab wheel");
+  await page.getByRole("link", { name: "Your exercises" }).click();
+  await expect(page.getByText("None yet.")).toBeVisible();
+  await page.getByRole("button", { name: "+ New exercise" }).click();
+  const form = page.getByRole("form", { name: "New exercise" });
+  await expect(form.getByRole("button", { name: "Add exercise" })).toBeDisabled();
+  await form.getByLabel("Exercise name").fill("Ab wheel rollout");
+  await form.getByLabel("Movement").selectOption({ label: "Core" });
+  await form.getByLabel("What it counts").selectOption({ label: "Weight and reps" });
+  await form.getByLabel("Done with").selectOption({ label: "Plates" });
+  await expect(form.getByRole("checkbox", { name: "Two at once, so the weight is for each" })).toBeVisible();
+  await form.getByLabel("What it counts").selectOption({ label: "Reps" });
+  await form.getByLabel("Done with").selectOption({ label: "Other" });
+  await form.getByRole("checkbox", { name: "Ab wheel" }).check();
+  await form.getByRole("button", { name: "Add exercise" }).click();
+  await expect(page.locator(".kit-row", { hasText: "Ab wheel rollout" })).toContainText("Core · Other · needs Ab wheel");
+
+  // Building a workout: filter by the kit it needs
+  await page.getByRole("link", { name: "Programme", exact: true }).click();
+  await expect(page.getByRole("region", { name: "Your exercises" })).toContainText("Ab wheel rollout");
+  await page.getByLabel("Name").fill("Core day");
+  await page.getByRole("button", { name: "Create" }).click();
+  await page.getByRole("link", { name: /Day 1/ }).click();
+  const all = page.getByRole("listbox", { name: "All exercises" });
+  await page.getByLabel("Kit").selectOption({ label: "Ab wheel" });
+  await expect(all.getByRole("option")).toHaveText(["Ab wheel rollout"]);
+  await all.getByRole("option", { name: "Ab wheel rollout" }).click();
+  await page.getByRole("button", { name: "Add highlighted" }).click();
+  await page.getByLabel("Kit").selectOption({ label: "Any kit" });
+  // Nothing is done with a kettlebell yet, so it isn't offered
+  await expect(page.getByLabel("Kit").getByRole("option", { name: "Kettlebell" })).toHaveCount(0);
+
+  // One that isn't in the list, made without leaving the workout
+  await page.getByRole("button", { name: "+ New exercise" }).click();
+  const made = page.getByRole("form", { name: "New exercise" });
+  await made.getByLabel("Exercise name").fill("Kettlebell swing");
+  await made.getByLabel("Movement").selectOption({ label: "Hinge" });
+  await made.getByLabel("What it counts").selectOption({ label: "Weight and reps" });
+  await made.getByLabel("Done with").selectOption({ label: "Kettlebell" });
+  await expect(made.getByRole("checkbox", { name: "Two at once, so the weight is for each" })).not.toBeChecked();
+  await made.getByRole("button", { name: "Add exercise" }).click();
+  await expect(page.getByRole("listbox", { name: "In this workout" }).getByRole("option")).toHaveText(["Ab wheel rollout", "Kettlebell swing"]);
+  await expect(page.getByLabel("Kettlebell swing weight")).toBeVisible();
+  await page.getByLabel("Kit").selectOption({ label: "Kettlebell" });
+  await expect(all).toHaveText("Nothing matches");
+
+  await page.getByRole("link", { name: "Done" }).first().click();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(page.getByRole("status")).toHaveText("Saved.");
+
+  // Used now: it can be renamed, but what it counts can't change and it can't be removed
+  await page.getByRole("link", { name: "Programme", exact: true }).click();
+  await page.getByRole("link", { name: "Edit exercises" }).click();
+  await page.getByRole("button", { name: "Edit Kettlebell swing" }).click();
+  const edit = page.getByRole("form", { name: "Change Kettlebell swing" });
+  await expect(edit.getByLabel("What it counts")).toBeDisabled();
+  await edit.getByLabel("Exercise name").fill("Russian swing");
+  await edit.getByRole("button", { name: "Save" }).click();
+  await expect(page.locator(".kit-row", { hasText: "Russian swing" })).toBeVisible();
+  await page.getByRole("button", { name: "Remove Russian swing" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Remove" }).click();
+  await expect(page.getByRole("dialog")).toContainText("It's in Core day. Take it out of that programme first.");
+  await page.getByRole("dialog").getByRole("button", { name: "Cancel" }).click();
+
+  // The programme took the new name
+  await page.getByRole("link", { name: "Programme", exact: true }).click();
+  await page.getByRole("link", { name: "Core day" }).click();
+  await page.getByRole("link", { name: /Day 1/ }).click();
+  await expect(page.getByRole("listbox", { name: "In this workout" }).getByRole("option")).toHaveText(["Ab wheel rollout", "Russian swing"]);
+});

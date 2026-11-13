@@ -676,3 +676,14 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 .starting-weights summary { min-height: 44px; padding: 10px 0; cursor: pointer; font-weight: 700; }
 .starting-weights summary .muted { font-weight: 400; }
 .sw-name { flex: 1 1 10rem; }
+
+/* Your own exercises */
+.own-form { margin-top: 8px; }
+.own-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(11em, 1fr)); gap: 0 14px; }
+.own-kit { display: grid; grid-template-columns: repeat(auto-fill, minmax(12em, 1fr)); gap: 8px; }
+.own-check { margin-bottom: var(--gap); }
+.own-edit { padding: 8px 0 12px; border-bottom: 1px solid var(--line); }
+.own-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.own-actions .set-remove { margin-left: 0; }
+.own-new { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line); }
+.own-prompt { margin-top: 12px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
