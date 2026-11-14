@@ -20,7 +20,7 @@ export default defineConfig({
     VitePWA({
       registerType: "prompt",
       injectRegister: false,
-      includeAssets: ["icons/*.png", "icons/*.svg"],
+      includeAssets: ["icons/*.png", "icons/*.webp"],
       manifest: {
         name: "J.F.D.I",
         short_name: "J.F.D.I",
