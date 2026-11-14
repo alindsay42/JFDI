@@ -24,7 +24,7 @@ export function WhoIsTraining({ profiles, currentId }: Props) {
   return (
     <main className="who">
       <header className="who-head">
-        <h1 className="brand"><img className="brand-logo" src={`${import.meta.env.BASE_URL}icons/logo.webp`} alt="J.F.D.I" width={240} height={240} /></h1>
+        <h1 className="brand">J.F.D.I</h1>
         <p className="who-question">{profiles.length ? "Who's training?" : "Add the first person to get started."}</p>
       </header>
 

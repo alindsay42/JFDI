@@ -41,7 +41,7 @@ export function PlainScreen({ title, children }: { title: string; children: Reac
     <div className="screen">
       <header className="plain-bar">
         <a href="#/who" className="btn btn-quiet">Back</a>
-        <span className="brand brand-small"><img className="brand-mark" src={`${import.meta.env.BASE_URL}icons/logo.webp`} alt="" width={32} height={32} />J.F.D.I</span>
+        <span className="brand brand-small">J.F.D.I</span>
       </header>
       <main className="page">
         <h1 className="page-title">{title}</h1>
