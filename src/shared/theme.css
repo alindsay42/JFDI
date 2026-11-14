@@ -712,3 +712,8 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 /* A check-in's colour wins over the person's own on a workout dot */
 .cal-dot.dot-green { background: #16a34a; } .cal-dot.dot-amber { background: #f59e0b; } .cal-dot.dot-red { background: #dc2626; }
 .btn[aria-pressed="true"] { background: color-mix(in srgb, var(--you) 18%, var(--surface)); border-color: var(--you); }
+
+/* The logo */
+.brand-logo { display: block; width: clamp(140px, 30vw, 220px); height: auto; margin: 0; filter: drop-shadow(0 4px 12px rgb(0 0 0 / 0.25)); }
+.brand-small { display: inline-flex; align-items: center; gap: 8px; }
+.brand-mark { width: 32px; height: 32px; }
