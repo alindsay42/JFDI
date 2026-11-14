@@ -12,7 +12,7 @@ import { localDate } from "../store/programmes.ts";
 import { CHECK_ANSWERS } from "./Check48h.tsx";
 import { Walks } from "./Walks.tsx";
 import { type CheckAnswer, addBodyweightGoal, clearGoal, deleteSession, deleteWeighIn, putWeighIn, removeBodyweightGoal, saveSession, setGoal } from "../store/progress.ts";
-import { fieldOf, type LoggedSet, type SetField } from "../store/session.ts";
+import { fieldOf, insteadOf, swappedOut, type LoggedSet, type SetField } from "../store/session.ts";
 
 export interface ProgressData {
   sessions: SessionRecord[];
@@ -168,11 +168,13 @@ function SessionSummary({ s, p }: { s: SessionRecord; p: Programme | null }) {
     <>
       <ul className="log-lines">
         {s.exercises.map((e, k) => {
+          if (swappedOut(s.exercises, k)) return null;
           const field = fieldOf(p, e.exercise);
           const done = e.sets.filter((x) => x.done);
+          const instead = insteadOf(s.exercises, k);
           return (
             <li key={k} className={e.removed ? "is-removed" : undefined}>
-              <span className="log-name">{e.name}</span>
+              <span className="log-name">{e.name}{instead && <span className="muted"> (instead of {instead})</span>}</span>
               <span className="log-sets">
                 {done.length ? done.map((x) => setText(x, field, e.loadPer === "each")).join(", ") : "No sets done"}
                 {e.removed && ` · removed${e.removed.reason ? `: ${e.removed.reason}` : ""}`}
@@ -220,10 +222,12 @@ function SessionEditor({ s, p, done }: { s: SessionRecord; p: Programme | null; 
         </label>
       )}
       {draft.exercises.map((e, k) => {
+        if (swappedOut(draft.exercises, k)) return null;
         const field = fieldOf(p, e.exercise);
+        const instead = insteadOf(draft.exercises, k);
         return (
           <fieldset key={k} className="edit-ex">
-            <legend>{e.name}{e.removed && <span className="tag">Removed</span>}</legend>
+            <legend>{e.name}{instead && <span className="muted"> (instead of {instead})</span>}{e.removed && <span className="tag">Removed</span>}</legend>
             {e.sets.map((set, j) => (
               <div key={j} className="set-row edit-set" role="group" aria-label={`${e.name} set ${j + 1}`}>
                 <span className="set-label">Set {j + 1}</span>

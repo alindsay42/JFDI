@@ -8,6 +8,7 @@ import {
   type ExerciseInput, type OwnExercise,
 } from "../store/exercises.ts";
 import { getGyms, type Gym } from "../store/gyms.ts";
+import { bundledLibrary } from "../store/household.ts";
 import { Confirm } from "./Confirm.tsx";
 import { BAR_TYPES } from "./Equipment.tsx";
 import { PlainScreen, Screen } from "./Screen.tsx";
@@ -98,6 +99,9 @@ function RemoveExercise({ exercise }: { exercise: OwnExercise }) {
   );
 }
 
+/** The library's families, for "Like": what it's offered as a swap for */
+const FAMILIES = [...bundledLibrary.families].sort((a, b) => a.name.localeCompare(b.name));
+
 const BLANK: ExerciseInput = { name: "", pattern: "" as ExerciseInput["pattern"], measure: "reps", implement: "bodyweight", requires: [] };
 
 /**
@@ -134,9 +138,15 @@ export function ExerciseForm({ gyms, exercise, done, added }: {
       </label>
       <div className="own-grid">
         <label className="field"><span>Movement</span>
-          <select value={v.pattern} onChange={(e) => set({ pattern: e.target.value as ExerciseInput["pattern"] })}>
+          <select aria-label="Movement" value={v.pattern} onChange={(e) => set({ pattern: e.target.value as ExerciseInput["pattern"] })}>
             {!v.pattern && <option value="">Choose…</option>}
             {Object.entries(PATTERN_NAMES).map(([id, name]) => <option key={id} value={id}>{name}</option>)}
+          </select>
+        </label>
+        <label className="field"><span>Like</span>
+          <select aria-label="Like" value={v.like ?? ""} onChange={(e) => set({ like: e.target.value || undefined })}>
+            <option value="">Nothing in particular</option>
+            {FAMILIES.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
           </select>
         </label>
         <label className="field"><span>What it counts</span>

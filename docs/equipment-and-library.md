@@ -112,7 +112,7 @@ The full list is in [`catalogue.md`](catalogue.md).
 
 In the app, **Your exercises** on the Programme tab adds exercises the library doesn't have, such as an ab wheel rollout. Each is stored on the device (settings key `exercises`) in the same exercise format, with:
 
-- an id starting `own-`, so it never clashes with one the app brings later, and the family `own`;
+- an id starting `own-`, so it never clashes with one the app brings later, and the family `own`, or a library family it's like (for swaps);
 - `requires` taken from any gym's kit, so the exercise picker can filter by kit;
 - a name that no other exercise has.
 

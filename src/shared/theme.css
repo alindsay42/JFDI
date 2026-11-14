@@ -687,3 +687,7 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 .own-actions .set-remove { margin-left: 0; }
 .own-new { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line); }
 .own-prompt { margin-top: 12px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+/* Swapping an exercise for this workout */
+.swap-panel { flex-basis: 100%; width: 100%; margin: 8px 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; }
+.swap-panel .hint { margin: 0; }

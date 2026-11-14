@@ -82,7 +82,7 @@ A log has three lists: `sessions`, `days` and `bodyweight`.
 | `loadPer` | `each` when kg is per hand |
 | `added` | `true` if added during the session (LG-4) |
 | `removed` | `{ reason }` if removed during the session. Sets already done stay; the rest are dropped. Removal never affects progression |
-| `swappedFrom` | The prescribed exercise it replaced, such as `band-pull-up` swapped for `chest-supported-db-row` |
+| `swappedFrom` | The prescribed exercise it replaced, such as `band-pull-up` swapped for `chest-supported-db-row`. A swap made in the app keeps the prescribed entry too, removed with the reason "Swapped for …" and no sets, so the swap can be undone and the record is complete |
 | `sets` | One entry per set (below) |
 
 ### Sets

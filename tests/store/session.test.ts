@@ -10,7 +10,7 @@ import { addProfile } from "../../src/store/profiles.ts";
 import { assignProgramme } from "../../src/store/programmes.ts";
 import {
   activeSession, addExercise, addRound, addSet, discardSession, fieldOf, finishSession, getSkip, removeExercise, removeSet, restAfter, restoreExercise,
-  setNotes, skipInForce, skipWorkout, startSession, updateSet,
+  setNotes, skipInForce, skipWorkout, startSession, updateSet, swapExercise, swappedOut, insteadOf,
 } from "../../src/store/session.ts";
 import { BLOCK1 } from "../helpers/block1.ts";
 
@@ -105,6 +105,58 @@ describe("during a workout", () => {
     s = await removeExercise(db, s, s.exercises.length - 1, null);
     expect(s.exercises.at(-1)!.exercise).toBe("db-curl");
     await expect(addExercise(db, s, "moon-squat")).rejects.toThrow("isn't in the library");
+  });
+});
+
+describe("swapping an exercise for this workout", () => {
+  it("sets the planned one aside, keeps its sets and reps, and leaves the weight for you", async () => {
+    let s = await startSession(db, await profile(), p, await plan("2027-01-01"), "green", at("2027-01-01"));
+    // Bench press, in a superset with rows, swapped for DB bench
+    s = await swapExercise(db, s, 1, "db-bench-press");
+    expect(s.exercises.map((e) => e.exercise)).toEqual(["back-squat", "bench-press", "db-bench-press", "barbell-row", "romanian-deadlift", "db-lateral-raise", "plank", "battle-ropes"]);
+    expect(s.exercises[1]!.removed).toEqual({ reason: "Swapped for DB bench press" });
+    expect(s.exercises[2]).toMatchObject({ name: "DB bench press", slot: "1.0", swappedFrom: "bench-press", loadPer: "each" });
+    expect(s.exercises[2]!.sets).toHaveLength(5);
+    expect(s.exercises[2]!.sets[0]).toEqual({ done: false, reps: 5 });
+    expect(swappedOut(s.exercises, 1)).toBe(true);
+    expect(swappedOut(s.exercises, 2)).toBe(false);
+    expect(insteadOf(s.exercises, 2)).toBe("Bench press");
+    expect(insteadOf(s.exercises, 0)).toBeNull();
+
+    // Swapped again: still instead of bench press. Something counting time keeps no reps
+    s = await swapExercise(db, s, 2, "plank");
+    expect(s.exercises[2]).toMatchObject({ exercise: "plank", swappedFrom: "bench-press" });
+    expect(s.exercises[2]!.sets[0]).toEqual({ done: false });
+    expect(s.exercises[2]!.loadPer).toBeUndefined();
+    // And back: bench press as planned, weights and all
+    s = await swapExercise(db, s, 2, "bench-press");
+    expect(s.exercises.map((e) => e.exercise).slice(0, 3)).toEqual(["back-squat", "bench-press", "barbell-row"]);
+    expect(s.exercises[1]!.removed).toBeUndefined();
+    expect(s.exercises[1]!.sets[0]).toEqual({ done: false, kg: 25, reps: 5 });
+
+    // Done for real: the log is valid, bench press has no sets, and progression ignores it
+    s = await swapExercise(db, s, 1, "db-bench-press");
+    s = await updateSet(db, s, 2, 0, { kg: 12, done: true });
+    await expect(swapExercise(db, s, 2, "push-up")).rejects.toThrow("Some sets are already done");
+    s = await finishSession(db, s, null, at("2027-01-01", "19:00"));
+    expect(s.exercises[1]).toMatchObject({ exercise: "bench-press", sets: [], removed: { reason: "Swapped for DB bench press" } });
+    expect(await valid()).toEqual([]);
+    expect(insteadOf([{ exercise: "push-up", name: "Push-up", slot: "1.0", swappedFrom: "bench-press", sets: [] }], 0)).toBe("Bench press");
+    expect(insteadOf([{ exercise: "push-up", name: "Push-up", slot: "1.0", swappedFrom: "gone", sets: [] }], 0)).toBe("gone");
+  });
+
+  it("starts the stand-in from what was lifted on it last time, set by set", async () => {
+    let s = await startSession(db, await profile(), p, await plan("2027-01-01"), "green", at("2027-01-01"));
+    s = await swapExercise(db, s, 1, "pause-bench-press", [{ kg: 20, reps: 5, done: true }, { kg: 22.5, reps: 5, done: true }]);
+    expect(s.exercises[2]!.sets.map((x) => x.kg)).toEqual([20, 22.5, 22.5, 22.5, 22.5]);
+    expect(s.exercises[2]!.sets[0]).toEqual({ done: false, kg: 20, reps: 5 });
+  });
+
+  it("isn't for added exercises or ones not in the library", async () => {
+    let s = await startSession(db, await profile(), p, await plan("2027-01-01"), "green", at("2027-01-01"));
+    await expect(swapExercise(db, s, 0, "nope")).rejects.toThrow(`"nope" isn't in the library`);
+    s = await addExercise(db, s, "push-up");
+    await expect(swapExercise(db, s, s.exercises.length - 1, "dip")).rejects.toThrow("An added exercise can be removed instead");
   });
 });
 
