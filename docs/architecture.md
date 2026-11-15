@@ -1,4 +1,4 @@
-# How J.F.D.I is built
+# How J.F.D.I. is built
 
 Status: **agreed** on 7 November 2026. Step 1 is built.
 

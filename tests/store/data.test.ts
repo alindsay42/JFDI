@@ -146,14 +146,14 @@ describe("importing from Rebuild Log", () => {
     expect(await db.sessions.where("profile").equals("andrew").count()).toBe(26);
   });
 
-  it("never overwrites a session logged in J.F.D.I", async () => {
+  it("never overwrites a session logged in J.F.D.I.", async () => {
     await addProfile(db, "Andrew", "#2563eb");
     await importRebuildLog(db, "andrew", rebuildBackup);
     const first = (await db.sessions.where("profile").equals("andrew").first())!;
-    await db.sessions.put({ ...first, importedFrom: undefined, notes: "Logged in J.F.D.I" } as typeof first);
+    await db.sessions.put({ ...first, importedFrom: undefined, notes: "Logged in J.F.D.I." } as typeof first);
     const again = await importRebuildLog(db, "andrew", rebuildBackup);
     expect(again.sessionsUpdated).toBe(25);
-    expect((await db.sessions.get(["andrew", first.id]))?.notes).toBe("Logged in J.F.D.I");
+    expect((await db.sessions.get(["andrew", first.id]))?.notes).toBe("Logged in J.F.D.I.");
   });
 
   it("explains files that aren't Rebuild Log backups", async () => {
@@ -221,7 +221,7 @@ describe("backup and restore", () => {
   it("rejects files that aren't backups, in words", () => {
     expect(() => parseBackup("{")).toThrow("can't be read as JSON");
     expect(() => parseBackup('{"app":"rebuild-log","sessions":{}}')).toThrow("Use Import from Rebuild Log");
-    expect(() => parseBackup("null")).toThrow("isn't a J.F.D.I backup");
+    expect(() => parseBackup("null")).toThrow("isn't a J.F.D.I. backup");
     try {
       parseBackup('{"format":"jfdi-backup"}');
       expect.unreachable();

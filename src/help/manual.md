@@ -1,6 +1,6 @@
 # Help
 
-J.F.D.I plans your training, runs each workout with you, and keeps track of how it's going. Everything stays on this device and works without a connection. Tap a heading below to jump to it.
+J.F.D.I. plans your training, runs each workout with you, and keeps track of how it's going. Everything stays on this device and works without a connection. Tap a heading below to jump to it.
 
 ## People
 

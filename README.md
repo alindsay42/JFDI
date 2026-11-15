@@ -1,4 +1,4 @@
-# J.F.D.I
+# J.F.D.I.
 
 Build training programmes and run them in the gym. One app with two modes: Train mode for logging sessions on the garage tablet, and Build mode for making programmes from templates or from scratch.
 
@@ -18,7 +18,7 @@ Build training programmes and run them in the gym. One app with two modes: Train
 | [`tests/invalid/`](tests/invalid/) | Broken files that must always be rejected, each for the reason listed in `expected-errors.json` |
 | [`tests/fixtures/`](tests/fixtures/) | A sample Rebuild Log backup for testing the importer |
 | [`scripts/validate.mjs`](scripts/validate.mjs) | Checks every file against its schema and the cross-reference rules |
-| [`scripts/import-rebuild-log.mjs`](scripts/import-rebuild-log.mjs) | Converts a Rebuild Log backup into a J.F.D.I training log |
+| [`scripts/import-rebuild-log.mjs`](scripts/import-rebuild-log.mjs) | Converts a Rebuild Log backup into a J.F.D.I. training log |
 
 ## The app
 
@@ -51,4 +51,4 @@ npm run check             # npm test, then build and run the whole-app tests
 ## Conventions
 
 - Weights are kilograms and always include the bar.
-- Requirements live in the J.F.D.I Requirements doc. Requirement ids (AR-1, ST-3 and so on) are used in commits and code comments.
+- Requirements live in the J.F.D.I. Requirements doc. Requirement ids (AR-1, ST-3 and so on) are used in commits and code comments.

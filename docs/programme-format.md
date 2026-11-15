@@ -1,4 +1,4 @@
-# J.F.D.I programme file format
+# J.F.D.I. programme file format
 
 Status: **version 2** of the format, from 7 November 2026: workouts and a week planner, as described in [programme-editor.md](programme-editor.md). Version 1 files are upgraded automatically (see Upgrading below).
 

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://alindsay42.github.io/jfdi/schema/equipment.schema.json",
-  "title": "J.F.D.I household equipment",
+  "title": "J.F.D.I. household equipment",
   "description": "Everything in the gym, with the details that matter for planning. See docs/equipment-and-library.md.",
   "type": "object",
   "additionalProperties": false,

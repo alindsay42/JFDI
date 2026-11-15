@@ -32,7 +32,7 @@ The file is named `jfdi-backup-YYYY-MM-DD.json` and saved to the device's Downlo
 This brings a Rebuild Log backup into one person's history. The conversion is described in [profile-and-log.md](profile-and-log.md#importing-from-rebuild-log).
 
 - **Safe to repeat.** Imported sessions are added, or updated if they came from Rebuild Log before. Days and weigh-ins only fill dates that are empty.
-- **Never overwrites J.F.D.I's own data.** A session logged in J.F.D.I is never replaced by an imported one.
+- **Never overwrites J.F.D.I.'s own data.** A session logged in J.F.D.I. is never replaced by an imported one.
 - The app reports what came across, and anything it couldn't match.
 
 ## Backup reminder

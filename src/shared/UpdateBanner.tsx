@@ -11,7 +11,7 @@ export function UpdateBanner() {
   if (!needRefresh) return null;
   return (
     <div className="update" role="status">
-      <span>A new version of J.F.D.I is ready.</span>
+      <span>A new version of J.F.D.I. is ready.</span>
       <button type="button" className="btn btn-quiet" onClick={() => setNeedRefresh(false)}>Later</button>
       <button type="button" className="btn" onClick={() => void updateServiceWorker(true)}>Update</button>
     </div>
