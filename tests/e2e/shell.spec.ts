@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
 
 async function addPerson(page: Page, name: string, colour: string) {
@@ -41,7 +42,7 @@ test("switching between people, and it's remembered after closing", async ({ pag
 test("nothing scrolls sideways", async ({ page }) => {
   await page.goto("./");
   await addPerson(page, "A name long enough to test wrapping", "Teal");
-  for (const route of ["#/today", "#/who", "#/progress", "#/programme", "#/data", "#/help", "#/equipment", "#/exercises"]) {
+  for (const route of ["#/today", "#/who", "#/progress", "#/programme", "#/data", "#/help", "#/whats-new", "#/equipment", "#/exercises"]) {
     await page.goto(`./${route}`);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     expect(overflow, route).toBeLessThanOrEqual(0);
@@ -77,4 +78,36 @@ test("help: from the bottom of any screen, with contents that jump to each secti
   await expect(page).toHaveURL(/#\/help\/backup$/);
   await expect(page.getByRole("heading", { name: "Backup", level: 2 })).toBeInViewport();
   await expect(page.getByText("Importing the same file again doesn't double anything up.")).toBeVisible();
+});
+
+test("what's new: from the bottom of any screen, and Today says what changed after an update", async ({ page }) => {
+  const version = JSON.parse(readFileSync("package.json", "utf8")).version as string;
+  // Two releases back, so there's the newest and one earlier to tell
+  const versions = [...readFileSync("src/help/changes.md", "utf8").matchAll(/^## (\S+) · /gm)].map((m) => m[1]!);
+  await page.goto("./");
+  await addPerson(page, "Diane", "Purple");
+  // A first install has nothing to say
+  await expect(page.getByRole("region", { name: /Updated to version/ })).toHaveCount(0);
+  await page.getByRole("link", { name: "What's new" }).click();
+  await expect(page.getByRole("heading", { name: "What's new", level: 1 })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2 }).first()).toHaveText(new RegExp(`^${version.replace(/\./g, "\\.")} · `));
+
+  // As if this device last ran an older version
+  await page.evaluate((seen) => new Promise<void>((done) => {
+    const open = indexedDB.open("jfdi");
+    open.onsuccess = () => {
+      const tx = open.result.transaction("settings", "readwrite");
+      tx.objectStore("settings").put({ key: "seenVersion", value: seen });
+      tx.oncomplete = () => { open.result.close(); done(); };
+    };
+  }), versions[2]!);
+  await page.getByRole("link", { name: "Today" }).click();
+  const note = page.getByRole("region", { name: `Updated to version ${version}` });
+  await expect(note).toBeVisible();
+  await expect(note).toContainText("And 1 earlier update since you last looked.");
+  await note.getByRole("button", { name: "Got it" }).click();
+  await expect(note).toHaveCount(0);
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "No programme yet" })).toBeVisible();
+  await expect(note).toHaveCount(0);
 });

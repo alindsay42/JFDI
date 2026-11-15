@@ -3,6 +3,7 @@ import { BuildHome } from "./build/BuildHome.tsx";
 import { BuildProgramme } from "./build/BuildProgramme.tsx";
 import { Data } from "./shared/Data.tsx";
 import { Help } from "./help/Help.tsx";
+import { WhatsNew } from "./help/WhatsNew.tsx";
 import { Equipment } from "./shared/Equipment.tsx";
 import { OwnExercises } from "./shared/OwnExercises.tsx";
 import { useRoute, useRouteParams } from "./shared/route.ts";
@@ -31,6 +32,7 @@ export function App() {
   let screen;
   if (route === "data") screen = <Data profile={current} profiles={profiles} />;
   else if (route === "help") screen = <Help profile={current} section={params[0]} />;
+  else if (route === "whats-new") screen = <WhatsNew profile={current} />;
   else if (route === "equipment") screen = <Equipment profile={current} />;
   else if (route === "exercises") screen = <OwnExercises profile={current} />;
   else if (route === "programme") {

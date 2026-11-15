@@ -691,3 +691,24 @@ a.btn { display: inline-flex; align-items: center; text-decoration: none; }
 /* Swapping an exercise for this workout */
 .swap-panel { flex-basis: 100%; width: 100%; margin: 8px 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; }
 .swap-panel .hint { margin: 0; }
+
+/* How you've been */
+.cal-worse { font-size: 0.7rem; padding: 0 4px; border-radius: 4px; border: 1px solid #dc2626; color: var(--text); }
+.been-totals { display: grid; grid-template-columns: repeat(auto-fit, minmax(9em, 1fr)); gap: 12px 20px; margin: 12px 0; }
+.been-totals div { margin: 0; }
+.been-totals .been-wide { grid-column: 1 / -1; }
+.been-totals dt { color: var(--muted); font-size: 0.9rem; }
+.been-totals dd { margin: 2px 0 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+.been-bar { display: flex; gap: 2px; height: 10px; border-radius: 5px; overflow: hidden; margin: 4px 0 6px; max-width: 28em; }
+.been-bar span { min-width: 6px; }
+.been-sub { font-size: 1rem; margin: 16px 0 6px; }
+.been-worse { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.link-btn { background: none; border: 0; padding: 6px 0; font: inherit; color: var(--text); text-decoration: underline; cursor: pointer; min-height: 44px; text-align: left; }
+.been-weeks { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.been-weeks th, .been-weeks td { text-align: left; padding: 6px 8px 6px 0; border-bottom: 1px solid var(--line); font-weight: normal; }
+.been-weeks thead th { color: var(--muted); font-size: 0.85rem; }
+.been-weeks tbody th { white-space: nowrap; }
+.been-dots { display: inline-flex; gap: 3px; flex-wrap: wrap; vertical-align: middle; }
+/* A check-in's colour wins over the person's own on a workout dot */
+.cal-dot.dot-green { background: #16a34a; } .cal-dot.dot-amber { background: #f59e0b; } .cal-dot.dot-red { background: #dc2626; }
+.btn[aria-pressed="true"] { background: color-mix(in srgb, var(--you) 18%, var(--surface)); border-color: var(--you); }

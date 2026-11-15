@@ -1,5 +1,5 @@
 import { useLiveQuery } from "dexie-react-hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { today as planToday, type LoggedSession, type Readiness, type Today as TodayPlan } from "../engine/prescription.ts";
 import type { Next } from "../engine/progression.ts";
 import type { JFDIProfile } from "../formats/generated/profile.ts";
@@ -7,6 +7,9 @@ import { asProgramme, type Item, type Programme } from "../formats/programme.ts"
 import { daysUntil, formatDayMonth, formatKg, formatLongDate, plural } from "../shared/format.ts";
 import { go, href } from "../shared/route.ts";
 import { Check48h } from "./Check48h.tsx";
+import { Text } from "../help/Help.tsx";
+import { getSeenVersion, newSince, RELEASES, setSeenVersion } from "../help/releases.ts";
+import { APP } from "../shared/Version.tsx";
 import { kitOf, type Kit } from "../engine/loading.ts";
 import { chooseGym, getGymChoice, getGyms, gymFor, type Gym } from "../store/gyms.ts";
 import { setDayReadiness } from "../store/progress.ts";
@@ -35,6 +38,26 @@ export const toLogged = (s: SessionRecord): LoggedSession => ({
   exercises: s.exercises,
 });
 
+/** After an update, what's changed, until it's been seen. A first install has nothing to say. */
+function UpdatedNote() {
+  const seen = useLiveQuery(() => getSeenVersion(db));
+  useEffect(() => { if (seen === null) void setSeenVersion(db, APP.version); }, [seen]);
+  if (seen === undefined || seen === null || seen === APP.version) return null;
+  const releases = newSince(RELEASES, seen);
+  const [newest, ...earlier] = releases;
+  return (
+    <section className="card updated" aria-labelledby="updated-heading">
+      <h2 id="updated-heading">Updated to version {APP.version}</h2>
+      {newest && <ul>{newest.items.map((it, i) => <li key={i}><Text parts={it} /></li>)}</ul>}
+      {earlier.length > 0 && <p className="hint">And {plural(earlier.length, "earlier update")} since you last looked.</p>}
+      <div className="actions actions-start">
+        <a className="btn btn-quiet" href="#/whats-new">What's new</a>
+        <button type="button" className="btn btn-quiet" onClick={() => void setSeenVersion(db, APP.version)}>Got it</button>
+      </div>
+    </section>
+  );
+}
+
 export function Today({ profile, now = new Date() }: { profile: JFDIProfile; now?: Date }) {
   const active = profile.programmes.active;
   const data = useLiveQuery(async () => ({
@@ -53,6 +76,7 @@ export function Today({ profile, now = new Date() }: { profile: JFDIProfile; now
   return (
     <Screen profile={profile} route="today">
       <h1 className="page-title">{todayFormat.format(now)}</h1>
+      <UpdatedNote />
       {data && !data.inProgress && <GymPicker profileId={profile.id} gyms={data.gyms} current={gym} />}
       {data === undefined ? null : data.inProgress ? (
         <InProgress s={data.inProgress} />

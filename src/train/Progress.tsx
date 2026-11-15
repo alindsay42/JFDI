@@ -6,7 +6,7 @@ import { formatShortDate, plural } from "../shared/format.ts";
 import { go } from "../shared/route.ts";
 import { Screen } from "../shared/Screen.tsx";
 import { asProgramme } from "../formats/programme.ts";
-import { Bodyweight, Calendar, DayLog, LiftProgress } from "./ProgressParts.tsx";
+import { Bodyweight, Calendar, DayLog, HowYouveBeen, LiftProgress } from "./ProgressParts.tsx";
 import { db, type SessionRecord } from "../store/db.ts";
 import { deleteProfile } from "../store/profiles.ts";
 
@@ -34,6 +34,7 @@ export function Progress({ profile }: { profile: JFDIProfile }) {
         <>
           <Calendar profile={profile} data={data} selected={selected} choose={choose} />
           {selected && <DayLog profile={profile} date={selected} data={data} close={() => setSelected(null)} />}
+          <HowYouveBeen data={data} choose={choose} />
           <LiftProgress profile={profile} sessions={data.sessions} />
           <Bodyweight profile={profile} weighIns={data.weighIns} />
         </>

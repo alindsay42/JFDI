@@ -192,6 +192,24 @@ test("48-hour check: asked the day after, a wrong tap can be changed, and it sho
   await expect(page.locator(".day-log")).toContainText("48-hour check: Clearly worse");
   await page.locator(".day-log").getByRole("button", { name: "Edit" }).click();
   await expect(page.getByLabel("48-hour check")).toHaveValue("worse");
+
+  // Marked on the calendar, and summed up in How you've been
+  await expect(page.getByRole("gridcell", { name: /Friday, 1 January 2027/ })).toHaveAccessibleName(/felt clearly worse after/);
+  const been = page.getByRole("region", { name: "How you've been" });
+  await expect(been).toContainText("Mon 7 Dec to today");
+  await expect(been.locator(".been-totals")).toContainText("Workouts1");
+  await expect(been.locator(".been-totals")).toContainText("Green 1 · Amber 0 · Red 0");
+  await expect(been.locator(".been-totals")).toContainText("Fine 0 · A bit worn but settling 0 · Clearly worse 1");
+  await expect(been.getByRole("row")).toHaveCount(5);
+  await expect(been.getByRole("row").nth(1)).toContainText("Mon 28 Dec");
+  await expect(been.getByRole("row").nth(1).getByRole("cell").first()).toHaveAccessibleName("Green 1");
+  await page.getByRole("button", { name: "Close" }).first().click();
+  await been.getByRole("button", { name: "Fri 1 Jan · Session A" }).click();
+  await expect(page.locator(".day-log")).toContainText("48-hour check: Clearly worse");
+  await been.getByRole("button", { name: "12 weeks" }).click();
+  await expect(been.getByRole("button", { name: "12 weeks" })).toHaveAttribute("aria-pressed", "true");
+  await expect(been.getByRole("row")).toHaveCount(13);
+  await expect(been).toContainText("Mon 12 Oct to today");
 });
 
 test("walks: log one from Today, and add one to an earlier day", async ({ page }) => {

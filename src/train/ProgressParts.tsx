@@ -1,10 +1,11 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { addDays, bodyweightView, calendarWeeks, liftSeries, liftsLogged, weeklyChange, type Pace, type PaceStatus } from "../engine/progress.ts";
 import { setDaysOn } from "../engine/schedule.ts";
+import { howYouveBeen, type Level } from "../engine/wellbeing.ts";
 import type { JFDIProfile } from "../formats/generated/profile.ts";
 import type { Programme } from "../formats/programme.ts";
 import { Confirm } from "../shared/Confirm.tsx";
-import { formatKg, formatLongDate, formatShortDate, plural } from "../shared/format.ts";
+import { formatDayMonth, formatKg, formatLongDate, formatShortDate, plural } from "../shared/format.ts";
 import { LineChart } from "../shared/LineChart.tsx";
 import type { DayRecord, SessionRecord, WeighInRecord } from "../store/db.ts";
 import { db } from "../store/db.ts";
@@ -73,10 +74,12 @@ export function Calendar({ profile, data, selected, choose }: {
               const day = days.get(date);
               const plan = planned(date);
               const walk = day?.activities?.length;
+              const worse = sessions.some((s) => s.check48h?.status === "worse");
               const label = [
                 formatLongDate(date),
                 sessions.length ? plural(sessions.length, "workout") : "",
                 day?.readiness ? `${READINESS[day.readiness]} day` : "",
+                worse ? "felt clearly worse after" : "",
                 walk ? "walk" : "",
                 plan ? `planned: ${plan}` : "",
               ].filter(Boolean).join(", ");
@@ -91,6 +94,7 @@ export function Calendar({ profile, data, selected, choose }: {
                     {sessions.map((s) => <span key={s.id} className={`cal-dot${s.readiness ? ` dot-${s.readiness}` : ""}`} aria-hidden="true" />)}
                     {!sessions.length && day?.readiness && <span className={`cal-ring dot-${day.readiness}`} aria-hidden="true" />}
                     {walk ? <span className="cal-walk" aria-hidden="true">walk</span> : null}
+                    {worse && <span className="cal-worse" aria-hidden="true">worse</span>}
                   </span>
                   {plan && <span className="cal-plan">{plan}</span>}
                 </button>
@@ -99,7 +103,87 @@ export function Calendar({ profile, data, selected, choose }: {
           </div>
         ))}
       </div>
-      <p className="hint cal-key"><span className="cal-dot" /> workout <span className="cal-walk">walk</span> · tap a day for its log</p>
+      <p className="hint cal-key"><span className="cal-dot" /> workout <span className="cal-walk">walk</span> <span className="cal-worse">worse</span> clearly worse after · tap a day for its log</p>
+    </section>
+  );
+}
+
+// ----- How you've been -----
+
+const LEVELS: Level[] = ["green", "amber", "red"];
+const hoursAndMinutes = (m: number) => (m >= 60 ? `${Math.floor(m / 60)} hr${m % 60 ? ` ${m % 60} min` : ""}` : `${m} min`);
+
+/** Check-ins, 48-hour answers, workouts and walks over the last 4 or 12 weeks, in total and week by week. */
+export function HowYouveBeen({ data, choose }: { data: ProgressData; choose: (date: string) => void }) {
+  const [weeks, setWeeks] = useState(4);
+  const today = localDate(new Date());
+  const h = useMemo(() => howYouveBeen(
+    data.sessions.map((s) => ({ id: s.id, date: s.date, status: s.status, readiness: s.readiness, check48h: s.check48h, name: s.session.name })),
+    data.days.map((d) => ({ date: d.date as unknown as string, readiness: d.readiness as Level | undefined, activities: d.activities })),
+    today, weeks,
+  ), [data.sessions, data.days, today, weeks]);
+  const checkedIn = h.checkIns.green + h.checkIns.amber + h.checkIns.red;
+  const answered = h.after.same + h.after.settling + h.after.worse;
+  const nothing = !checkedIn && !answered && !h.workouts && !h.walks;
+
+  return (
+    <section className="card" aria-labelledby="been-heading">
+      <div className="week-head">
+        <h2 id="been-heading">How you've been</h2>
+        <span className="cal-nav" role="group" aria-label="Over">
+          {[4, 12].map((n) => (
+            <button key={n} type="button" className="btn btn-quiet btn-small" aria-pressed={weeks === n} onClick={() => setWeeks(n)}>{n} weeks</button>
+          ))}
+        </span>
+      </div>
+      <p className="muted">{formatDayMonth(h.from)} to today</p>
+      {nothing ? <p className="muted">Nothing logged in the last {weeks} weeks.</p> : (
+        <>
+          <dl className="been-totals">
+            <div><dt>Workouts</dt><dd>{h.workouts}</dd></div>
+            <div><dt>Walks</dt><dd>{h.walks}{h.walkMinutes ? <span className="muted"> · {hoursAndMinutes(h.walkMinutes)}</span> : null}</dd></div>
+            {checkedIn > 0 && (
+              <div className="been-wide"><dt>Check-ins</dt><dd>
+                <span className="been-bar" aria-hidden="true">
+                  {LEVELS.map((l) => h.checkIns[l] ? <span key={l} className={`dot-${l}`} style={{ flexGrow: h.checkIns[l] }} /> : null)}
+                </span>
+                {LEVELS.map((l) => `${READINESS[l]} ${h.checkIns[l]}`).join(" · ")}
+              </dd></div>
+            )}
+            {answered > 0 && (
+              <div className="been-wide"><dt>48 hours after</dt><dd>{CHECK_ANSWERS.map(([k, name]) => `${name} ${h.after[k]}`).join(" · ")}</dd></div>
+            )}
+          </dl>
+          {h.worse.length > 0 && (
+            <>
+              <h3 className="been-sub">Clearly worse after</h3>
+              <ul className="been-worse">
+                {h.worse.map((w) => (
+                  <li key={w.session}><button type="button" className="link-btn" onClick={() => choose(w.date)}>{formatDayMonth(w.date)} · {w.name}</button></li>
+                ))}
+              </ul>
+            </>
+          )}
+          <h3 className="been-sub">Week by week</h3>
+          <table className="been-weeks">
+            <thead><tr><th scope="col">Week of</th><th scope="col">Check-ins</th><th scope="col">Workouts</th><th scope="col">Clearly worse</th></tr></thead>
+            <tbody>
+              {[...h.weeks].reverse().map((w) => (
+                <tr key={w.monday}>
+                  <th scope="row">{formatDayMonth(w.monday)}</th>
+                  <td aria-label={LEVELS.filter((l) => w.checkIns[l]).map((l) => `${READINESS[l]} ${w.checkIns[l]}`).join(", ") || "None"}>
+                    <span className="been-dots" aria-hidden="true">
+                      {LEVELS.flatMap((l) => Array.from({ length: w.checkIns[l] }, (_, i) => <span key={`${l}${i}`} className={`cal-dot dot-${l}`} />))}
+                    </span>
+                  </td>
+                  <td>{w.workouts}</td>
+                  <td>{w.worse || ""}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      )}
     </section>
   );
 }

@@ -147,11 +147,15 @@ Today shows what's next, with the targets for each exercise.
 
 ### Calendar
 
-Four weeks at a time, Monday first. Use ‹ and › to move back and forward, and **This week** to return. Each day shows its workouts (coloured by that day's check), check-ins, walks, and planned workouts ahead. Tap a day to open its log.
+Four weeks at a time, Monday first. Use ‹ and › to move back and forward, and **This week** to return. Each day shows its workouts (coloured by that day's check), check-ins, walks, a **worse** mark if you felt clearly worse after a workout, and planned workouts ahead. Tap a day to open its log.
 
 ### A day's log
 
 Shows each workout that day, the check-in, walks and notes, plus any 48-hour answer. **Edit** a finished workout to change weights, reps, RPE, sets, notes or the 48-hour answer; **Save changes** lights up once something has changed. **Delete** removes the workout. Walks can be added to or removed from any past day here.
+
+### How you've been
+
+A summary of the last **4 weeks** or **12 weeks**: how many workouts and walks, how many days you checked in Green, Amber or Red, and your 48-hour answers. Any workout you felt clearly worse after is listed; tap one to open that day. **Week by week** shows each week's check-ins as dots, its workouts and any clearly worse.
 
 ### Lift progress
 
@@ -175,7 +179,7 @@ Everything is kept on this device only, so back up now and then. The app reminds
 
 ## Updates and working offline
 
-The app works without a connection once it's been opened. When a new version is ready, a banner offers **Update**; tap it when you're not mid-workout. The version number is at the bottom of every screen.
+The app works without a connection once it's been opened. When a new version is ready, a banner offers **Update**; tap it when you're not mid-workout. Afterwards, Today says what's changed until you tap **Got it**. **What's new**, at the bottom of every screen next to the version number, lists every update.
 
 ## Words used
 
