@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://alindsay42.github.io/jfdi/schema/programme.schema.json",
-  "title": "J.F.D.I programme file",
+  "title": "J.F.D.I. programme file",
   "description": "A training programme as data. See docs/programme-format.md. Cross-references between ids are checked by scripts/validate.mjs, not by this schema.",
   "type": "object",
   "additionalProperties": false,

@@ -2,7 +2,7 @@
 
 Status: profile format version 1, log format version 2 (7 November 2026: prescriptions are workouts, slots are `item.slot`).
 
-These are the last two pieces of the data model. With programmes, equipment and the library, they cover everything J.F.D.I stores.
+These are the last two pieces of the data model. With programmes, equipment and the library, they cover everything J.F.D.I. stores.
 
 | File | One per | Holds | Schema | Example |
 | --- | --- | --- | --- | --- |
@@ -113,13 +113,13 @@ A **weigh-in** is `{ date, kg, fasted }`. `fasted` means morning, before food an
 
 ## Importing from Rebuild Log
 
-[`scripts/import-rebuild-log.mjs`](../scripts/import-rebuild-log.mjs) turns a Rebuild Log backup into a J.F.D.I log (DA-1):
+[`scripts/import-rebuild-log.mjs`](../scripts/import-rebuild-log.mjs) turns a Rebuild Log backup into a J.F.D.I. log (DA-1):
 
 ```
 node scripts/import-rebuild-log.mjs rebuild-log-backup.json --profile andrew --out andrew-log.json
 ```
 
-| Rebuild Log | J.F.D.I |
+| Rebuild Log | J.F.D.I. |
 | --- | --- |
 | Finished sessions | Sessions with `programme: null` and `importedFrom: "rebuild-log"`. Rebuild Log's phase and week go into the notes |
 | Back light (Green, Amber, Red) | `readiness` |
@@ -129,7 +129,7 @@ node scripts/import-rebuild-log.mjs rebuild-log-backup.json --profile andrew --o
 | Walks | A day activity: `walk` with minutes |
 | Daily routine ticks | Day notes, such as "Daily routine: 4 of 5 done" |
 | Bodyweight | Weigh-ins |
-| The programme itself | **Not imported.** J.F.D.I has no recovery programme |
+| The programme itself | **Not imported.** J.F.D.I. has no recovery programme |
 
 Exercises are mapped to library exercises. Most map one to one, such as `ssb` to `ssb-squat-heels-raised` and `csrow` to `chest-supported-db-row`. A few depend on what was logged:
 
@@ -145,8 +145,8 @@ The full table is at the top of the script. An exercise with no mapping is repor
 Settled on 6 Nov:
 
 1. **Diane's profile:** name "Diane", colour purple.
-2. **Start date:** Friday 1 January 2027, so J.F.D.I can be built first. If she wants to start sooner, a copy of Rebuild Log can run Block 1 in the meantime.
-3. **Your history:** all of Rebuild Log comes across when you move to J.F.D.I, so the lift charts show the whole recovery.
+2. **Start date:** Friday 1 January 2027, so J.F.D.I. can be built first. If she wants to start sooner, a copy of Rebuild Log can run Block 1 in the meantime.
+3. **Your history:** all of Rebuild Log comes across when you move to J.F.D.I., so the lift charts show the whole recovery.
 
 Settled on 7 Nov:
 

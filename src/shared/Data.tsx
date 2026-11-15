@@ -120,7 +120,7 @@ function RestoreSection() {
   return (
     <section className="card" aria-labelledby="restore-heading">
       <h2 id="restore-heading">Restore a backup</h2>
-      <p>Replaces everything on this device with a J.F.D.I backup file. Use it to move to a new tablet, or to go back to an earlier backup.</p>
+      <p>Replaces everything on this device with a J.F.D.I. backup file. Use it to move to a new tablet, or to go back to an earlier backup.</p>
       <div className="actions actions-start">
         <FileButton
           label="Choose a backup to restore"

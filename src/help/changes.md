@@ -4,7 +4,7 @@ The newest version is first. The version you're running is at the bottom of ever
 
 ## 0.19.0 · 14 November 2026
 
-- **A new logo and app icon.** If the old icon stays on your home screen, remove it and add the app again.
+- **A new logo and app icon,** and the name is now written **J.F.D.I.** to match. If the old icon stays on your home screen, remove it and add the app again.
 
 ## 0.18.0 · 14 November 2026
 

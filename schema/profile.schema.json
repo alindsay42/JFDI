@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://alindsay42.github.io/jfdi/schema/profile.schema.json",
-  "title": "J.F.D.I profile",
+  "title": "J.F.D.I. profile",
   "description": "One person in the household: who they are, what they're running, and their own limits and starting points. See docs/profile-and-log.md.",
   "type": "object",
   "additionalProperties": false,

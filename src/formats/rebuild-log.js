@@ -1,8 +1,8 @@
-// Converts a Rebuild Log backup into a J.F.D.I training log (requirement DA-1). Training history
+// Converts a Rebuild Log backup into a J.F.D.I. training log (requirement DA-1). Training history
 // comes across; Rebuild Log's programme does not. Shared by the app's import and by
 // scripts/import-rebuild-log.mjs. Types are in rebuild-log.d.ts.
 
-// Rebuild Log exercise id -> J.F.D.I library id. Some depend on whether weight was added.
+// Rebuild Log exercise id -> J.F.D.I. library id. Some depend on whether weight was added.
 const EXERCISE_MAP = {
   ssb: "ssb-squat-heels-raised",
   hatfield: "hatfield-squat",
@@ -59,7 +59,7 @@ export function convertRebuildLog(backup, profileId, library) {
         const rule = EXERCISE_MAP[e.id];
         const id = typeof rule === "function" ? rule(anyKg) : rule;
         const ex = id && lib.get(id);
-        if (!ex) { problems.push(`${s.date}: no J.F.D.I exercise for Rebuild Log's "${e.id}"`); return null; }
+        if (!ex) { problems.push(`${s.date}: no J.F.D.I. exercise for Rebuild Log's "${e.id}"`); return null; }
         const sets = (e.sets || []).map(st => {
           const out = { done: !!st.done };
           const kg = num(st.kg), value = num(st.reps);

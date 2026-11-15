@@ -255,7 +255,7 @@ export interface JFDIBackup {
   formatVersion: 2;
   exportedAt: string;
   /**
-   * The version of J.F.D.I that made the backup
+   * The version of J.F.D.I. that made the backup
    */
   app: {
     version: string;

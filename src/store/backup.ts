@@ -61,7 +61,7 @@ export class BackupError extends Error {
   }
 }
 
-/** Reads a backup file's text. Throws a BackupError, in words, if it isn't a J.F.D.I backup or fails a check. */
+/** Reads a backup file's text. Throws a BackupError, in words, if it isn't a J.F.D.I. backup or fails a check. */
 export function parseBackup(text: string): JFDIBackup {
   let data: unknown;
   try {
@@ -73,7 +73,7 @@ export function parseBackup(text: string): JFDIBackup {
   if (format !== "jfdi-backup") {
     if ((data as { app?: unknown } | null)?.app === "rebuild-log")
       throw new BackupError("This is a Rebuild Log backup. Use Import from Rebuild Log instead.");
-    throw new BackupError("This file isn't a J.F.D.I backup.");
+    throw new BackupError("This file isn't a J.F.D.I. backup.");
   }
   const upgraded = upgradeBackup(data);
   const problems = validateBackup(upgraded, { equipment, library: bundledLibrary });
@@ -134,7 +134,7 @@ export async function importRebuildLog(db: JfdiDatabase, profileId: string, text
     throw new BackupError("This file can't be read. Choose the backup file saved from Rebuild Log.");
   }
   if ((data as { format?: unknown } | null)?.format === "jfdi-backup")
-    throw new BackupError("This is a J.F.D.I backup. Use Restore instead.");
+    throw new BackupError("This is a J.F.D.I. backup. Use Restore instead.");
   let converted: ReturnType<typeof convertRebuildLog>;
   try {
     converted = convertRebuildLog(data, profileId, library);

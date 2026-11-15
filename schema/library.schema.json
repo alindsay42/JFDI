@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://alindsay42.github.io/jfdi/schema/library.schema.json",
-  "title": "J.F.D.I exercise library",
+  "title": "J.F.D.I. exercise library",
   "description": "Exercise families and their variations. Each variation is its own exercise with its own history. See docs/equipment-and-library.md.",
   "type": "object",
   "additionalProperties": false,

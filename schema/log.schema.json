@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://alindsay42.github.io/jfdi/schema/log.schema.json",
-  "title": "J.F.D.I training log",
+  "title": "J.F.D.I. training log",
   "description": "Everything one person has done: sessions as performed, daily check-ins and activities, and bodyweight. See docs/profile-and-log.md.",
   "type": "object",
   "additionalProperties": false,

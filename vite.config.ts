@@ -22,8 +22,8 @@ export default defineConfig({
       injectRegister: false,
       includeAssets: ["icons/*.png", "icons/*.webp"],
       manifest: {
-        name: "J.F.D.I",
-        short_name: "J.F.D.I",
+        name: "J.F.D.I.",
+        short_name: "J.F.D.I.",
         description: "Build training programmes and run them in the gym.",
         start_url: "./",
         scope: "./",
